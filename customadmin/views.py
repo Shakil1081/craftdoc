@@ -15,7 +15,7 @@ def custom_admin_dashboard(request):
 @login_required
 @has_permission_decorator('view_users')
 def users_list(request):
-    users = User.objects.all()
+    users = User.objects.filter(is_superuser=False)
     return render(request, 'customadmin/user/users_list.html', {'users': users})
 
 @login_required
@@ -36,9 +36,14 @@ def create_user(request):
 @has_permission_decorator('edit_user')
 def edit_user(request, pk):
     user = get_object_or_404(User, pk=pk)
+
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
+            # Ensure password is not reset if left empty
+            if not form.cleaned_data.get('password'):
+                form.cleaned_data.pop('password', None)
+
             form.save()
             messages.success(request, "User updated successfully!")
             return redirect('users_list')

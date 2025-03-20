@@ -40,10 +40,13 @@ class UserForm(forms.ModelForm):
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 
-        if password and confirm_password and password != confirm_password:
-            raise ValidationError("Passwords do not match.")
-
-        if password:  # Hash the password only if it's being set
+        if password and confirm_password:
+            if password != confirm_password:
+                raise ValidationError("Passwords do not match.")
             cleaned_data["password"] = make_password(password)
+        else:
+            # If no new password is provided, retain the existing one
+            if self.instance and self.instance.pk:
+                cleaned_data["password"] = self.instance.password
 
         return cleaned_data
