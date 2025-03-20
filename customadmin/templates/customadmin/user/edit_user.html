@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Edit User - {{ user.username }}</h2>
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ form.name.value }}" required>
+            <div class="text-danger">{{ form.name.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ form.username.value }}" required>
+            <div class="text-danger">{{ form.username.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value }}" required>
+            <div class="text-danger">{{ form.email.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone:</label>
+            <input type="tel" class="form-control" id="phone" name="phone" value="{{ form.phone.value }}" required>
+            <div class="text-danger">{{ form.phone.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="department" class="form-label">Department:</label>
+            <input type="text" class="form-control" id="department" name="department" value="{{ form.department.value }}" required>
+            <div class="text-danger">{{ form.department.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="designation" class="form-label">Designation:</label>
+            <input type="text" class="form-control" id="designation" name="designation" value="{{ form.designation.value }}" required>
+            <div class="text-danger">{{ form.designation.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="profile_image" class="form-label">Profile Image:</label>
+            <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">            
+            <div class="text-danger">{{ form.profile_image.errors }}</div>
+        </div>
+        {% if user.profile_image %}
+            <div class="mb-3">
+                <img src="{{ user.profile_image.url }}" class="rounded-circle mt-2" width="50" height="50">
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{% url 'users_list' %}" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Users List</h2>
+        <a href="{% url 'create_user' %}" class="btn btn-primary">Add New User</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Profile Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr id="user-{{ user.id }}">
+                <td>{{ user.name }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.department }}</td>
+                <td>{{ user.designation }}</td>
+                <td>
+                  {% if user.profile_image %}
+                      <img src="{{ user.profile_image.url }}" class="rounded-circle" width="50" height="50">
+                  {% else %}
+                      <span class="text-muted">No Image</span>
+                  {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'edit_user' user.id %}" class="btn btn-sm btn-warning">Edit</a>
+                    <button class="btn btn-sm btn-danger delete-btn" data-user-id="{{ user.id }}">Delete</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const deleteUrl = "{% url 'delete_user' 0 %}".replace("0", userId);  // Dynamic URL
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request to delete the user
+                    fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // If the user is deleted, remove the row from the table
+                            document.getElementById('user-' + userId).remove();
+                            Swal.fire('Deleted!', 'The user has been deleted.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'An error occurred while deleting the user.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
