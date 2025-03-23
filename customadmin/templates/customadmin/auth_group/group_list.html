@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Groups List</h2>
+        <a href="{% url 'group_create' %}" class="btn btn-primary">Add New Group</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr id="group-{{ group.id }}">
+                <td>{{ group.name }}</td>
+                <td>
+                    <a href="{% url 'group_edit' group.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'group_view' group.id %}" class="btn btn-info btn-sm">View</a>
+                    <button class="btn btn-sm btn-danger delete-btn" data-group-id="{{ group.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const groupId = this.getAttribute('data-group-id');
+            const deleteUrl = "{% url 'group_delete' 0 %}".replace("0", groupId);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('group-' + groupId).remove();
+                            Swal.fire('Deleted!', 'The group has been deleted.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'An error occurred while deleting the group.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Permission - {{ permission.name }}</h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Name Field -->
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Permission Name:</label>
+            <input type="text" name="name" id="id_name" class="form-control" value="{{ permission.name }}" required>
+            <div class="text-danger">{{ form.name.errors }}</div>
+        </div>
+
+        <!-- Codename Field -->
+        <div class="mb-3">
+            <label for="id_codename" class="form-label">Codename:</label>
+            <input type="text" name="codename" id="id_codename" class="form-control" value="{{ permission.codename }}" required>
+            <div class="text-danger">{{ form.codename.errors }}</div>
+        </div>
+
+        <!-- Content Type Field -->
+        <div class="mb-3">
+            <label for="id_content_type" class="form-label">Content Type:</label>
+            <select name="content_type" id="id_content_type" class="form-control" required>
+                {% for content_type in content_types %}
+                    <option value="{{ content_type.id }}" {% if content_type.id == permission.content_type.id %} selected {% endif %}>
+                        {{ content_type }}
+                    </option>
+                {% endfor %}
+            </select>
+            <div class="text-danger">{{ form.content_type.errors }}</div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'permission_list' %}" class="btn btn-secondary">Back to Permissions</a>
+    </form>
+</div>
+
+{% endblock %}

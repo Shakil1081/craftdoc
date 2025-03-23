@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Content Types List</h2>
+        <a href="{% url 'content_type_create' %}" class="btn btn-primary">Add New Content Type</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>App Label</th>
+                <th>Model</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for content_type in content_types %}
+            <tr id="contenttype-{{ content_type.id }}">
+                <td>{{ content_type.app_label }}</td>
+                <td>{{ content_type.model }}</td>
+                <td>
+                    <a href="{% url 'content_type_edit' content_type.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <button class="btn btn-sm btn-danger delete-btn" data-contenttype-id="{{ content_type.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const contentTypeId = this.getAttribute('data-contenttype-id');
+            const deleteUrl = "{% url 'content_type_delete' 0 %}".replace("0", contentTypeId);  // Dynamic URL
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request to delete the content type
+                    fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // If the content type is deleted, remove the row from the table
+                            document.getElementById('contenttype-' + contentTypeId).remove();
+                            Swal.fire('Deleted!', 'The content type has been deleted.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'An error occurred while deleting the content type.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
