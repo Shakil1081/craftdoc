@@ -40,6 +40,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'adminlte2.urls'
 
 ROLEPERMISSIONS_MODULE = 'customadmin.roles' 
