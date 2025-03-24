@@ -82,20 +82,21 @@ def create_user(request):
         raise PermissionDenied 
 
     if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES)
+        form = UserForm(request.POST, request.FILES)  # Include request.FILES
         if form.is_valid():
             user = form.save(commit=False)
 
-            # For admin-created users, set email_verified_at to the current time (automatically verified)
-            user.email_verified_at = now()  # Mark the user as verified immediately
+            # Automatically mark the email as verified
+            user.email_verified_at = now()
 
+            # Save the user
             user.save()
 
-            # Assign selected groups to the user
-            selected_groups = request.POST.getlist('groups')  # List of selected group IDs
+            # Assign selected groups
+            selected_groups = request.POST.getlist('groups')
             user.groups.set(Group.objects.filter(id__in=selected_groups))
 
-            # After assigning groups, ensure the user has the necessary permissions from the groups
+            # Assign permissions from groups
             for group in user.groups.all():
                 for perm in group.permissions.all():
                     user.user_permissions.add(perm)
@@ -105,15 +106,17 @@ def create_user(request):
             return redirect('users_list')
     else:
         form = UserForm()
-        groups = Group.objects.all()  # Fetch all groups to display in the form
+        groups = Group.objects.all()
 
     return render(request, 'customadmin/user/create_user.html', {'form': form, 'groups': groups})
+
 
 
 @login_required
 def edit_user(request, pk):
     if not request.user.has_perm('customadmin.edit_user'):
         raise PermissionDenied 
+    
     user = get_object_or_404(User, pk=pk)
 
     if request.method == 'POST':
@@ -123,6 +126,10 @@ def edit_user(request, pk):
             if not form.cleaned_data.get('password'):
                 form.cleaned_data.pop('password', None)
 
+            # Keep the existing profile image if none is uploaded
+            if not request.FILES.get('profile_image'):
+                form.instance.profile_image = user.profile_image
+
             form.save()
             messages.success(request, "User updated successfully!")
             return redirect('users_list')
@@ -130,6 +137,8 @@ def edit_user(request, pk):
         form = UserForm(instance=user)
 
     return render(request, 'customadmin/user/edit_user.html', {'form': form, 'user': user})
+
+
 
 @login_required
 def delete_user(request, pk):

@@ -29,6 +29,10 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['name', 'username', 'email', 'phone', 'password', 'confirm_password', 'department', 'designation', 'profile_image', 'groups', 'organization', 'profession', 'address', 'city', 'facebook_link', 'x_link', 'instagram_link', 'linkedin_link', 'youtube_link']
 
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.fields['profile_image'].required = False
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         user = getattr(self, 'instance', None)
