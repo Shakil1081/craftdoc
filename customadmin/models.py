@@ -32,6 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     designation = models.CharField(max_length=255)
     profile_image = models.ImageField(upload_to="users/", null=True, blank=True)
     password = models.CharField(max_length=128)  # Password field is required
+    email_verified_at = models.DateTimeField(null=True, blank=True)  # New field added
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

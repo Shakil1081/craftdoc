@@ -8,6 +8,58 @@ from rolepermissions.decorators import has_permission_decorator
 # from rolepermissions.checkers import has_permission
 from django.contrib.auth.models import Permission, Group
 from django.core.exceptions import PermissionDenied
+from .forms import UserRegistrationForm
+from django.contrib.auth import login, authenticate
+from django.utils.timezone import now 
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            # Create the user
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])  # Hash the password
+            user.email_verified_at = None  # Set email_verified_at to None (not verified)
+            user.save()
+
+            # here implement email sent while register
+
+            # Redirect to the verification page after successful registration
+            return redirect('verification_sent')
+    else:
+        form = UserRegistrationForm()
+
+    return render(request, 'customadmin/register.html', {'form': form})
+
+# Login view for checking email verification
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Check if the user is an admin (superuser)
+            if user.is_superuser:
+                login(request, user)
+                return redirect('custom_admin_dashboard')  # Redirect to the dashboard after successful login
+            else:
+                # Check if the user's email is verified for non-admin users
+                if user.email_verified_at is None:
+                    messages.error(request, 'Please verify your email before logging in.')
+                    return redirect('verification_sent')  # Redirect to verification page
+                else:
+                    login(request, user)
+                    return redirect('custom_admin_dashboard')  # Redirect to the dashboard after successful login
+        else:
+            messages.error(request, 'Invalid credentials. Please try again.')
+
+    return render(request, 'customadmin/login.html')
+
+
+def verification_sent(request):
+    return render(request, 'customadmin/verification_sent.html')
 
 @login_required
 def custom_admin_dashboard(request):
@@ -32,9 +84,14 @@ def create_user(request):
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
 
-            # Assign selected groups to user
+            # For admin-created users, set email_verified_at to the current time (automatically verified)
+            user.email_verified_at = now()  # Mark the user as verified immediately
+
+            user.save()
+
+            # Assign selected groups to the user
             selected_groups = request.POST.getlist('groups')  # List of selected group IDs
             user.groups.set(Group.objects.filter(id__in=selected_groups))
 

@@ -7,8 +7,12 @@ from . import content_type_views
 from . import auth_group_views
 
 urlpatterns = [
-    path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
+    # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
+    path('login/', views.login_view, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('register/', views.register, name='register'),
+     path('verification-sent/', views.verification_sent, name='verification_sent'),
+    # path('resend-verification-email/', views.resend_verification_email, name='resend_verification_email'),
     path('', custom_admin_dashboard, name='custom_admin_dashboard'),  
     path('users/', views.users_list, name='users_list'),
     path('users/create/', views.create_user, name='create_user'),
