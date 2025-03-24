@@ -5,8 +5,9 @@ from .forms import UserForm
 from django.contrib import messages
 from django.http import JsonResponse
 from rolepermissions.decorators import has_permission_decorator
-from rolepermissions.checkers import has_permission
+# from rolepermissions.checkers import has_permission
 from django.contrib.auth.models import Permission, Group
+from django.core.exceptions import PermissionDenied
 
 @login_required
 def custom_admin_dashboard(request):
@@ -14,31 +15,33 @@ def custom_admin_dashboard(request):
 
 
 @login_required
-@has_permission_decorator('view_users')
 def users_list(request):
+    # Check if the user has the required permission
+    if not request.user.has_perm('customadmin.view_user'):
+        raise PermissionDenied  # Return a 403 Forbidden error if they lack permission
+
     users = User.objects.filter(is_superuser=False)
     return render(request, 'customadmin/user/users_list.html', {'users': users})
 
+
 @login_required
-@has_permission_decorator('add_user')
 def create_user(request):
+    if not request.user.has_perm('customadmin.add_user'):
+        raise PermissionDenied 
+
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
-            # Save the user
             user = form.save()
 
-            # Get the selected groups from the form
+            # Assign selected groups to user
             selected_groups = request.POST.getlist('groups')  # List of selected group IDs
+            user.groups.set(Group.objects.filter(id__in=selected_groups))
 
-            for group_id in selected_groups:
-                # Assign the user to each selected group
-                group = Group.objects.get(id=group_id)
-                user.groups.add(group)
-
-                # Assign the permissions associated with the group to the user
-                for permission in group.permissions.all():
-                    user.user_permissions.add(permission)
+            # After assigning groups, ensure the user has the necessary permissions from the groups
+            for group in user.groups.all():
+                for perm in group.permissions.all():
+                    user.user_permissions.add(perm)
 
             user.save()
             messages.success(request, "User created successfully!")
@@ -49,9 +52,11 @@ def create_user(request):
 
     return render(request, 'customadmin/user/create_user.html', {'form': form, 'groups': groups})
 
+
 @login_required
-@has_permission_decorator('edit_user')
 def edit_user(request, pk):
+    if not request.user.has_perm('customadmin.edit_user'):
+        raise PermissionDenied 
     user = get_object_or_404(User, pk=pk)
 
     if request.method == 'POST':
@@ -70,8 +75,9 @@ def edit_user(request, pk):
     return render(request, 'customadmin/user/edit_user.html', {'form': form, 'user': user})
 
 @login_required
-@has_permission_decorator('delete_user')
 def delete_user(request, pk):
+    if not request.user.has_perm('customadmin.delete_user'):
+        raise PermissionDenied 
     if request.method == 'DELETE':
         user = get_object_or_404(User, pk=pk)
         user.delete()
