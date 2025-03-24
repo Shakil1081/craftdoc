@@ -5,6 +5,7 @@ from . import permission_views
 from . import views
 from . import content_type_views
 from . import auth_group_views
+from .views import CustomPasswordResetView
 
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
@@ -35,8 +36,8 @@ urlpatterns = [
     path('groups/view/<int:group_id>/', auth_group_views.group_view, name='group_view'),
     path('group/delete/<int:group_id>/', auth_group_views.group_delete, name='group_delete'),
 
-    
-    path("password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
+    path("password_reset/", CustomPasswordResetView.as_view(), name="password_reset"),
+    # path("password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
     path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),

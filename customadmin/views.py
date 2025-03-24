@@ -7,6 +7,11 @@ from django.http import JsonResponse
 from rolepermissions.decorators import has_permission_decorator
 from rolepermissions.checkers import has_permission
 from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 
 @login_required
 def custom_admin_dashboard(request):
@@ -77,3 +82,50 @@ def delete_user(request, pk):
         user.delete()
         return JsonResponse({'status': 'success'}, status=200)
     return JsonResponse({'status': 'failed'}, status=400)
+
+
+# class CustomPasswordResetView(PasswordResetView):
+#     template_name = 'registration/password_reset_form.html'  # Your custom form template
+#     email_template_name = 'registration/password_reset_email.html'  # Your custom email template
+#     # subject_template_name = 'registration/password_reset_subject.txt'  # Optional: Custom subject template
+#     success_url = reverse_lazy('password_reset_done')
+
+#     def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
+#         """
+#         Override the send_mail method to customize the email sending process.
+#         """
+#         subject = "Reset Your Password | CraftDOC"  # Custom subject
+#         email = render_to_string(email_template_name, context)  # Render the HTML email template
+
+#         # Create the email message
+#         msg = EmailMessage(
+#             subject,
+#             email,
+#             from_email,
+#             [to_email],
+#         )
+#         msg.content_subtype = "html"  # Set the content subtype to HTML
+#         msg.send()
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registration/password_reset_form.html'  # Your custom form template
+    # email_template_name = 'registration/password_reset_email.html'  # Plain text email template (optional)
+    html_email_template_name = 'registration/password_reset_email.html'  # Your custom HTML email template
+    # subject_template_name = 'registration/password_reset_subject.txt'  # Custom subject template
+    success_url = reverse_lazy('password_reset_done')
+
+    def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
+        """
+        Override the send_mail method to send both plain text and HTML emails.
+        """
+        subject = render_to_string(subject_template_name, context)
+        subject = ''.join(subject.splitlines())  # Remove any line breaks
+        body = render_to_string(email_template_name, context)  # Plain text email (optional)
+
+        # Render the HTML email template
+        html_email = render_to_string(html_email_template_name, context)
+
+        # Create the email message
+        msg = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        msg.attach_alternative(html_email, "text/html")  # Attach the HTML version
+        msg.send()

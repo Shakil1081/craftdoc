@@ -114,10 +114,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 LOGIN_URL = '/admin/login/'  # Redirect users to your custom login page
 LOGIN_REDIRECT_URL = '/admin/'  # Redirect to dashboard after login
@@ -159,3 +156,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "mdashrafulislam369@gmail.com"
 EMAIL_HOST_PASSWORD = "pltm hcib zjfa rdnu"
+DEFAULT_FROM_EMAIL = 'CraftDOC Support <support@craftdoc.com>'
