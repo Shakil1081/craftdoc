@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Add New Content Type</h2>
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- App Label Field -->
+        <div class="mb-3">
+            <label for="app_label" class="form-label">App Label:</label>
+            <input type="text" name="app_label" id="app_label" class="form-control {% if form.app_label.errors %}is-invalid{% endif %}" value="{{ form.app_label.value|default:'' }}">
+            <div class="text-danger">{{ form.app_label.errors }}</div>
+        </div>
+
+        <!-- Model Field -->
+        <div class="mb-3">
+            <label for="model" class="form-label">Model:</label>
+            <input type="text" name="model" id="model" class="form-control {% if form.model.errors %}is-invalid{% endif %}" value="{{ form.model.value|default:'' }}">
+            <div class="text-danger">{{ form.model.errors }}</div>
+        </div>
+
+        <!-- Save Button -->
+        <button type="submit" class="btn btn-primary">Save</button>
+
+        <!-- Back to List Button -->
+        <a href="{% url 'content_type_list' %}" class="btn btn-secondary">Back to Content Types</a>
+    </form>
+</div>
+
+{% endblock %}

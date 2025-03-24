@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Permissions List</h2>
+        <a href="{% url 'permission_create' %}" class="btn btn-primary">Add New Permission</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Codename</th>
+                <th>Content Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for permission in permissions %}
+            <tr id="permission-{{ permission.id }}">
+                <td>{{ permission.name }}</td>
+                <td>{{ permission.codename }}</td>
+                <td>{{ permission.content_type }}</td>
+                <td>
+                    <a href="{% url 'permission_update' permission.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <button class="btn btn-sm btn-danger delete-btn" data-permission-id="{{ permission.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const permissionId = this.getAttribute('data-permission-id');
+            const deleteUrl = "{% url 'permission_delete' 0 %}".replace("0", permissionId);  // Dynamic URL
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request to delete the permission
+                    fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // If the permission is deleted, remove the row from the table
+                            document.getElementById('permission-' + permissionId).remove();
+                            Swal.fire('Deleted!', 'The permission has been deleted.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'An error occurred while deleting the permission.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Error!', 'An error occurred while deleting the permission.', 'error');
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
