@@ -55,3 +55,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=255)
+    short_name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subcategories')
+    category_level = models.IntegerField()
+
+    def __str__(self):
+        return self.name

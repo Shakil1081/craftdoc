@@ -5,6 +5,7 @@ from . import permission_views
 from . import views
 from . import content_type_views
 from . import auth_group_views
+from . import category_views
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
@@ -44,4 +45,10 @@ urlpatterns = [
     path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+
+
+    path('categories/', category_views.category_list, name='category_list'),
+    path('categories/create/', category_views.category_create, name='category_create'),
+    path('categories/edit/<int:pk>/', category_views.category_edit, name='category_edit'),
+    path('categories/delete/<int:pk>/', category_views.category_delete, name='category_delete'),
 ]

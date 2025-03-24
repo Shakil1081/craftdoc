@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Permission, ContentType
 from django.contrib.auth.models import Group
+from .models import Category
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), min_length=6, required=False)
@@ -131,3 +132,13 @@ class UserRegistrationForm(forms.ModelForm):
             raise ValidationError("Passwords do not match")
         
         return cleaned_data
+    
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'short_name', 'parent', 'category_level']
+        widgets = {
+            'parent': forms.Select(attrs={'class': 'form-control'}),
+            'category_level': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
