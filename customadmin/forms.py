@@ -13,10 +13,20 @@ class UserForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
+    # Additional fields
+    organization = forms.CharField(max_length=255, required=False)
+    profession = forms.CharField(max_length=255, required=False)
+    address = forms.CharField(widget=forms.Textarea, required=False)
+    city = forms.CharField(max_length=255, required=False)
+    facebook_link = forms.URLField(required=False)
+    x_link = forms.URLField(required=False)
+    instagram_link = forms.URLField(required=False)
+    linkedin_link = forms.URLField(required=False)
+    youtube_link = forms.URLField(required=False)
 
     class Meta:
         model = User
-        fields = ['name', 'username', 'email', 'phone', 'password', 'confirm_password', 'department', 'designation', 'profile_image','groups']
+        fields = ['name', 'username', 'email', 'phone', 'password', 'confirm_password', 'department', 'designation', 'profile_image', 'groups', 'organization', 'profession', 'address', 'city', 'facebook_link', 'x_link', 'instagram_link', 'linkedin_link', 'youtube_link']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -97,9 +107,20 @@ class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
     confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
     
+    # Additional fields
+    organization = forms.CharField(max_length=255, required=False)
+    profession = forms.CharField(max_length=255, required=False)
+    address = forms.CharField(widget=forms.Textarea, required=False)
+    city = forms.CharField(max_length=255, required=False)
+    facebook_link = forms.URLField(required=False)
+    x_link = forms.URLField(required=False)
+    instagram_link = forms.URLField(required=False)
+    linkedin_link = forms.URLField(required=False)
+    youtube_link = forms.URLField(required=False)
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'confirm_password', 'name']
+        fields = ['username', 'email', 'password', 'confirm_password', 'name', 'organization', 'profession', 'address', 'city', 'facebook_link', 'x_link', 'instagram_link', 'linkedin_link', 'youtube_link']
     
     def clean(self):
         cleaned_data = super().clean()

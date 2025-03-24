@@ -1,11 +1,10 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set")
-
         email = self.normalize_email(email)
         extra_fields.setdefault("is_active", True)
 
@@ -28,11 +27,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, unique=True)
+    phone_verified_at = models.DateTimeField(null=True, blank=True)  # New field for phone verification
+    email_verified_at = models.DateTimeField(null=True, blank=True)  # New field for email verification
+    password = models.CharField(max_length=128)
+    organization = models.CharField(max_length=255, null=True, blank=True)  # New field for organization
+    profession = models.CharField(max_length=255, null=True, blank=True)  # New field for profession
     department = models.CharField(max_length=255)
     designation = models.CharField(max_length=255)
+    address = models.TextField(null=True, blank=True)  # New field for address
+    city = models.CharField(max_length=255, null=True, blank=True)  # New field for city
+    facebook_link = models.URLField(null=True, blank=True)  # New field for Facebook link
+    x_link = models.URLField(null=True, blank=True)  # New field for X (formerly Twitter) link
+    instagram_link = models.URLField(null=True, blank=True)  # New field for Instagram link
+    linkedin_link = models.URLField(null=True, blank=True)  # New field for LinkedIn link
+    youtube_link = models.URLField(null=True, blank=True)  # New field for YouTube link
     profile_image = models.ImageField(upload_to="users/", null=True, blank=True)
-    password = models.CharField(max_length=128)  # Password field is required
-    email_verified_at = models.DateTimeField(null=True, blank=True)  # New field added
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
