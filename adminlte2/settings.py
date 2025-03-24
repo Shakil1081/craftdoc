@@ -75,7 +75,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL engine
         'NAME': 'myproject_db',  # Replace with your PostgreSQL database name
         'USER': 'postgres',  # PostgreSQL user (typically 'postgres')
-        'PASSWORD': '12345678',  # Replace with your PostgreSQL password
+        'PASSWORD': 'admin',  # Replace with your PostgreSQL password
         'HOST': '127.0.0.1',  # Localhost for PostgreSQL
         'PORT': '5432',  # Default PostgreSQL port
     }
@@ -129,3 +129,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+"""
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"  # Use your email provider's SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "your-email@gmail.com"
+EMAIL_HOST_PASSWORD = "your-email-password"
+"""
+
+

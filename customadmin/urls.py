@@ -16,6 +16,7 @@ urlpatterns = [
     path('users/delete-user/<int:pk>/', views.delete_user, name='delete_user'),
 
 
+<<<<<<< HEAD
 
     path("permission/", permission_views.permission_list, name="permission_list"),
     path("permission/create/", permission_views.permission_create, name="permission_create"),
@@ -36,4 +37,10 @@ urlpatterns = [
     path('group/delete/<int:group_id>/', auth_group_views.group_delete, name='group_delete'),
 
     
+=======
+    path("password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
+    path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+>>>>>>> 08232907737204958aa72dc816fc08cbf3ea1452
 ]
