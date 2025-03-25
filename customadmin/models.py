@@ -66,3 +66,39 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Document(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    html_body = models.TextField()
+    css_body = models.TextField()
+    preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
+    mockup_image = models.ImageField(upload_to='documents/mockups/', blank=True, null=True)
+    file_name = models.CharField(max_length=255, blank=True, null=True)
+    file_path = models.FileField(upload_to='documents/files/', blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+
+class DocumentCategory(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    category_id = models.IntegerField()
+    level = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.document.title} - Level {self.level}"
+
+
+class DocumentMeta(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    key = models.CharField(max_length=255, blank=True, null=True)
+    value = models.TextField(blank=True, null=True)
+    type = models.CharField(max_length=100, blank=True, null=True)
+    css = models.TextField(blank=True, null=True)
+    attribute_id = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.title or 'Untitled'} - {self.key or 'No Key'}"
