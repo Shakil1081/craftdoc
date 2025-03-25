@@ -82,14 +82,10 @@ def create_user(request):
         raise PermissionDenied 
 
     if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES)  # Include request.FILES
+        form = UserForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-
-            # Automatically mark the email as verified
             user.email_verified_at = now()
-
-            # Save the user
             user.save()
 
             # Assign selected groups
@@ -101,14 +97,12 @@ def create_user(request):
                 for perm in group.permissions.all():
                     user.user_permissions.add(perm)
 
-            user.save()
             messages.success(request, "User created successfully!")
             return redirect('users_list')
     else:
         form = UserForm()
-        groups = Group.objects.all()
 
-    return render(request, 'customadmin/user/create_user.html', {'form': form, 'groups': groups})
+    return render(request, 'customadmin/user/create_user.html', {'form': form})
 
 
 
@@ -137,7 +131,6 @@ def edit_user(request, pk):
         form = UserForm(instance=user)
 
     return render(request, 'customadmin/user/edit_user.html', {'form': form, 'user': user})
-
 
 
 @login_required

@@ -152,43 +152,25 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            "name", "username", "email", "phone", "organization", "profession", "department",
-            "designation", "address", "city", "facebook_link", "x_link", "instagram_link",
+            "name", "username", "email", "phone", "organization", "profession", "department", 
+            "designation", "address", "city", "facebook_link", "x_link", "instagram_link", 
             "linkedin_link", "youtube_link", "profile_image"
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Full Name"}),
             "username": forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}),
             "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email", "readonly": "readonly"}),
-            "phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "Phone"}),
-
-            # Optional fields
+            "phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "Phone Number"}),
             "organization": forms.TextInput(attrs={"class": "form-control", "placeholder": "Organization"}),
             "profession": forms.TextInput(attrs={"class": "form-control", "placeholder": "Profession"}),
             "department": forms.TextInput(attrs={"class": "form-control", "placeholder": "Department"}),
             "designation": forms.TextInput(attrs={"class": "form-control", "placeholder": "Designation"}),
             "address": forms.Textarea(attrs={"class": "form-control", "placeholder": "Address", "rows": 2}),
             "city": forms.TextInput(attrs={"class": "form-control", "placeholder": "City"}),
-
-            # Social media links (Optional)
             "facebook_link": forms.URLInput(attrs={"class": "form-control", "placeholder": "Facebook Profile"}),
             "x_link": forms.URLInput(attrs={"class": "form-control", "placeholder": "Twitter Profile"}),
             "instagram_link": forms.URLInput(attrs={"class": "form-control", "placeholder": "Instagram Profile"}),
             "linkedin_link": forms.URLInput(attrs={"class": "form-control", "placeholder": "LinkedIn Profile"}),
             "youtube_link": forms.URLInput(attrs={"class": "form-control", "placeholder": "YouTube Profile"}),
-
-            # Optional profile image
             "profile_image": forms.FileInput(attrs={"class": "form-control"}),
         }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Set only selected fields as optional
-        optional_fields = [
-            "organization", "profession", "department", "designation",
-            "address", "city", "facebook_link", "x_link",
-            "instagram_link", "linkedin_link", "youtube_link", "profile_image"
-        ]
-        for field in optional_fields:
-            self.fields[field].required = False

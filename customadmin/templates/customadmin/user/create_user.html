@@ -7,58 +7,124 @@
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="name" class="form-label">Name:</label>
-            <input type="text" name="name" id="name" class="form-control {% if form.name.errors %}is-invalid{% endif %}" value="{{ form.name.value|default:'' }}">
-            <div class="text-danger">{{ form.name.errors }}</div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" name="name" id="name" class="form-control {% if form.name.errors %}is-invalid{% endif %}" value="{{ form.name.value|default:'' }}">
+                <div class="text-danger">{{ form.name.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" name="username" id="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" value="{{ form.username.value|default:'' }}">
+                <div class="text-danger">{{ form.username.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" value="{{ form.email.value|default:'' }}">
+                <div class="text-danger">{{ form.email.errors }}</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="username" class="form-label">Username:</label>
-            <input type="text" name="username" id="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" value="{{ form.username.value|default:'' }}">
-            <div class="text-danger">{{ form.username.errors }}</div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="phone" class="form-label">Phone:</label>
+                <input type="text" name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" value="{{ form.phone.value|default:'' }}">
+                <div class="text-danger">{{ form.phone.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" name="password" id="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" value="{{ form.password.value|default:'' }}">
+                <div class="text-danger">{{ form.password.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="confirm_password" class="form-label">Confirm Password:</label>
+                <input type="password" name="confirm_password" id="confirm_password" class="form-control {% if form.confirm_password.errors %}is-invalid{% endif %}" value="{{ form.confirm_password.value|default:'' }}">
+                <div class="text-danger">{{ form.confirm_password.errors }}</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" value="{{ form.email.value|default:'' }}">
-            <div class="text-danger">{{ form.email.errors }}</div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="organization" class="form-label">Organization:</label>
+                <input type="text" name="organization" id="organization" class="form-control {% if form.organization.errors %}is-invalid{% endif %}" value="{{ form.organization.value|default:'' }}">
+                <div class="text-danger">{{ form.organization.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="profession" class="form-label">Profession:</label>
+                <input type="text" name="profession" id="profession" class="form-control {% if form.profession.errors %}is-invalid{% endif %}" value="{{ form.profession.value|default:'' }}">
+                <div class="text-danger">{{ form.profession.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="department" class="form-label">Department:</label>
+                <input type="text" name="department" id="department" class="form-control {% if form.department.errors %}is-invalid{% endif %}" value="{{ form.department.value|default:'' }}">
+                <div class="text-danger">{{ form.department.errors }}</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="phone" class="form-label">Phone:</label>
-            <input type="text" name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" value="{{ form.phone.value|default:'' }}">
-            <div class="text-danger">{{ form.phone.errors }}</div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="designation" class="form-label">Designation:</label>
+                <input type="text" name="designation" id="designation" class="form-control {% if form.designation.errors %}is-invalid{% endif %}" value="{{ form.designation.value|default:'' }}">
+                <div class="text-danger">{{ form.designation.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="address" class="form-label">Address:</label>
+                <input type="text" name="address" id="address" class="form-control {% if form.address.errors %}is-invalid{% endif %}" value="{{ form.address.value|default:'' }}">
+                <div class="text-danger">{{ form.address.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="city" class="form-label">City:</label>
+                <input type="text" name="city" id="city" class="form-control {% if form.city.errors %}is-invalid{% endif %}" value="{{ form.city.value|default:'' }}">
+                <div class="text-danger">{{ form.city.errors }}</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Password:</label>
-            <input type="password" name="password" id="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" value="{{ form.password.value|default:'' }}">
-            <div class="text-danger">{{ form.password.errors }}</div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="facebook_link" class="form-label">Facebook Link:</label>
+                <input type="url" name="facebook_link" id="facebook_link" class="form-control {% if form.facebook_link.errors %}is-invalid{% endif %}" value="{{ form.facebook_link.value|default:'' }}">
+                <div class="text-danger">{{ form.facebook_link.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="x_link" class="form-label">X Link:</label>
+                <input type="url" name="x_link" id="x_link" class="form-control {% if form.x_link.errors %}is-invalid{% endif %}" value="{{ form.x_link.value|default:'' }}">
+                <div class="text-danger">{{ form.x_link.errors }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="instagram_link" class="form-label">Instagram Link:</label>
+                <input type="url" name="instagram_link" id="instagram_link" class="form-control {% if form.instagram_link.errors %}is-invalid{% endif %}" value="{{ form.instagram_link.value|default:'' }}">
+                <div class="text-danger">{{ form.instagram_link.errors }}</div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="confirm_password" class="form-label">Confirm Password:</label>
-            <input type="password" name="confirm_password" id="confirm_password" class="form-control {% if form.confirm_password.errors %}is-invalid{% endif %}" value="{{ form.confirm_password.value|default:'' }}">
-            <div class="text-danger">{{ form.confirm_password.errors }}</div>
-        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="linkedin_link" class="form-label">LinkedIn Link:</label>
+                <input type="url" name="linkedin_link" id="linkedin_link" class="form-control {% if form.linkedin_link.errors %}is-invalid{% endif %}" value="{{ form.linkedin_link.value|default:'' }}">
+                <div class="text-danger">{{ form.linkedin_link.errors }}</div>
+            </div>
 
-        <div class="mb-3">
-            <label for="department" class="form-label">Department:</label>
-            <input type="text" name="department" id="department" class="form-control {% if form.department.errors %}is-invalid{% endif %}" value="{{ form.department.value|default:'' }}">
-            <div class="text-danger">{{ form.department.errors }}</div>
-        </div>
+            <div class="col-md-4">
+                <label for="youtube_link" class="form-label">YouTube Link:</label>
+                <input type="url" name="youtube_link" id="youtube_link" class="form-control {% if form.youtube_link.errors %}is-invalid{% endif %}" value="{{ form.youtube_link.value|default:'' }}">
+                <div class="text-danger">{{ form.youtube_link.errors }}</div>
+            </div>
 
-        <div class="mb-3">
-            <label for="designation" class="form-label">Designation:</label>
-            <input type="text" name="designation" id="designation" class="form-control {% if form.designation.errors %}is-invalid{% endif %}" value="{{ form.designation.value|default:'' }}">
-            <div class="text-danger">{{ form.designation.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="profile_image" class="form-label">Profile Image:</label>
-            <input type="file" name="profile_image" id="profile_image" class="form-control {% if form.profile_image.errors %}is-invalid{% endif %}">
-            <div class="text-danger">{{ form.profile_image.errors }}</div>
+            <div class="col-md-4">
+                <label for="profile_image" class="form-label">Profile Image:</label>
+                <input type="file" name="profile_image" id="profile_image" class="form-control {% if form.profile_image.errors %}is-invalid{% endif %}">
+                <div class="text-danger">{{ form.profile_image.errors }}</div>
+            </div>
         </div>
 
         <div class="mb-3">
