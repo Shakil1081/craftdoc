@@ -15,6 +15,7 @@ urlpatterns = [
      path('verification-sent/', views.verification_sent, name='verification_sent'),
     # path('resend-verification-email/', views.resend_verification_email, name='resend_verification_email'),
     path('', custom_admin_dashboard, name='custom_admin_dashboard'),  
+    path('profile/edit/', views.edit_profile, name='profile_edit'),
     path('users/', views.users_list, name='users_list'),
     path('users/create/', views.create_user, name='create_user'),
     path('users/edit/<int:pk>/', views.edit_user, name='edit_user'),

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import User
-from .forms import UserForm
+from .forms import UserForm,ProfileEditForm
 from django.contrib import messages
 from django.http import JsonResponse
 from rolepermissions.decorators import has_permission_decorator
@@ -149,3 +149,18 @@ def delete_user(request, pk):
         user.delete()
         return JsonResponse({'status': 'success'}, status=200)
     return JsonResponse({'status': 'failed'}, status=400)
+
+
+@login_required
+def edit_profile(request):
+    user = request.user  # Get logged-in user
+    
+    if request.method == "POST":
+        form = ProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_edit')  # Redirect to profile page after saving
+    else:
+        form = ProfileEditForm(instance=user)
+
+    return render(request, "customadmin/profile_edit.html", {"form": form, "user": user})
