@@ -62,7 +62,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     short_name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subcategories')
-    category_level = models.IntegerField()
+    category_level = models.IntegerField(default=1)  # Default to 1
 
     def __str__(self):
         return self.name

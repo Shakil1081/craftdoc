@@ -141,10 +141,9 @@ class UserRegistrationForm(forms.ModelForm):
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ['name', 'short_name', 'parent', 'category_level']
+        fields = ['name', 'short_name', 'parent']  # Removed 'category_level'
         widgets = {
             'parent': forms.Select(attrs={'class': 'form-control'}),
-            'category_level': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
 

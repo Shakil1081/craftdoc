@@ -9,15 +9,23 @@ def category_list(request):
     categories = Category.objects.all()
     return render(request, 'customadmin/category/category_list.html', {'categories': categories})
 
-# View to create a category
 def category_create(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            form.save()
+            category = form.save(commit=False)
+
+            # Ensure category_level is correctly assigned
+            if category.parent:
+                category.category_level = category.parent.category_level + 1
+            else:
+                category.category_level = 1
+
+            category.save()
             return redirect('category_list')
     else:
         form = CategoryForm()
+
     return render(request, 'customadmin/category/category_create.html', {'form': form})
 
 # View to edit a category
