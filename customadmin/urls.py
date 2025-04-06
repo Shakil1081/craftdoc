@@ -10,7 +10,7 @@ from . import category_views
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
     path('login/', views.login_view, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('admin-logout/', auth_views.LogoutView.as_view(next_page='/admin/login/'), name='admin-logout'),
     path('register/', views.register, name='register'),
     path('verification-sent/', views.verification_sent, name='verification_sent'),
     # path('resend-verification-email/', views.resend_verification_email, name='resend_verification_email'),
