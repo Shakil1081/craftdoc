@@ -9,9 +9,9 @@ from . import category_views
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
-    path('login/', views.login_view, name='login'),
+    path('login/', views.login_view, name='admin-login'),
     path('admin-logout/', auth_views.LogoutView.as_view(next_page='/admin/login/'), name='admin-logout'),
-    path('register/', views.register, name='register'),
+    path('register/', views.register, name='admin-register'),
     path('verification-sent/', views.verification_sent, name='verification_sent'),
     # path('resend-verification-email/', views.resend_verification_email, name='resend_verification_email'),
     path('', custom_admin_dashboard, name='custom_admin_dashboard'),  
