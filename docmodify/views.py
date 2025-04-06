@@ -27,7 +27,7 @@ def register(request):
     else:
         form = PublicUserRegistrationForm()
 
-    return render(request, 'docmodify/register.html', {'form': form})
+    return render(request, 'docmodify/auth/register.html', {'form': form})
 
 
 @login_required
@@ -64,4 +64,4 @@ def public_login(request):
     else:
         form = PublicLoginForm()
 
-    return render(request, 'docmodify/login.html', {'form': form})
+    return render(request, 'docmodify/auth/login.html', {'form': form})
