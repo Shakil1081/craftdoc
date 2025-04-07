@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add New Document</h2>
+
+    <div class="text-danger">
+        {% for error in form.title.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" name="title" id="title" class="form-control {% if form.title.errors %}is-invalid{% endif %}" value="{{ form.title.value|default:'' }}">
+            <div class="text-danger">{{ form.title.errors }}</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control {% if form.description.errors %}is-invalid{% endif %}">{{ form.description.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.description.errors }}</div>
+        </div>
+
+        <!-- HTML Body -->
+        <div class="mb-3">
+            <label for="html_body" class="form-label">HTML Body</label>
+            <textarea name="html_body" id="html_body" class="form-control {% if form.html_body.errors %}is-invalid{% endif %}">{{ form.html_body.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.html_body.errors }}</div>
+        </div>
+
+        <!-- CSS Body -->
+        <div class="mb-3">
+            <label for="css_body" class="form-label">CSS Body</label>
+            <textarea name="css_body" id="css_body" class="form-control {% if form.css_body.errors %}is-invalid{% endif %}">{{ form.css_body.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.css_body.errors }}</div>
+        </div>
+
+        <!-- Preview Image -->
+        <div class="mb-3">
+            <label for="preview_image" class="form-label">Preview Image</label>
+            <input type="file" name="preview_image" id="preview_image" class="form-control {% if form.preview_image.errors %}is-invalid{% endif %}">
+            <div class="text-danger">{{ form.preview_image.errors }}</div>
+        </div>
+
+        <!-- Mockup Image -->
+        <div class="mb-3">
+            <label for="mockup_image" class="form-label">Mockup Image</label>
+            <input type="file" name="mockup_image" id="mockup_image" class="form-control {% if form.mockup_image.errors %}is-invalid{% endif %}">
+            <div class="text-danger">{{ form.mockup_image.errors }}</div>
+        </div>
+
+        <!-- File Name (Auto-filled) -->
+        <div class="mb-3">
+            <label for="file_name" class="form-label">File Name</label>
+            <input type="text" name="file_name" id="file_name" class="form-control" value="{{ form.file_name.value|default:'' }}" readonly>
+        </div>
+
+        <!-- File Path -->
+        <div class="mb-3">
+            <label for="file_path" class="form-label">Upload File</label>
+            <input type="file" name="file_path" id="file_path" class="form-control {% if form.file_path.errors %}is-invalid{% endif %}">
+            <div class="text-danger">{{ form.file_path.errors }}</div>
+        </div>
+
+
+        <!-- Category Dropdown -->
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select name="category" id="category" class="form-select {% if category_form.category.errors %}is-invalid{% endif %}">
+                <option value="">-- Select Category --</option>
+                {% for cat in category_form.fields.category.queryset %}
+                    <option value="{{ cat.id }}" {% if category_form.category.value|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="text-danger">{{ category_form.category.errors }}</div>
+        </div>
+
+
+
+        <!-- Document Meta Fields -->
+        <hr>
+        <h4>
+            Document Meta 
+            <button type="button" id="add-meta" class="btn btn-sm btn-success">+</button>
+        </h4>
+        <div id="meta-formset">
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="meta-form border p-3 mb-3 rounded">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="{{ form.title.html_name }}" class="form-control" value="{{ form.title.value|default:'' }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Key</label>
+                            <input type="text" name="{{ form.key.html_name }}" class="form-control" value="{{ form.key.value|default:'' }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Value</label>
+                            <input type="text" name="{{ form.value.html_name }}" class="form-control" value="{{ form.value.value|default:'' }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Type</label>
+                            <input type="text" name="{{ form.type.html_name }}" class="form-control" value="{{ form.type.value|default:'' }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">CSS</label>
+                            <input type="text" name="{{ form.css.html_name }}" class="form-control" value="{{ form.css.value|default:'' }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Attribute ID</label>
+                            <input type="text" name="{{ form.attribute_id.html_name }}" class="form-control" value="{{ form.attribute_id.value|default:'' }}">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger remove-meta">Remove</button>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Submit Buttons -->
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'document_list' %}" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
+
+<!-- JavaScript to clone formset -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addButton = document.getElementById('add-meta');
+        const formsetDiv = document.getElementById('meta-formset');
+        const totalForms = document.getElementById('id_documentmeta_set-TOTAL_FORMS');
+
+        addButton.addEventListener('click', function () {
+            const currentFormCount = parseInt(totalForms.value);
+            if (currentFormCount < 8) {
+                const firstForm = formsetDiv.querySelector('.meta-form');
+                const newForm = firstForm.cloneNode(true);
+
+                newForm.querySelectorAll('input').forEach((input) => {
+                    let oldName = input.name;
+                    let newName = oldName.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                    input.name = newName;
+                    input.value = '';
+                });
+
+                formsetDiv.appendChild(newForm);
+                totalForms.value = currentFormCount + 1;
+            } else {
+                alert("Max 8 meta entries allowed.");
+            }
+        });
+
+        formsetDiv.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-meta')) {
+                const formBlocks = document.querySelectorAll('.meta-form');
+                if (formBlocks.length > 1) {
+                    e.target.closest('.meta-form').remove();
+                    totalForms.value = formBlocks.length - 1;
+                }
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.getElementById("file_path");
+        const fileNameInput = document.getElementById("file_name");
+
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                fileNameInput.value = fileInput.files[0].name;
+            } else {
+                fileNameInput.value = '';
+            }
+        });
+    });
+</script>
+
+{% endblock %}
