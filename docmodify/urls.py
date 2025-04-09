@@ -8,5 +8,10 @@ urlpatterns = [
     path('dashboard/', views.public_dashboard, name='public_dashboard'),
     path('redirect/', views.role_based_redirect, name='role_based_redirect'),
     path('login/', views.public_login, name='login'),
-     path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
+    
+    # Email verification URLs
+    path('verify-email/<str:uidb64>/<str:token>/', views.verify_email, name='verify_email'),
+    path('verification-sent/', views.verification_sent, name='verification_mail_sent'),
+    path('resend-verification/', views.resend_verification_email, name='resend_verification'),
 ]

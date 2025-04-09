@@ -83,16 +83,18 @@ class Document(models.Model):
 
 
 class DocumentCategory(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
-    category_id = models.IntegerField()
+    # Assuming Category with ID 1 exists
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="document_categories", default=1) 
+    document_id = models.ForeignKey(Document, on_delete=models.CASCADE)
     level = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.document.title} - Level {self.level}"
+        return f"{self.document_id.title} - Level {self.level}"
+
 
 
 class DocumentMeta(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document_id = models.ForeignKey(Document, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, blank=True, null=True)
     key = models.CharField(max_length=255, blank=True, null=True)
     value = models.TextField(blank=True, null=True)

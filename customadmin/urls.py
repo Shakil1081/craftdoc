@@ -7,6 +7,7 @@ from . import content_type_views
 from . import auth_group_views
 from .views import CustomPasswordResetView
 from . import category_views
+from . import document_views
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
@@ -53,4 +54,10 @@ urlpatterns = [
     path('categories/create/', category_views.category_create, name='category_create'),
     path('categories/edit/<int:pk>/', category_views.category_edit, name='category_edit'),
     path('categories/delete/<int:pk>/', category_views.category_delete, name='category_delete'),
+
+
+
+    path('documents/', document_views.document_list, name='document_list'),
+    path('documents/add/', document_views.document_create, name='document_create'),
+    path('documents/delete/<int:pk>/', document_views.document_delete, name='document_delete'),
 ]

@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Permission, ContentType
 from django.contrib.auth.models import Group
-from .models import Category
+from django.forms import inlineformset_factory
+from .models import Category,Document, DocumentMeta, DocumentCategory
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), min_length=6, required=False)
@@ -173,3 +174,22 @@ class ProfileEditForm(forms.ModelForm):
             "youtube_link": forms.URLInput(attrs={"class": "form-control", "placeholder": "YouTube Profile"}),
             "profile_image": forms.FileInput(attrs={"class": "form-control"}),
         }
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = '__all__'
+
+# forms.py
+class DocumentCategoryForm(forms.ModelForm):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), label='Category', required=True)
+    
+    class Meta:
+        model = DocumentCategory
+        fields = ['category', 'level']  # Change 'document' to 'document_id'
+
+DocumentMetaFormSet = inlineformset_factory(
+    Document, DocumentMeta, form=forms.ModelForm,
+    fields='__all__', extra=1, can_delete=True, max_num=8
+)
