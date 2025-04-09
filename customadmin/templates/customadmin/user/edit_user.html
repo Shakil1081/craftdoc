@@ -7,40 +7,99 @@
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="name" class="form-label">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ form.name.value }}" required>
-            <div class="text-danger">{{ form.name.errors }}</div>
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ form.name.value }}" required>
+                <div class="text-danger">{{ form.name.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ form.username.value }}" required>
+                <div class="text-danger">{{ form.username.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value }}" required>
+                <div class="text-danger">{{ form.email.errors }}</div>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label for="phone" class="form-label">Phone:</label>
+                <input type="tel" class="form-control" id="phone" name="phone" value="{{ form.phone.value }}" required>
+                <div class="text-danger">{{ form.phone.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="department" class="form-label">Department:</label>
+                <input type="text" class="form-control" id="department" name="department" value="{{ form.department.value }}" required>
+                <div class="text-danger">{{ form.department.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="designation" class="form-label">Designation:</label>
+                <input type="text" class="form-control" id="designation" name="designation" value="{{ form.designation.value }}" required>
+                <div class="text-danger">{{ form.designation.errors }}</div>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label for="organization" class="form-label">Organization:</label>
+                <input type="text" class="form-control" id="organization" name="organization" value="{{ form.organization.value }}">
+                <div class="text-danger">{{ form.organization.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="profession" class="form-label">Profession:</label>
+                <input type="text" class="form-control" id="profession" name="profession" value="{{ form.profession.value }}">
+                <div class="text-danger">{{ form.profession.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="address" class="form-label">Address:</label>
+                <textarea class="form-control" id="address" name="address">{{ form.address.value }}</textarea>
+                <div class="text-danger">{{ form.address.errors }}</div>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label for="city" class="form-label">City:</label>
+                <input type="text" class="form-control" id="city" name="city" value="{{ form.city.value }}">
+                <div class="text-danger">{{ form.city.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="facebook_link" class="form-label">Facebook Link:</label>
+                <input type="url" class="form-control" id="facebook_link" name="facebook_link" value="{{ form.facebook_link.value }}">
+                <div class="text-danger">{{ form.facebook_link.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="x_link" class="form-label">X (Twitter) Link:</label>
+                <input type="url" class="form-control" id="x_link" name="x_link" value="{{ form.x_link.value }}">
+                <div class="text-danger">{{ form.x_link.errors }}</div>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label for="instagram_link" class="form-label">Instagram Link:</label>
+                <input type="url" class="form-control" id="instagram_link" name="instagram_link" value="{{ form.instagram_link.value }}">
+                <div class="text-danger">{{ form.instagram_link.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="linkedin_link" class="form-label">LinkedIn Link:</label>
+                <input type="url" class="form-control" id="linkedin_link" name="linkedin_link" value="{{ form.linkedin_link.value }}">
+                <div class="text-danger">{{ form.linkedin_link.errors }}</div>
+            </div>
+            <div class="col-md-4">
+                <label for="youtube_link" class="form-label">YouTube Link:</label>
+                <input type="url" class="form-control" id="youtube_link" name="youtube_link" value="{{ form.youtube_link.value }}">
+                <div class="text-danger">{{ form.youtube_link.errors }}</div>
+            </div>
         </div>
 
         <div class="mb-3">
-            <label for="username" class="form-label">Username:</label>
-            <input type="text" class="form-control" id="username" name="username" value="{{ form.username.value }}" required>
-            <div class="text-danger">{{ form.username.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value }}" required>
-            <div class="text-danger">{{ form.email.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="phone" class="form-label">Phone:</label>
-            <input type="tel" class="form-control" id="phone" name="phone" value="{{ form.phone.value }}" required>
-            <div class="text-danger">{{ form.phone.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="department" class="form-label">Department:</label>
-            <input type="text" class="form-control" id="department" name="department" value="{{ form.department.value }}" required>
-            <div class="text-danger">{{ form.department.errors }}</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="designation" class="form-label">Designation:</label>
-            <input type="text" class="form-control" id="designation" name="designation" value="{{ form.designation.value }}" required>
-            <div class="text-danger">{{ form.designation.errors }}</div>
+            <label for="groups" class="form-label">Select Groups:</label>
+            {{ form.groups }}
         </div>
 
         <div class="mb-3">
@@ -50,7 +109,7 @@
         </div>
         {% if user.profile_image %}
             <div class="mb-3">
-                <img src="{{ user.profile_image.url }}" class="rounded-circle mt-2" width="50" height="50">
+                <img src="{{ user.profile_image.url }}" class="rounded-circle mt-2" width="100" height="100" alt="Profile Image">
             </div>
         {% endif %}
 
@@ -58,5 +117,4 @@
         <a href="{% url 'users_list' %}" class="btn btn-secondary">Back to List</a>
     </form>
 </div>
-
 {% endblock %}

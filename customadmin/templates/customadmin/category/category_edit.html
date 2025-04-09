@@ -1,0 +1,35 @@
+<!-- customadmin/templates/customadmin/category_edit.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Category - {{ category.name }}</h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input type="text" name="name" id="name" class="form-control" value="{{ category.name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="short_name" class="form-label">Short Name:</label>
+            <input type="text" name="short_name" id="short_name" class="form-control" value="{{ category.short_name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="parent" class="form-label">Parent Category:</label>
+            {{ form.parent }}
+        </div>
+
+        <div class="mb-3">
+            <label for="category_level" class="form-label">Category Level:</label>
+            {{ form.category_level }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'category_list' %}" class="btn btn-secondary">Back to Category List</a>
+    </form>
+</div>
+{% endblock %}
