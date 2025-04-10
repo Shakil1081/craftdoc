@@ -104,3 +104,12 @@ class DocumentMeta(models.Model):
 
     def __str__(self):
         return f"{self.title or 'Untitled'} - {self.key or 'No Key'}"
+    
+
+class Font(models.Model):
+    name = models.CharField(max_length=255)
+    url = models.URLField()
+    font_family = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

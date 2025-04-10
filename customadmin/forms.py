@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Permission, ContentType
 from django.contrib.auth.models import Group
 from django.forms import inlineformset_factory
-from .models import Category,Document, DocumentMeta, DocumentCategory
+from .models import Category,Document, DocumentMeta, DocumentCategory, Font
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), min_length=6, required=False)
@@ -193,3 +193,9 @@ DocumentMetaFormSet = inlineformset_factory(
     Document, DocumentMeta, form=forms.ModelForm,
     fields='__all__', extra=1, can_delete=True, max_num=8
 )
+
+
+class FontForm(forms.ModelForm):
+    class Meta:
+        model = Font
+        fields = ['name', 'url', 'font_family']

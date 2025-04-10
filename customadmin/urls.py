@@ -7,6 +7,7 @@ from . import content_type_views
 from . import auth_group_views
 from . import category_views
 from . import document_views
+from . import font_views
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
@@ -59,4 +60,10 @@ urlpatterns = [
     path('documents/', document_views.document_list, name='document_list'),
     path('documents/add/', document_views.document_create, name='document_create'),
     path('documents/delete/<int:pk>/', document_views.document_delete, name='document_delete'),
+
+
+    path('fonts/', font_views.font_list, name='font_list'),
+    path('fonts/create/', font_views.font_create, name='font_create'),
+    path('fonts/edit/<int:pk>/', font_views.font_edit, name='font_edit'),
+    path('fonts/delete/<int:pk>/', font_views.font_delete, name='font_delete'),
 ]

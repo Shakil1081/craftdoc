@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Add New Font</h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input type="text" name="name" id="name" class="form-control {% if form.name.errors %}is-invalid{% endif %}" value="{{ form.name.value|default:'' }}">
+            <div class="text-danger">{{ form.name.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="url" class="form-label">URL:</label>
+            <input type="url" name="url" id="url" class="form-control {% if form.url.errors %}is-invalid{% endif %}" value="{{ form.url.value|default:'' }}">
+            <div class="text-danger">{{ form.url.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="font_family" class="form-label">Font Family:</label>
+            <input type="text" name="font_family" id="font_family" class="form-control {% if form.font_family.errors %}is-invalid{% endif %}" value="{{ form.font_family.value|default:'' }}">
+            <div class="text-danger">{{ form.font_family.errors }}</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'font_list' %}" class="btn btn-secondary">Back to Font List</a>
+    </form>
+</div>
+{% endblock %}
