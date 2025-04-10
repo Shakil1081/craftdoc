@@ -72,6 +72,7 @@ def register(request):
 User = get_user_model()  # This gets your custom user model
 
 def verify_email(request, uidb64, token):
+    
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -85,7 +86,7 @@ def verify_email(request, uidb64, token):
     verification_status = (
         user is not None and
         user.email_verify_token and  # Token exists
-        account_activation_token.check_token(user, token)
+        user.email_verify_token == token
     )
 
     if verification_status:
