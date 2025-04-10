@@ -4,8 +4,9 @@ from django.conf import settings
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (
-            str(user.pk) + str(timestamp) + 
-            str(user.is_active)
+            str(user.pk) + 
+            str(timestamp) + 
+            str(user.email_verify_token)
         )
 
 account_activation_token = AccountActivationTokenGenerator()

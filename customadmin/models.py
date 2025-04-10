@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
+from django.utils import timezone
+from django.utils.crypto import get_random_string
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
@@ -42,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     linkedin_link = models.URLField(null=True, blank=True)  # New field for LinkedIn link
     youtube_link = models.URLField(null=True, blank=True)  # New field for YouTube link
     profile_image = models.ImageField(upload_to="users/", null=True, blank=True)
+    email_verify_token = models.CharField(max_length=100, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -52,6 +55,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username", "phone", "name"]
+
+    def generate_verification_token(self):
+        """Generate and store a 150-character verification token"""
+        self.email_verify_token = get_random_string(150)
+        self.save()
+        return self.email_verify_token
+    
+    def verify_email(self):
+        """Mark email as verified and clear the token"""
+        self.email_verified_at = timezone.now()
+        self.email_verify_token = None
+        self.is_active = True  # Activate account if not already active
+        self.save()
 
     def __str__(self):
         return self.username

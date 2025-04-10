@@ -25,13 +25,16 @@ def register(request):
             user.is_active = False  # User inactive until email verified
             user.set_password(form.cleaned_data['password'])
             user.save()
-            
+
+            # Generate and store 150-char token
+            token = user.generate_verification_token()
+
             # Assign 'user' group
             user_group, created = Group.objects.get_or_create(name='user')
             user.groups.add(user_group)
 
             # Send verification email
-            token = account_activation_token.make_token(user)
+            # token = account_activation_token.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             protocol = 'https' if request.is_secure() else 'http'
             current_site = get_current_site(request)
@@ -71,18 +74,27 @@ User = get_user_model()  # This gets your custom user model
 def verify_email(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)  # Now uses your custom user model
+        user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        messages.success(request, 'Your account has been verified!')
+    if user.is_active:
+        messages.warning(request, 'Account is already verified.')
+        return redirect('login')
+        
+    verification_status = (
+        user is not None and
+        user.email_verify_token and  # Token exists
+        account_activation_token.check_token(user, token)
+    )
+
+    if verification_status:
+        user.verify_email()  # Updates email_verified_at and clears token
+        messages.success(request, 'Email verified successfully!')
         return redirect('login')
     else:
-        messages.error(request, 'Invalid verification link!')
-        return redirect('login')
+        messages.error(request, 'Invalid or expired verification link')
+        return redirect('resend_verification')
 
 def verification_sent(request):
     return render(request, 'docmodify/auth/verification_sent.html')
@@ -96,7 +108,8 @@ def resend_verification_email(request):
                 messages.warning(request, 'Account is already verified.')
                 return redirect('login')
 
-            token = account_activation_token.make_token(user)
+            # token = account_activation_token.make_token(user)
+            token = user.generate_verification_token()
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             protocol = 'https' if request.is_secure() else 'http'
             current_site = get_current_site(request)
