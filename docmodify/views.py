@@ -13,8 +13,9 @@ from .tokens import account_activation_token
 from .forms import PublicUserRegistrationForm, PublicLoginForm
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
-from django.contrib.auth.views import PasswordResetView
-from django.urls import reverse_lazy
+from .forms import ForgotPasswordForm, ResetPasswordForm
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 
 def hello_there(request):
     return render(request, 'docmodify/letterhead_upload.html')
@@ -183,25 +184,50 @@ def public_login(request):
 
     return render(request, 'docmodify/auth/login.html', {'form': form})
 
-class CustomPasswordResetView(PasswordResetView):
-    template_name = 'docmodify/auth/password_reset_form.html'  # Your custom form template
-    # email_template_name = 'docmodify/auth/password_reset_email.html'  # Plain text email template (optional)
-    html_email_template_name = 'docmodify/auth/password_reset_email.html'  # Your custom HTML email template
-    # subject_template_name = 'docmodify/auth/password_reset_subject.txt'  # Custom subject template
-    success_url = reverse_lazy('password_reset_done')
+def forgot_password(request):
+    if request.method == 'POST':
+        form = ForgotPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+                reset_link = request.build_absolute_uri(
+                    f"/reset-password/{uid}/{token}/"
+                )
+                send_mail(
+                    'Password Reset',
+                    f'Click the link to reset your password: {reset_link}',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                )
+                messages.success(request, 'Password reset link sent to your email.')
+                return redirect('login')
+            except User.DoesNotExist:
+                form.add_error('email', 'No user with this email found.')
+    else:
+        form = ForgotPasswordForm()
+    return render(request, 'docmodify/auth/forgot_password.html', {'form': form})
 
-    def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
-        """
-        Override the send_mail method to send both plain text and HTML emails.
-        """
-        subject = render_to_string(subject_template_name, context)
-        subject = ''.join(subject.splitlines())  # Remove any line breaks
-        body = render_to_string(email_template_name, context)  # Plain text email (optional)
+def reset_password(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+        user = None
 
-        # Render the HTML email template
-        html_email = render_to_string(html_email_template_name, context)
-
-        # Create the email message
-        msg = EmailMultiAlternatives(subject, body, from_email, [to_email])
-        msg.attach_alternative(html_email, "text/html")  # Attach the HTML version
-        msg.send()
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = ResetPasswordForm(request.POST)
+            if form.is_valid():
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+                messages.success(request, 'Password reset successfully!')
+                return redirect('login')
+        else:
+            form = ResetPasswordForm()
+        return render(request, 'docmodify/auth/reset_password.html', {'form': form})
+    else:
+        messages.error(request, 'Invalid or expired password reset link.')
+        return redirect('forgot_password')

@@ -1,9 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LogoutView
 from . import views
-from .views import CustomPasswordResetView
-from django.contrib.auth import views as auth_views
-
 
 urlpatterns = [
     path('', views.hello_there, name='hello_there'),
@@ -17,4 +14,7 @@ urlpatterns = [
     path('verify-email/<str:uidb64>/<str:token>/', views.verify_email, name='verify_email'),
     path('verification-sent/', views.verification_sent, name='verification_mail_sent'),
     path('resend-verification/', views.resend_verification_email, name='resend_verification'),
+
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('reset-password/<uidb64>/<token>/', views.reset_password, name='reset_password'),
 ]
