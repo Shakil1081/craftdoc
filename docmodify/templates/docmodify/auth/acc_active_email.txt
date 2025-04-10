@@ -1,0 +1,12 @@
+{% autoescape off %}
+Hi {{ user.username }},
+
+Welcome to CraftDOC! Please verify your email by clicking the link below:
+
+{{ protocol }}://{{ domain }}{% url 'verify_email' uidb64=uid token=token %}
+
+If you didn't create this account, you can safely ignore this email.
+
+Thanks,
+The CraftDOC Team
+{% endautoescape %}

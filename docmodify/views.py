@@ -12,6 +12,7 @@ from django.conf import settings
 from .tokens import account_activation_token
 from .forms import PublicUserRegistrationForm, PublicLoginForm
 from django.contrib.auth import get_user_model
+from django.core.mail import EmailMultiAlternatives
 
 def hello_there(request):
     return render(request, 'docmodify/letterhead_upload.html')
@@ -30,18 +31,33 @@ def register(request):
             user.groups.add(user_group)
 
             # Send verification email
+            token = account_activation_token.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            protocol = 'https' if request.is_secure() else 'http'
             current_site = get_current_site(request)
-            mail_subject = 'Activate your account'
-            message = render_to_string('docmodify/auth/acc_active_email.html', {
+            domain = current_site.domain
+
+            context = {
                 'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                mail_subject, message, to=[to_email]
+                'protocol': protocol,
+                'domain': domain,
+                'uid': uid,
+                'token': token,
+                'site_name': 'CraftDOC'
+            }
+
+            # Render both HTML and plain text versions
+            html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
+            text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
+
+            # Send the email
+            email = EmailMultiAlternatives(
+                subject="Verify Your Email | CraftDOC",
+                body=text_content,  # Plain text fallback
+                from_email="noreply@craftdoc.com",
+                to=[user.email]
             )
+            email.attach_alternative(html_content, "text/html")  # HTML version
             email.send()
 
             return redirect('verification_mail_sent')
@@ -79,22 +95,38 @@ def resend_verification_email(request):
             if user.is_active:
                 messages.warning(request, 'Account is already verified.')
                 return redirect('login')
-            
+
+            token = account_activation_token.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            protocol = 'https' if request.is_secure() else 'http'
             current_site = get_current_site(request)
-            mail_subject = 'Activate your account'
-            message = render_to_string('docmodify/auth/acc_active_email.html', {
+            domain = current_site.domain
+
+            context = {
                 'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            email = EmailMessage(
-                mail_subject, message, to=[user.email]
+                'protocol': protocol,
+                'domain': domain,
+                'uid': uid,
+                'token': token,
+                'site_name': 'CraftDOC'
+            }
+
+            # Render both HTML and plain text versions
+            html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
+            text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
+
+            # Send the email
+            email = EmailMultiAlternatives(
+                subject="Verify Your Email | CraftDOC",
+                body=text_content,  # Plain text fallback
+                from_email="noreply@craftdoc.com",
+                to=[user.email]
             )
+            email.attach_alternative(html_content, "text/html")  # HTML version
             email.send()
             
             messages.success(request, 'Verification email sent. Please check your inbox.')
-            return redirect('verification_sent')
+            return redirect('verification_mail_sent')
         except User.DoesNotExist:
             messages.error(request, 'No account found with this email.')
     
