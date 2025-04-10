@@ -1,6 +1,9 @@
 from django.urls import path
 from django.contrib.auth.views import LogoutView
 from . import views
+from .views import CustomPasswordResetView
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('', views.hello_there, name='hello_there'),

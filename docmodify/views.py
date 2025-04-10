@@ -13,6 +13,8 @@ from .tokens import account_activation_token
 from .forms import PublicUserRegistrationForm, PublicLoginForm
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
 
 def hello_there(request):
     return render(request, 'docmodify/letterhead_upload.html')
@@ -180,3 +182,26 @@ def public_login(request):
         form = PublicLoginForm()
 
     return render(request, 'docmodify/auth/login.html', {'form': form})
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'docmodify/auth/password_reset_form.html'  # Your custom form template
+    # email_template_name = 'docmodify/auth/password_reset_email.html'  # Plain text email template (optional)
+    html_email_template_name = 'docmodify/auth/password_reset_email.html'  # Your custom HTML email template
+    # subject_template_name = 'docmodify/auth/password_reset_subject.txt'  # Custom subject template
+    success_url = reverse_lazy('password_reset_done')
+
+    def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
+        """
+        Override the send_mail method to send both plain text and HTML emails.
+        """
+        subject = render_to_string(subject_template_name, context)
+        subject = ''.join(subject.splitlines())  # Remove any line breaks
+        body = render_to_string(email_template_name, context)  # Plain text email (optional)
+
+        # Render the HTML email template
+        html_email = render_to_string(html_email_template_name, context)
+
+        # Create the email message
+        msg = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        msg.attach_alternative(html_email, "text/html")  # Attach the HTML version
+        msg.send()

@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def verify_email(self):
         """Mark email as verified and clear the token"""
         self.email_verified_at = timezone.now()
-        self.email_verify_token = None
+        # self.email_verify_token = None
         self.is_active = True  # Activate account if not already active
         self.save()
 
