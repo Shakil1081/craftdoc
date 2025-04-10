@@ -45,6 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     youtube_link = models.URLField(null=True, blank=True)  # New field for YouTube link
     profile_image = models.ImageField(upload_to="users/", null=True, blank=True)
     email_verify_token = models.CharField(max_length=150, null=True, blank=True)
+    password_reset_token = models.CharField(max_length=150, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -62,10 +63,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
         return self.email_verify_token
     
+    def generate_password_reset_token(self):
+        """Generate and store a 150-character verification token"""
+        self.password_reset_token = get_random_string(100)
+        self.save()
+        return self.password_reset_token
+    
     def verify_email(self):
         """Mark email as verified and clear the token"""
         self.email_verified_at = timezone.now()
-        # self.email_verify_token = None
+        self.email_verify_token = None
         self.is_active = True  # Activate account if not already active
         self.save()
 

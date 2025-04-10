@@ -192,23 +192,51 @@ def forgot_password(request):
             try:
                 user = User.objects.get(email=email)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                token = default_token_generator.make_token(user)
+                token = user.generate_password_reset_token()
                 reset_link = request.build_absolute_uri(
                     f"/reset-password/{uid}/{token}/"
                 )
-                send_mail(
-                    'Password Reset',
-                    f'Click the link to reset your password: {reset_link}',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
+                protocol = 'https' if request.is_secure() else 'http'
+                current_site = get_current_site(request)
+                domain = current_site.domain
+
+                context = {
+                    'user': user,
+                    'protocol': protocol,
+                    'reset_link': reset_link,
+                    'site_name': 'CraftDOC'
+                }
+
+                # Render both HTML and plain text versions
+                html_content = render_to_string('docmodify/auth/password_reset_mail.html', context)
+                text_content = render_to_string('docmodify/auth/password_reset_mail.txt', context)
+
+                # Send the email
+                email = EmailMultiAlternatives(
+                    subject="Password Reset | CraftDOC",
+                    body=text_content,  # Plain text fallback
+                    from_email="noreply@craftdoc.com",
+                    to=[user.email]
                 )
-                messages.success(request, 'Password reset link sent to your email.')
-                return redirect('login')
+                email.attach_alternative(html_content, "text/html")  # HTML version
+                email.send()
+
+                # send_mail(
+                #     'Password Reset',
+                #     f'Click the link to reset your password: {reset_link}',
+                #     settings.DEFAULT_FROM_EMAIL,
+                #     [email],
+                # )
+                # messages.success(request, 'Password reset link sent to your email.')
+                return redirect('password_reset_mail_done')
             except User.DoesNotExist:
                 form.add_error('email', 'No user with this email found.')
     else:
         form = ForgotPasswordForm()
     return render(request, 'docmodify/auth/forgot_password.html', {'form': form})
+
+def mail_send_done(request):
+    return render(request, 'docmodify/auth/password_reset_done.html')
 
 def reset_password(request, uidb64, token):
     try:
@@ -217,11 +245,12 @@ def reset_password(request, uidb64, token):
     except (User.DoesNotExist, ValueError, TypeError, OverflowError):
         user = None
 
-    if user is not None and default_token_generator.check_token(user, token):
+    if user is not None and user.password_reset_token == token:
         if request.method == 'POST':
             form = ResetPasswordForm(request.POST)
             if form.is_valid():
                 user.set_password(form.cleaned_data['password'])
+                user.password_reset_token = None
                 user.save()
                 messages.success(request, 'Password reset successfully!')
                 return redirect('login')
