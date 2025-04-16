@@ -8,23 +8,23 @@ def document_create(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         category_form = DocumentCategoryForm(request.POST)
-        formset = DocumentMetaFormSet(request.POST, request.FILES, instance=None)
-        header_footer_image_formset = DocumentHeaderFooterImageFormSet(request.POST, request.FILES, instance=None)
+        formset = DocumentMetaFormSet(request.POST, request.FILES)
+        header_footer_image_formset = DocumentHeaderFooterImageFormSet(request.POST, request.FILES)
 
-        if form.is_valid() and formset.is_valid() and category_form.is_valid() and header_footer_image_formset.is_valid():
+        if form.is_valid() and category_form.is_valid() and formset.is_valid() and header_footer_image_formset.is_valid():
             # Save the main Document object
             document = form.save()
 
-            # Save the category object
+            # Save the category object (assumes FK to Document)
             category = category_form.save(commit=False)
-            category.document = document  # assuming FK is named `document`
+            category.document = document
             category.save()
 
-            # Save DocumentMeta formset
+            # Save DocumentMeta formset (assumes FK to Document)
             formset.instance = document
             formset.save()
 
-            # Save HeaderFooterImage formset
+            # Save HeaderFooterImage formset (assumes FK to Document)
             header_footer_image_formset.instance = document
             header_footer_image_formset.save()
 
@@ -43,9 +43,9 @@ def document_create(request):
 
     return render(request, 'customadmin/document/document_form.html', {
         'form': form,
-        'formset': formset,
         'category_form': category_form,
-        'header_footer_image_formset': header_footer_image_formset
+        'formset': formset,
+        'header_footer_image_formset': header_footer_image_formset,
     })
 
 
