@@ -96,9 +96,6 @@ class Document(models.Model):
     description = models.TextField()
     html_body = models.TextField()
     css_body = models.TextField()
-    # preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
-    # mockup_image = models.ImageField(upload_to='documents/mockups/', blank=True, null=True)
-    # file_name = models.CharField(max_length=255, blank=True, null=True)
     file_path = models.FileField(upload_to='documents/files/', blank=True, null=True)
 
     def __str__(self):
@@ -106,18 +103,16 @@ class Document(models.Model):
 
 
 class DocumentCategory(models.Model):
-    # Assuming Category with ID 1 exists
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="document_categories", default=1) 
-    document_id = models.ForeignKey(Document, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="document_categories", default=1)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)  # This is the renamed field
     level = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.document_id.title} - Level {self.level}"
-
+        return f"{self.document.title} - Level {self.level}"
 
 
 class DocumentMeta(models.Model):
-    document_id = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)  # This should be the renamed field
     title = models.CharField(max_length=255, blank=True, null=True)
     key = models.CharField(max_length=255, blank=True, null=True)
     value = models.TextField(blank=True, null=True)
@@ -127,7 +122,7 @@ class DocumentMeta(models.Model):
 
     def __str__(self):
         return f"{self.title or 'Untitled'} - {self.key or 'No Key'}"
-    
+       
 
 class Font(models.Model):
     name = models.CharField(max_length=255)

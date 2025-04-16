@@ -87,8 +87,9 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Value</label>
-                            <input type="text" name="{{ form.value.html_name }}" class="form-control" value="{{ form.value.value|default:'' }}">
+                            <textarea name="{{ form.value.html_name }}" class="form-control" rows="2">{{ form.value.value|default:'' }}</textarea>
                         </div>
+                        
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Type</label>
                             <input type="text" name="{{ form.type.html_name }}" class="form-control" value="{{ form.type.value|default:'' }}">
