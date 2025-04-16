@@ -113,3 +113,25 @@ class Font(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+class CreditEarnHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    target_type = models.CharField(max_length=100)
+    target_id = models.IntegerField()
+    description = models.TextField()
+    earned_credit = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.username} earned {self.earned_credit}"
+
+class CreditUsesHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    target_type = models.CharField(max_length=100)
+    target_id = models.IntegerField()
+    description = models.TextField()
+    usage_credit = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.username} used {self.usage_credit}"
