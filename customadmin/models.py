@@ -96,9 +96,9 @@ class Document(models.Model):
     description = models.TextField()
     html_body = models.TextField()
     css_body = models.TextField()
-    preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
-    mockup_image = models.ImageField(upload_to='documents/mockups/', blank=True, null=True)
-    file_name = models.CharField(max_length=255, blank=True, null=True)
+    # preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
+    # mockup_image = models.ImageField(upload_to='documents/mockups/', blank=True, null=True)
+    # file_name = models.CharField(max_length=255, blank=True, null=True)
     file_path = models.FileField(upload_to='documents/files/', blank=True, null=True)
 
     def __str__(self):
@@ -127,3 +127,43 @@ class DocumentMeta(models.Model):
 
     def __str__(self):
         return f"{self.title or 'Untitled'} - {self.key or 'No Key'}"
+    
+
+class Font(models.Model):
+    name = models.CharField(max_length=255)
+    url = models.URLField()
+    font_family = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class CreditEarnHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    target_type = models.CharField(max_length=100)
+    target_id = models.IntegerField()
+    description = models.TextField()
+    earned_credit = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.username} earned {self.earned_credit}"
+
+class CreditUsesHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    target_type = models.CharField(max_length=100)
+    target_id = models.IntegerField()
+    description = models.TextField()
+    usage_credit = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.username} used {self.usage_credit}"
+    
+class DocumentHeaderFooterImage(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='header_footer_images')
+    color = models.CharField(max_length=50, blank=True, null=True)
+    header = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
+    footer = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
+    preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
+
+    def __str__(self):
+        return f"Header/Footer for {self.document.title}"

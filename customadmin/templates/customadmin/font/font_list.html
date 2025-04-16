@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Font List</h2>
+        <a href="{% url 'font_create' %}" class="btn btn-primary">Add New Font</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Font Family</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for font in fonts %}
+            <tr id="font-{{ font.id }}">
+                <td>{{ font.name }}</td>
+                <td><a href="{{ font.url }}" target="_blank">{{ font.url }}</a></td>
+                <td>{{ font.font_family }}</td>
+                <td>
+                    <a href="{% url 'font_edit' font.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <button class="btn btn-sm btn-danger delete-btn" data-font-id="{{ font.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const fontId = this.getAttribute('data-font-id');
+            const deleteUrl = "{% url 'font_delete' 0 %}".replace("0", fontId);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('font-' + fontId).remove();
+                            Swal.fire('Deleted!', 'The font has been deleted.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'An error occurred while deleting the font.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

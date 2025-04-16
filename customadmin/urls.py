@@ -8,6 +8,8 @@ from . import auth_group_views
 from .views import CustomPasswordResetView
 from . import category_views
 from . import document_views
+from . import font_views
+from . import credit_earn_views
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
@@ -60,4 +62,22 @@ urlpatterns = [
     path('documents/', document_views.document_list, name='document_list'),
     path('documents/add/', document_views.document_create, name='document_create'),
     path('documents/delete/<int:pk>/', document_views.document_delete, name='document_delete'),
+
+
+    path('fonts/', font_views.font_list, name='font_list'),
+    path('fonts/create/', font_views.font_create, name='font_create'),
+    path('fonts/edit/<int:pk>/', font_views.font_edit, name='font_edit'),
+    path('fonts/delete/<int:pk>/', font_views.font_delete, name='font_delete'),
+
+
+    path('credit-earn/', credit_earn_views.earn_list, name='earn_list'),
+    path('credit-earn/create/', credit_earn_views.earn_create, name='earn_create'),
+    path('credit-earn/edit/<int:pk>/', credit_earn_views.earn_edit, name='earn_edit'),
+    path('credit-earn/delete/<int:pk>/', credit_earn_views.earn_delete, name='earn_delete'),
+
+    # Usage History
+    path('credit-usage/', credit_earn_views.usage_list, name='usage_list'),
+    path('credit-usage/create/', credit_earn_views.usage_create, name='usage_create'),
+    path('credit-usage/edit/<int:pk>/', credit_earn_views.usage_edit, name='usage_edit'),
+    path('credit-usage/delete/<int:pk>/', credit_earn_views.usage_delete, name='usage_delete'),
 ]
