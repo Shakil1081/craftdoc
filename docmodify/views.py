@@ -260,3 +260,6 @@ def reset_password(request, uidb64, token):
     else:
         messages.error(request, 'Invalid or expired password reset link.')
         return redirect('forgot_password')
+    
+def earn_credit(request):
+    return render(request, 'docmodify/credit/earn.html')
