@@ -23,4 +23,6 @@ urlpatterns = [
     path('credit-earn', views.earn_credit, name='earn_credit'),
     path('credit-earn-history', views.credit_earn_history, name='credit_earn_history'),
     path('credit-uses-history', views.credit_uses_history, name='credit_uses_history'),
+
+    path('letterhead/5', views.letterhead, name='letterhead'),
 ]

@@ -19,6 +19,11 @@ from django.core.mail import send_mail
 from customadmin.models import CreditEarnHistory, CreditUsesHistory
 from django.core.paginator import Paginator
 
+from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+
+from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
+
 def hello_there(request):
     return render(request, 'docmodify/letterhead_upload.html')
 
@@ -163,6 +168,32 @@ def public_dashboard(request):
     if not request.user.is_active:
         messages.warning(request, 'Please verify your email to access all features.')
     return render(request, 'docmodify/dashboard.html')
+
+@login_required
+def letterhead(request):  # <-- receive the document_id from URL
+    if not request.user.is_active:
+        messages.warning(request, 'Please verify your email to access all features.')
+
+    document_id = 5  # static ID
+    document = get_object_or_404(Document, pk=document_id)
+    documents = Document.objects.all()
+
+    # Related models
+    categories = DocumentCategory.objects.filter(document=document)
+    metas = DocumentMeta.objects.filter(document=document)
+    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
+    fonts = Font.objects.all()
+
+    context = {
+        'document': document,
+        'documents': documents,
+        'categories': categories,
+        'metas': metas,
+        'header_footer_images': header_footer_images,
+        'fonts' : fonts
+    }
+
+    return render(request, 'docmodify/document/letterhead.html', context)
 
 def public_login(request):
     if request.method == 'POST':
