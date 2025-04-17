@@ -21,7 +21,7 @@ urlpatterns = [
 
 
 
-    path('letterhead/5', views.letterhead, name='letterhead'),
+    path('letterhead/26', views.letterhead, name='letterhead'),
 
     path('credit-earn', views.earn_credit, name='earn_credit'),
     path('credit-history', views.credit_history, name='credit_history'),
