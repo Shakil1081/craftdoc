@@ -211,9 +211,21 @@ class CreditUsesHistoryForm(forms.ModelForm):
         model = CreditUsesHistory
         fields = '__all__'
     
+
+class DocumentHeaderFooterImageForm(forms.ModelForm):
+    class Meta:
+        model = DocumentHeaderFooterImage
+        fields = ['header', 'footer', 'preview_image', 'is_default', 'color']
+
+    # Ensure 'is_default' is handled as a Boolean field
+    is_default = forms.BooleanField(required=False, initial=False)
+
+
 DocumentHeaderFooterImageFormSet = inlineformset_factory(
-    Document, DocumentHeaderFooterImage, form=forms.ModelForm,
-    fields='__all__',
+    Document,
+    DocumentHeaderFooterImage,
+    form=DocumentHeaderFooterImageForm,  # Use the custom form here
+    fields=['header', 'footer', 'preview_image', 'is_default', 'color'],
     extra=1,
     can_delete=True,
     max_num=8

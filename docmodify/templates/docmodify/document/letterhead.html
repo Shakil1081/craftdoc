@@ -23,10 +23,10 @@
           <!-- Left Panel -->
             <div class="left-panel scroll-panel">
                 <div class="row row-cols-1 g-4 template-list">
-                  {% for document in documents %}
+                  {% for singleDocument in documents %}
                     <div class="col">
-                        <div class="template-item selected" data-image="{{ document.file_path }}">
-                        <img src="{{ document.file_path.url}}" class="img-fluid" alt="Template 1">
+                        <div class="template-item selected" data-image="{{ singleDocument.file_path }}">
+                        <img src="{{ singleDocument.file_path.url}}" class="img-fluid" alt="Template 1">
                         </div>
                     </div>
                   {% endfor %}
