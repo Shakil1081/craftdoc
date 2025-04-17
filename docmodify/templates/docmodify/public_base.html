@@ -160,10 +160,17 @@
             </a>
           </li>
           <li
-            class="{% if request.path == '/credit-history' %}active{% endif %}"
+            class="{% if request.path == '/credit-earn-history' %}active{% endif %}"
           >
-            <a href="{% url 'credit_history' %}">
+            <a href="{% url 'credit_earn_history' %}">
               <i class="fas fa-dollar me-2"></i> Credit History
+            </a>
+          </li>
+          <li
+            class="{% if request.path == '/credit-uses-history' %}active{% endif %}"
+          >
+            <a href="{% url 'credit_uses_history' %}">
+              <i class="fas fa-dollar me-2"></i> Credit Uses History
             </a>
           </li>
         </ul>

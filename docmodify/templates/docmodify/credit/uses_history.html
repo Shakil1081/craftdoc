@@ -1,0 +1,71 @@
+{% extends 'docmodify/public_base.html' %} {% block css %}
+<style>
+  .table-bordered {
+    border: 1px solid #ddd;
+  }
+  .pagination {
+    margin-top: 20px;
+  }
+  .step-links a {
+    margin: 0 5px;
+    text-decoration: none;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Credit Usage History</h2>
+
+  <!-- Table to Display Credit Usage History -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Target Type</th>
+        <th>Target ID</th>
+        <th>Description</th>
+        <th>Credit Used</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in page_obj.object_list %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <!-- Row Number -->
+        <td>{{ record.target_type }}</td>
+        <!-- Target Type -->
+        <td>{{ record.target_id }}</td>
+        <!-- Target ID -->
+        <td>{{ record.description }}</td>
+        <!-- Description -->
+        <td>{{ record.usage_credit }}</td>
+        <!-- Credit Used -->
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center">
+          No credit usage history available.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<!-- Pagination -->
+<div class="pagination">
+  <span class="step-links">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; First</a>
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+{% endblock %}
