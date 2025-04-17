@@ -126,7 +126,7 @@ class DocumentMeta(models.Model):
 
 class Font(models.Model):
     name = models.CharField(max_length=255)
-    url = models.URLField()
+    url = models.URLField(max_length=1000)
     font_family = models.CharField(max_length=255)
 
     def __str__(self):
