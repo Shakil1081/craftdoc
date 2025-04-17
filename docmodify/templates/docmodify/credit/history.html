@@ -1,0 +1,43 @@
+{% extends 'docmodify/public_base.html' %} {% load static %} 
+{% block css %} 
+{% endblock %} 
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Credit Earning History</h2>
+
+  <!-- Table to Display Credit Earning History -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Target Type</th>
+        <th>Target ID</th>
+        <th>Description</th>
+        <th>Credit Earned</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in credit_history %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <!-- Row Number -->
+        <td>{{ record.target_type }}</td>
+        <!-- Target Type -->
+        <td>{{ record.target_id }}</td>
+        <!-- Target ID -->
+        <td>{{ record.description }}</td>
+        <!-- Description -->
+        <td>{{ record.earned_credit }}</td>
+        <!-- Credit Earned -->
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center">
+          No credit earning history available.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -21,4 +21,5 @@ urlpatterns = [
 
 
     path('credit-earn', views.earn_credit, name='earn_credit'),
+    path('credit-history', views.credit_history, name='credit_history'),
 ]

@@ -149,11 +149,22 @@
         </div>
 
         <ul class="list-unstyled components">
-          <li class="">
-            <a href="{% url 'public_dashboard' %}"><i class="fas fa-home me-2"></i> Home</a>
+          <li class="{% if request.path == '/dashboard/' %}active{% endif %}">
+            <a href="{% url 'public_dashboard' %}">
+              <i class="fas fa-home me-2"></i> Home
+            </a>
           </li>
-          <li>
-            <a href="{% url 'earn_credit' %}"><i class="fas fa-chart-line me-2"></i> Earn Credit</a>
+          <li class="{% if request.path == '/credit-earn' %}active{% endif %}">
+            <a href="{% url 'earn_credit' %}">
+              <i class="fas fa-chart-line me-2"></i> Earn Credit
+            </a>
+          </li>
+          <li
+            class="{% if request.path == '/credit-history' %}active{% endif %}"
+          >
+            <a href="{% url 'credit_history' %}">
+              <i class="fas fa-dollar me-2"></i> Credit History
+            </a>
           </li>
         </ul>
 
