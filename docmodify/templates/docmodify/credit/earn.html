@@ -1,0 +1,222 @@
+{% extends 'docmodify/public_base.html' %}{% load static %} {% block css %}
+<style>
+  .modal-body {
+    padding: 0;
+  }
+  .modal-content {
+    border-radius: 10px;
+  }
+  iframe {
+    width: 100%;
+    height: 400px;
+  }
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  .payment-method-img{
+    width: 100%;
+  }
+</style>
+{% endblock %} {% block content %}
+<!-- Smart Cards -->
+<div class="container text-center mt-5">
+  <div class="row">
+    <!-- View Ad Card -->
+    <div class="col-md-6 mb-4">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <i class="fas fa-play-circle card-icon"></i>
+          <h5 class="card-title">View Ad</h5>
+          <p class="card-text">Watch an ad to earn credits.</p>
+          <button
+            type="button"
+            class="btn btn-light btn-custom"
+            data-bs-toggle="modal"
+            data-bs-target="#videoModal"
+          >
+            Watch Now
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buy Credit Card -->
+    <div class="col-md-6 mb-4">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <i class="fas fa-coins card-icon"></i>
+          <h5 class="card-title">Buy Credit</h5>
+          <p class="card-text">Purchase credits to unlock features.</p>
+          <button
+            type="button"
+            class="btn btn-light btn-custom"
+            data-bs-toggle="modal"
+            data-bs-target="#buyCreditModal"
+          >
+            Buy Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Ad Modal -->
+<div
+  class="modal fade"
+  id="videoModal"
+  tabindex="-1"
+  aria-labelledby="videoModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="videoModalLabel">View Ad</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Modified YouTube Embed Code -->
+        <iframe
+          id="youtubeVideo"
+          src="https://www.youtube.com/embed/lXmuuUKlndY?list=RDlXmuuUKlndY"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buy Credit Modal -->
+<div
+  class="modal fade"
+  id="buyCreditModal"
+  tabindex="-1"
+  aria-labelledby="buyCreditModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="buyCreditModalLabel">Buy Credit</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-3">
+        <form id="creditForm">
+          <!-- Amount Input Field -->
+          <div class="form-group">
+            <label for="amountInput" class="form-label">Amount ($)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="amountInput"
+              placeholder="Enter amount"
+              required
+            />
+          </div>
+
+          <!-- Total Credits Display -->
+          <div class="form-group">
+            <label for="totalCredits" class="form-label">Total Credits</label>
+            <input
+              type="text"
+              class="form-control"
+              id="totalCredits"
+              readonly
+            />
+          </div>
+
+          <div class="">
+            <p>Payment Methods:</p>
+            <img
+            src="{% static 'assets/payment-methods.png' %}"
+            alt="Default Payment Method"
+            class="payment-method-img"
+          />
+          </div/>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" id="submitCredit">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // View Ad Modal Logic
+  const videoModal = document.getElementById("videoModal");
+  const youtubeIframe = document.getElementById("youtubeVideo");
+
+  // Initialize the iframe without autoplay
+  const baseSrc =
+    "https://www.youtube.com/embed/lXmuuUKlndY?list=RDlXmuuUKlndY";
+  youtubeIframe.src = baseSrc + "&autoplay=0";
+
+  videoModal.addEventListener("shown.bs.modal", () => {
+    youtubeIframe.src = baseSrc + "&autoplay=1";
+  });
+
+  videoModal.addEventListener("hidden.bs.modal", () => {
+    youtubeIframe.src = baseSrc + "&autoplay=0";
+  });
+
+  // Buy Credit Modal Logic
+  const amountInput = document.getElementById("amountInput");
+  const totalCredits = document.getElementById("totalCredits");
+  const submitCredit = document.getElementById("submitCredit");
+
+  // Calculate total credits when the amount changes
+  amountInput.addEventListener("input", () => {
+    const amount = parseFloat(amountInput.value);
+    if (!isNaN(amount)) {
+      totalCredits.value = amount * 25;
+    } else {
+      totalCredits.value = "";
+    }
+  });
+
+  // Handle form submission
+  submitCredit.addEventListener("click", () => {
+    const amount = amountInput.value;
+    const credits = totalCredits.value;
+    const paymentMethod = document.getElementById("paymentMethod").value;
+
+    if (!amount || !credits) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+
+    // Log the data (or send it to the server)
+    console.log({
+      amount: amount,
+      credits: credits,
+      paymentMethod: paymentMethod,
+    });
+
+    alert(`You are buying ${credits} credits using ${paymentMethod}.`);
+  });
+</script>
+{% endblock %}

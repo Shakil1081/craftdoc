@@ -16,6 +16,7 @@ from django.core.mail import EmailMultiAlternatives
 from .forms import ForgotPasswordForm, ResetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from customadmin.models import CreditEarnHistory, CreditUsesHistory
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
@@ -291,3 +292,10 @@ def reset_password(request, uidb64, token):
     else:
         messages.error(request, 'Invalid or expired password reset link.')
         return redirect('forgot_password')
+    
+def earn_credit(request):
+    return render(request, 'docmodify/credit/earn.html')
+
+def credit_history(request):
+    user_credit_history = CreditEarnHistory.objects.filter(user=request.user)
+    return render(request, 'docmodify/credit/history.html', {'credit_history': user_credit_history})
