@@ -4,34 +4,37 @@
   {% load static %}
   <section id="login" class="d-flex align-items-center pb-5">
     <div class="login-panel">
-        <img class="logo" src="{% static 'img/logo_light.png' %}" alt="">
-        <div class="login-section">
-            <div class="tab-content pb-3" id="myTabContent">
-                <div class="pt-5">
-                    <form method="post">
-			                  {% csrf_token %}
-                        <div class="mb-3">
-                            <div class="input-group ">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">
-                                        <img src="{% static 'img/icon/email.svg' %}" alt="">
-                                    </span>
-                                </div>
-                                <input type="email" class="form-control br-0" name="email" placeholder="Email">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <button class="btn submit-btn" type="submit">Resend Verification</button>
-                        </div>
-
-                        <div class="mb-3 forget d-flex justify-content-center">
-                            <a href="{% url 'login' %}" class="text-primary">Go to login page</a>
-                        </div>
-                    </form>
+      <img class="logo" src="{% static 'img/logo_light.png' %}" alt="" />
+      <div class="login-section">
+        <div class="tab-content pb-3" id="myTabContent">
+          <div class="pt-5">
+            {% if messages %}
+              {% for message in messages %}
+                <p style="color:red;">{{ message }}</p>
+              {% endfor %}
+            {% endif %}
+            <form method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><img src="{% static 'img/icon/email.svg' %}" alt="" /></span>
+                  </div>
+                  <input type="email" class="form-control br-0" name="email" placeholder="Email" />
                 </div>
-            </div>
+              </div>
+
+              <div class="mb-3">
+                <button class="btn submit-btn" type="submit">Resend Verification</button>
+              </div>
+
+              <div class="mb-3 forget d-flex justify-content-center">
+                <a href="{% url 'login' %}" class="text-primary">Go to login page</a>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 {% endblock %}

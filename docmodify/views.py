@@ -18,10 +18,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from customadmin.models import CreditEarnHistory, CreditUsesHistory
 from django.core.paginator import Paginator
-
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-
 from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
 
 def hello_there(request):
@@ -91,6 +90,8 @@ def verify_email(request, uidb64, token):
 
     if user.is_active:
         messages.warning(request, 'Account is already verified.')
+        if user.is_authenticated:
+            return redirect('public_dashboard')
         return redirect('login')
         
     verification_status = (
@@ -117,6 +118,8 @@ def resend_verification_email(request):
             user = User.objects.get(email=email)
             if user.is_active:
                 messages.warning(request, 'Account is already verified.')
+                if user.is_authenticated:
+                    return redirect('public_dashboard')
                 return redirect('login')
 
             # token = account_activation_token.make_token(user)
@@ -196,20 +199,31 @@ def letterhead(request):  # <-- receive the document_id from URL
     return render(request, 'docmodify/document/letterhead.html', context)
 
 def public_login(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        return redirect('public_dashboard')
+    
+    if request.method == 'POST':    
+        User = get_user_model()
         form = PublicLoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            user = authenticate(request, email=email, password=password)
+
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                user = None
 
             if user is not None:
-                if user.is_active:
+                if not user.check_password(password):
+                    messages.error(request, "Invalid email or password.")
+                elif not user.is_active:
+                    login(request, user)
+                    messages.error(request, "Account not verified. Please enter your email for verification link.")
+                    return redirect('resend_verification')
+                else:
                     login(request, user)
                     return redirect('public_dashboard')
-                else:
-                    messages.error(request, "Account not verified. Please check your email for verification link.")
-                    return redirect('resend_verification')
             else:
                 messages.error(request, "Invalid email or password.")
     else:
@@ -254,13 +268,6 @@ def forgot_password(request):
                 email.attach_alternative(html_content, "text/html")  # HTML version
                 email.send()
 
-                # send_mail(
-                #     'Password Reset',
-                #     f'Click the link to reset your password: {reset_link}',
-                #     settings.DEFAULT_FROM_EMAIL,
-                #     [email],
-                # )
-                # messages.success(request, 'Password reset link sent to your email.')
                 return redirect('password_reset_mail_done')
             except User.DoesNotExist:
                 form.add_error('email', 'No user with this email found.')
