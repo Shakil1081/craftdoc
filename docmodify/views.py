@@ -17,6 +17,7 @@ from .forms import ForgotPasswordForm, ResetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from customadmin.models import CreditEarnHistory, CreditUsesHistory
+from django.core.paginator import Paginator
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
@@ -296,6 +297,16 @@ def reset_password(request, uidb64, token):
 def earn_credit(request):
     return render(request, 'docmodify/credit/earn.html')
 
-def credit_history(request):
+def credit_earn_history(request):
     user_credit_history = CreditEarnHistory.objects.filter(user=request.user)
-    return render(request, 'docmodify/credit/history.html', {'credit_history': user_credit_history})
+    paginator = Paginator(user_credit_history, 10)  # Show 10 records per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'docmodify/credit/earn_history.html', {'page_obj': page_obj})
+
+def credit_uses_history(request):
+    user_credit_history = CreditUsesHistory.objects.filter(user=request.user)
+    paginator = Paginator(user_credit_history, 10)  # Show 10 records per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj})
