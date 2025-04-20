@@ -1,0 +1,46 @@
+.btn:focus {
+    box-shadow: none;
+    outline: none;
+}
+.font-23 {
+    font-size: 23px;
+}
+.font-20 {
+    font-size: 20px;
+}
+
+.font-16 {
+    font-size: 16px;
+}
+.font-15 {
+    font-size: 15px;
+}
+.font-14 {
+    font-size: 14px;
+}
+.font-13 {
+    font-size: 13px;
+}
+.font-12 {
+    font-size: 12px;
+}
+.text-orange {
+    color: $orange;
+}
+
+.bg-gray {
+    background-color: #f4f4f4;
+}
+.form-control:focus {
+    box-shadow: none;
+    outline: none;
+    border-color: lighten($c1, 20%);
+}
+
+.form-check-input:focus {
+    box-shadow: none;
+    outline: none;
+}
+.br-0 {
+    border-right: 0;
+}

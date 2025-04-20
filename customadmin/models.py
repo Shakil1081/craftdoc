@@ -28,7 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, unique=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)
     phone_verified_at = models.DateTimeField(null=True, blank=True)  # New field for phone verification
     email_verified_at = models.DateTimeField(null=True, blank=True)  # New field for email verification
     password = models.CharField(max_length=128)
