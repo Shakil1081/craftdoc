@@ -21,6 +21,7 @@ from django.core.paginator import Paginator
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
+from collections import defaultdict
 
 from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
 
@@ -170,19 +171,28 @@ def public_dashboard(request):
     return render(request, 'docmodify/dashboard.html')
 
 @login_required
-def letterhead(request):  # <-- receive the document_id from URL
+def letterhead(request):
     if not request.user.is_active:
         messages.warning(request, 'Please verify your email to access all features.')
 
-    document_id = 26  # static ID
+    document_id = 26
     document = get_object_or_404(Document, pk=document_id)
-    documents = Document.objects.all()
+    documents = Document.objects.all().order_by('id')
 
-    # Related models
     categories = DocumentCategory.objects.filter(document=document)
     metas = DocumentMeta.objects.filter(document=document)
     header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
     fonts = Font.objects.all()
+
+    # Group images by document ID
+    images_by_document = defaultdict(dict)
+    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
+        doc_id = img.document.id
+        images_by_document[doc_id] = {
+            'header': img.header.url if img.header else '',
+            'body': img.preview_image.url if img.preview_image else '',
+            'footer': img.footer.url if img.footer else ''
+        }
 
     context = {
         'document': document,
@@ -190,7 +200,8 @@ def letterhead(request):  # <-- receive the document_id from URL
         'categories': categories,
         'metas': metas,
         'header_footer_images': header_footer_images,
-        'fonts' : fonts
+        'fonts': fonts,
+        'images_by_document': dict(images_by_document)
     }
 
     return render(request, 'docmodify/document/letterhead.html', context)

@@ -18,44 +18,56 @@
   <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 </head>
 <body class="letterhead-page">
+  {% load custom_filters %}
     <div class="letterhead-content">
         <div class="template-layout">
           <!-- Left Panel -->
-            <div class="left-panel scroll-panel">
-                <div class="row row-cols-1 g-4 template-list">
-                  {% for singleDocument in documents %}
-                    <div class="col">
-                        <div class="template-item selected" data-image="{{ singleDocument.file_path }}">
-                        <img src="{{ singleDocument.file_path.url}}" class="img-fluid" alt="Template 1">
-                        </div>
-                    </div>
-                  {% endfor %}
+          <div class="left-panel scroll-panel">
+            <div class="row row-cols-2 g-4 template-list">
+              {% for singleDocument in documents %}
+                {% with img=images_by_document|get_item:singleDocument.id %}
+                <div class="col">
+                  <div class="template-item {% if forloop.first %}selected{% endif %}" 
+                       data-id="{{ singleDocument.id }}"
+                       data-header="{{ img.header }}"
+                       data-body="{{ img.body }}"
+                       data-footer="{{ img.footer }}">
+                    <img src="{{ singleDocument.file_path.url }}" class="img-fluid" alt="Template {{ forloop.counter }}">
+                  </div>
                 </div>
+                {% endwith %}
+              {% endfor %}
             </div>
+          </div>
+          
             
             <!-- Center Panel -->
-            <div class="center-panel scroll-panel position-relative d-flex justify-content-center align-items-center">
+          <div class="center-panel scroll-panel position-relative d-flex justify-content-center align-items-center">
+              
+              <div class="zoom-control position-absolute top-0 start-50 translate-middle-x mt-3">
+                  <button class="btn btn-sm btn-secondary" id="zoomOut">-</button>
+                  <span id="zoomValue">100%</span>
+                  <button class="btn btn-sm btn-secondary" id="zoomIn">+</button>
+              </div>
+          
+              <!-- Centered Preview -->
+              <div class="a4-preview" id="a4Preview">
+                {% for item in header_footer_images %}
+                  {% if item.is_default %}
+                  <div class="header-section"></div>
                 
-                <div class="zoom-control position-absolute top-0 start-50 translate-middle-x mt-3">
-                    <button class="btn btn-sm btn-secondary" id="zoomOut">-</button>
-                    <span id="zoomValue">100%</span>
-                    <button class="btn btn-sm btn-secondary" id="zoomIn">+</button>
-                </div>
-            
-                <!-- Centered Preview -->
-                <div class="a4-preview" id="a4Preview">
-                    <div class="header-section"></div>
-                  
-                    <div class="body-section">
-                      <div class="contact contact-number"></div>
-                      <div class="contact website"></div>
-                      <div class="contact address"></div>
-                    </div>
-                  
-                    <div class="footer-section"></div>
+                  <div class="body-section">
+                    <div class="contact contact-number"></div>
+                    <div class="contact website"></div>
+                    <div class="contact address"></div>
                   </div>
-                  
-            </div>
+              
+                  <div class="footer-section"></div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+                
+          </div>
   
   
     
@@ -162,6 +174,67 @@
       updateDynamicPreview();
     });
 </script>
+
+<script>
+  const defaultImagesByDocument = {{ images_by_document|safe }};
+</script>
+
+<script>
+  $(document).ready(function () {
+    const $templateItems = $('.template-item');
+    const $headerSection = $('.header-section');
+    const $bodySection = $('.body-section');
+    const $footerSection = $('.footer-section');
+
+    function setTemplateImages(images) {
+      console.log(images)
+      if (images.header) {
+        $headerSection.css({
+          'background-image': `url('${images.header}')`,
+          'background-size': '100% auto',
+          'background-repeat': 'no-repeat',
+          'background-position': 'top center',
+        });
+      }
+
+      if (images.body) {
+        $bodySection.css({
+          'background-image': `url('${images.body}')`,
+          'background-size': 'cover',
+          'background-repeat': 'no-repeat',
+          'background-position': 'center',
+        });
+      }
+
+      if (images.footer) {
+        $footerSection.css({
+          'background-image': `url('${images.footer}')`,
+          'background-size': '100% auto',
+          'background-repeat': 'no-repeat',
+          'background-position': 'bottom center',
+        });
+      }
+    }
+
+    // Initial Load
+    const defaultId = $('.template-item.selected').data('id');
+    if (defaultId && defaultImagesByDocument[defaultId]) {
+      setTemplateImages(defaultImagesByDocument[defaultId]);
+    }
+
+    // On click
+    $templateItems.on('click', function () {
+      $templateItems.removeClass('selected');
+      $(this).addClass('selected');
+
+      const docId = $(this).data('id');
+      if (defaultImagesByDocument[docId]) {
+        setTemplateImages(defaultImagesByDocument[docId]);
+      }
+    });
+  });
+</script>
+
     
   <script src="{% static 'assets/js/script.js' %}"></script>
 
