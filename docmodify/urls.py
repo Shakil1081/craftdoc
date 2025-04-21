@@ -23,6 +23,7 @@ urlpatterns = [
 
     path('letterhead/26', views.letterhead, name='letterhead'),
 
+    # path('credit-history', views.credit_history, name='credit_history'),
     path('credit-earn', views.earn_credit, name='earn_credit'),
     path('credit-earn-history', views.credit_earn_history, name='credit_earn_history'),
     path('credit-uses-history', views.credit_uses_history, name='credit_uses_history'),

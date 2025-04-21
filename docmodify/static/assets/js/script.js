@@ -62,66 +62,66 @@
 
 
 
-  $(document).ready(function () {
-    const $templateItems = $('.template-item');
-    const $headerSection = $('.header-section');
-    const $bodySection = $('.body-section');
-    const $footerSection = $('.footer-section');
+//   $(document).ready(function () {
+//     const $templateItems = $('.template-item');
+//     const $headerSection = $('.header-section');
+//     const $bodySection = $('.body-section');
+//     const $footerSection = $('.footer-section');
 
-    function setTemplateImages(filename) {
-        const headerPath = `./assets/image/header/${filename}`;
-        const footerPath = `./assets/image/footer/${filename}`;
-        const bodyPath = `./assets/image/body/${filename}`;
+//     function setTemplateImages(filename) {
+//         const headerPath = `./assets/image/header/${filename}`;
+//         const footerPath = `./assets/image/footer/${filename}`;
+//         const bodyPath = `./assets/image/body/${filename}`;
     
-        // Set BODY background
-        $bodySection.css({
-            'background-image': `url('${bodyPath}')`,
-            'background-size': 'cover',
-            'background-repeat': 'no-repeat',
-            'background-position': 'center',
-        });
+//         // Set BODY background
+//         $bodySection.css({
+//             'background-image': `url('${bodyPath}')`,
+//             'background-size': 'cover',
+//             'background-repeat': 'no-repeat',
+//             'background-position': 'center',
+//         });
     
-        // HEADER
-        const headerImg = new Image();
-        headerImg.src = headerPath;
-        headerImg.onload = function () {
-            $headerSection.css({
-                'background-image': `url('${headerPath}')`,
-                'background-size': '100% auto',
-                'background-repeat': 'no-repeat',
-                'background-position': 'top center',
-            });
-        };
+//         // HEADER
+//         const headerImg = new Image();
+//         headerImg.src = headerPath;
+//         headerImg.onload = function () {
+//             $headerSection.css({
+//                 'background-image': `url('${headerPath}')`,
+//                 'background-size': '100% auto',
+//                 'background-repeat': 'no-repeat',
+//                 'background-position': 'top center',
+//             });
+//         };
     
-        // FOOTER
-        const footerImg = new Image();
-        footerImg.src = footerPath;
-        footerImg.onload = function () {
-            $footerSection.css({
-                'background-image': `url('${footerPath}')`,
-                'background-size': '100% auto',
-                'background-repeat': 'no-repeat',
-                'background-position': 'bottom center',
-            });
-        };
-    }
+//         // FOOTER
+//         const footerImg = new Image();
+//         footerImg.src = footerPath;
+//         footerImg.onload = function () {
+//             $footerSection.css({
+//                 'background-image': `url('${footerPath}')`,
+//                 'background-size': '100% auto',
+//                 'background-repeat': 'no-repeat',
+//                 'background-position': 'bottom center',
+//             });
+//         };
+//     }
   
-    // On load (default)
-    const defaultImage = $templateItems.first().data('image');  // Get the first template item
-    const defaultFilename = defaultImage.split('/').pop(); // Extract the filename (e.g., "1.png")
-    setTemplateImages(defaultFilename); // Set the default images for header, body, and footer
+//     // On load (default)
+//     const defaultImage = $templateItems.first().data('image');  // Get the first template item
+//     const defaultFilename = defaultImage.split('/').pop(); // Extract the filename (e.g., "1.png")
+//     setTemplateImages(defaultFilename); // Set the default images for header, body, and footer
   
-    // On template click
-    $templateItems.on('click', function () {
-        $templateItems.removeClass('selected');  // Remove the "selected" class from all items
-        $(this).addClass('selected');  // Add the "selected" class to the clicked item
+//     // On template click
+//     $templateItems.on('click', function () {
+//         $templateItems.removeClass('selected');  // Remove the "selected" class from all items
+//         $(this).addClass('selected');  // Add the "selected" class to the clicked item
     
-        const image = $(this).data('image');  // Get the data-image attribute from the clicked template
-        const filename = image.split('/').pop();  // Extract the filename (e.g., "2.png")
+//         const image = $(this).data('image');  // Get the data-image attribute from the clicked template
+//         const filename = image.split('/').pop();  // Extract the filename (e.g., "2.png")
     
-        setTemplateImages(filename);  // Update the header, body, and footer images based on the selected template
-    });
-});
+//         setTemplateImages(filename);  // Update the header, body, and footer images based on the selected template
+//     });
+// });
 
 
 
