@@ -1,0 +1,40 @@
+@media only screen and (max-width: 992px) {
+    #banner .caption {
+        padding-top: 30px;
+        .caption-title {
+            text-shadow: 0px 0px 5px #fff;
+        }
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #banner .banner-caption .caption .caption-title {
+        font-size: 30px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #banner .banner-caption .logo {
+        width: 140px;
+    }
+    #banner .banner-caption .caption .caption-title {
+        font-size: 25px;
+    }
+}
+
+@media only screen and (max-width: 370px) {
+    #banner .input-group-prepend,
+    #search-box .input-group-prepend {
+        display: none;
+    }
+    #banner .banner-caption .caption .form-control,
+    #search-box .banner-caption .caption .form-control {
+        border-radius: 20px 0 0 20px;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    #top-nav .nav .nav-item .nav-link {
+        font-size: 13px;
+    }
+}

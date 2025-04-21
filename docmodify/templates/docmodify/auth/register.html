@@ -1,89 +1,67 @@
-{% extends 'docmodify/auth/base-auth.html' %}
-{% load static %}
-
-{% block content %}
-<section class="signup">
-    <div class="container">
-        <div class="signup-content">
-            <div class="signup-form">
-                <h2 class="form-title">Sign up</h2>
-                <form method="POST" class="register-form" id="register-form">
-                    {% csrf_token %}
-
-                    <div class="form-group">
-                        <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        {{ form.name }}
-                        {% if form.name.errors %}
-                            <div class="error">{{ form.name.errors }}</div>
-                        {% endif %}
+{% extends 'docmodify/auth/base-auth.html' %} {% block content %}
+  {% load static %}
+  <section id="login" class="d-flex align-items-center pb-5">
+    <div class="login-panel">
+      <img class="logo" src="{% static 'img/logo_light.png' %}" alt="" />
+      <div class="login-section">
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="profile" role="tabpanel">
+            <div class="tab-pane fade show active" id="home" role="tabpanel">
+              <div class="pt-4">
+                <h3 class="text-center mb-3 text-secondary">Sign Up</h3>
+                <form method="POST">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1"><img src="{% static 'img/icon/user.svg' %}" alt="" /></span>
+                      </div>
+                      {{ form.username }}
                     </div>
-
-                    <div class="form-group">
-                        <label for="username"><i class="zmdi zmdi-account"></i></label>
-                        {{ form.username }}
-                        {% if form.username.errors %}
-                            <div class="error">{{ form.username.errors }}</div>
-                        {% endif %}
+                    {% if form.username.errors %}
+                      <div class="text-start d-block text-danger">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1"><img src="{% static 'img/icon/email.svg' %}" alt="" /></span>
+                      </div>
+                      {{ form.email }}
                     </div>
-
-                    <div class="form-group">
-                        <label for="email"><i class="zmdi zmdi-email"></i></label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                            <div class="error">{{ form.email.errors }}</div>
-                        {% endif %}
+                    {% if form.email.errors %}
+                      <div class="text-start d-block text-danger">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1"><img src="{% static 'img/icon/lock.svg' %}" alt="" /></span>
+                      </div>
+                      {{ form.password }}
+                      <div class="input-group-append">
+                        <button type="button" class="btn input-group-text password-view password-icon"><i class="far fa-eye"></i></button>
+                      </div>
                     </div>
+                    {% if form.password.errors %}
+                      <div class="text-start d-block text-danger">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                  </div>
 
-                    <div class="form-group">
-                        <label for="phone"><i class="zmdi zmdi-phone"></i></label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                            <div class="error">{{ form.phone.errors }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="department"><i class="zmdi zmdi-assignment-account"></i></label>
-                        {{ form.department }}
-                        {% if form.department.errors %}
-                            <div class="error">{{ form.department.errors }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="designation"><i class="zmdi zmdi-label"></i></label>
-                        {{ form.designation }}
-                        {% if form.designation.errors %}
-                            <div class="error">{{ form.designation.errors }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password"><i class="zmdi zmdi-lock"></i></label>
-                        {{ form.password }}
-                        {% if form.password.errors %}
-                            <div class="error">{{ form.password.errors }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                        <label for="agree-term" class="label-agree-term">
-                            <span><span></span></span>
-                            I agree all statements in <a href="#" class="term-service">Terms of service</a>
-                        </label>
-                    </div>
-
-                    <div class="form-group form-button">
-                        <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
-                    </div>
+                  <div class="mb-3">
+                    <button class="btn submit-btn" type="submit">Sign Up</button>
+                  </div>
                 </form>
+
+                <div class="mb-3 forget d-flex justify-content-center">
+                  Have an account?
+                  <a href="{% url 'login' %}" class="ms-2 text-primary">Login</a>
+                </div>
+              </div>
             </div>
-            <div class="signup-image">
-                <figure><img src="{% static 'assets/auth/images/signup-image.jpg' %}" alt="sign up image"></figure>
-                <a href="{% url 'login' %}" class="signup-image-link">I am already member</a>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 {% endblock %}

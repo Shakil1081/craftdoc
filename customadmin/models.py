@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-
+from decimal import Decimal
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
@@ -28,7 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, unique=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)
     phone_verified_at = models.DateTimeField(null=True, blank=True)  # New field for phone verification
     email_verified_at = models.DateTimeField(null=True, blank=True)  # New field for email verification
     password = models.CharField(max_length=128)
@@ -46,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to="users/", null=True, blank=True)
     email_verify_token = models.CharField(max_length=150, null=True, blank=True)
     password_reset_token = models.CharField(max_length=150, null=True, blank=True)
-
+    user_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -72,14 +72,71 @@ class User(AbstractBaseUser, PermissionsMixin):
     def verify_email(self):
         """Mark email as verified and clear the token"""
         self.email_verified_at = timezone.now()
-        self.email_verify_token = None
         self.is_active = True  # Activate account if not already active
         self.save()
 
     def __str__(self):
         return self.username
     
+    def change_credit(self, amount, description="", target_type="", target_id=None, allow_negative=False):
+        """
+        Change user credit by adding or deducting.
+        """
+        if self.user_credit is None:
+            self.user_credit = Decimal("0.00")
 
+        new_credit = self.user_credit + Decimal(amount)
+
+        if not allow_negative and new_credit < 0:
+            raise ValueError("Insufficient credit.")
+
+        self.user_credit = new_credit
+        self.save()
+
+        if amount > 0:
+            CreditEarnHistory.objects.create(
+                user=self,
+                earned_credit=Decimal(amount),
+                description=description,
+                target_type=target_type,
+                target_id=target_id or 0
+            )
+        else:
+            CreditUsesHistory.objects.create(
+                user=self,
+                usage_credit=abs(Decimal(amount)),
+                description=description,
+                target_type=target_type,
+                target_id=target_id or 0
+            )
+
+
+    def earn_credit(self, setting_key, allow_negative=False):
+        """
+        Earn credit using a value from Setting by key.
+        """
+        setting = Setting.objects.get(key=setting_key)
+        self.change_credit(
+            amount=abs(Decimal(setting.value)),
+            description=setting.title,
+            target_type=setting.key,
+            target_id=setting.id,
+            allow_negative=allow_negative
+        )
+
+
+    def use_credit(self, setting_key, allow_negative=False):
+        """
+        Use credit using a value from Setting by key.
+        """
+        setting = Setting.objects.get(key=setting_key)
+        self.change_credit(
+            amount=-abs(Decimal(setting.value)),
+            description=setting.title,
+            target_type=setting.key,
+            target_id=setting.id,
+            allow_negative=allow_negative
+        )
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -163,4 +220,22 @@ class DocumentHeaderFooterImage(models.Model):
 
     def __str__(self):
         return f"Header/Footer for {self.document.title}"
+    
+class SettingManager(models.Manager):
+    def get_value(self, key, default=None):
+        try:
+            return self.get(key=key).value
+        except Setting.DoesNotExist:
+            return default
+
+class Setting(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=150)
+    value = models.TextField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = SettingManager()
+
+    def __str__(self):
+        return f"{self.title} ({self.key})"
 

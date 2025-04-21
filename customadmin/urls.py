@@ -10,6 +10,7 @@ from . import category_views
 from . import document_views
 from . import font_views
 from . import credit_earn_views
+from . import setting_views
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='customadmin/login.html'), name='login'),  # Custom login
@@ -80,4 +81,10 @@ urlpatterns = [
     path('credit-usage/create/', credit_earn_views.usage_create, name='usage_create'),
     path('credit-usage/edit/<int:pk>/', credit_earn_views.usage_edit, name='usage_edit'),
     path('credit-usage/delete/<int:pk>/', credit_earn_views.usage_delete, name='usage_delete'),
+
+
+    path('settings/', setting_views.setting_list, name='setting_list'),
+    path('settings/create/', setting_views.setting_create, name='setting_create'),
+    path('settings/<int:pk>/edit/', setting_views.setting_edit, name='setting_edit'),
+    path('settings/<int:pk>/delete/', setting_views.setting_delete, name='setting_delete'),
 ]
