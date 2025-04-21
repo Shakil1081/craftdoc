@@ -148,30 +148,6 @@ def delete_user(request, pk):
         return JsonResponse({'status': 'success'}, status=200)
     return JsonResponse({'status': 'failed'}, status=400)
 
-
-# class CustomPasswordResetView(PasswordResetView):
-#     template_name = 'registration/password_reset_form.html'  # Your custom form template
-#     email_template_name = 'registration/password_reset_email.html'  # Your custom email template
-#     # subject_template_name = 'registration/password_reset_subject.txt'  # Optional: Custom subject template
-#     success_url = reverse_lazy('password_reset_done')
-
-#     def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
-#         """
-#         Override the send_mail method to customize the email sending process.
-#         """
-#         subject = "Reset Your Password | CraftDOC"  # Custom subject
-#         email = render_to_string(email_template_name, context)  # Render the HTML email template
-
-#         # Create the email message
-#         msg = EmailMessage(
-#             subject,
-#             email,
-#             from_email,
-#             [to_email],
-#         )
-#         msg.content_subtype = "html"  # Set the content subtype to HTML
-#         msg.send()
-
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registration/password_reset_form.html'  # Your custom form template
     # email_template_name = 'registration/password_reset_email.html'  # Plain text email template (optional)
@@ -207,3 +183,5 @@ def edit_profile(request):
         form = ProfileEditForm(instance=user)
 
     return render(request, "customadmin/profile_edit.html", {"form": form, "user": user})
+
+

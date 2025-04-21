@@ -162,3 +162,22 @@ class DocumentHeaderFooterImage(models.Model):
 
     def __str__(self):
         return f"Header/Footer for {self.document.title}"
+    
+class SettingManager(models.Manager):
+    def get_value(self, key, default=None):
+        try:
+            return self.get(key=key).value
+        except Setting.DoesNotExist:
+            return default
+
+class Setting(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=150)
+    value = models.TextField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = SettingManager()
+
+    def __str__(self):
+        return f"{self.title} ({self.key})"
+

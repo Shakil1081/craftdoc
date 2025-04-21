@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Permission, ContentType
 from django.contrib.auth.models import Group
 from django.forms import inlineformset_factory
-from .models import Category,Document, DocumentMeta, DocumentCategory, Font, CreditEarnHistory, CreditUsesHistory, DocumentHeaderFooterImage
+from .models import Category,Document, DocumentMeta, DocumentCategory, Font, CreditEarnHistory, CreditUsesHistory, DocumentHeaderFooterImage, Setting
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), min_length=6, required=False)
@@ -218,3 +218,26 @@ DocumentHeaderFooterImageFormSet = inlineformset_factory(
     can_delete=True,
     max_num=8
 )
+
+from django import forms
+from .models import Setting
+
+class SettingForm(forms.ModelForm):
+    class Meta:
+        model = Setting
+        fields = ['key', 'title', 'value']
+        widgets = {
+            'key': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter setting key',
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter title',
+            }),
+            'value': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter value',
+            }),
+        }
+
