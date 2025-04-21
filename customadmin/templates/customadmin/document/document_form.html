@@ -132,11 +132,15 @@
                             <label class="form-label">Preview Image</label>
                             <input type="file" name="{{ form.preview_image.html_name }}" class="form-control">
                         </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Is Default</label>
+                            <input type="checkbox" name="{{ form.is_default.html_name }}" class="form-check-input" {% if form.is_default.value %} checked {% endif %}>
+                        </div>
                     </div>
                     <button type="button" class="btn btn-danger remove-header-footer">Remove</button>
                 </div>
             {% endfor %}
-        </div>
+        </div>                
 
         <!-- Submit Buttons -->
         <button type="submit" class="btn btn-primary">Save</button>
@@ -150,27 +154,43 @@
         const addButton = document.getElementById('add-meta');
         const formsetDiv = document.getElementById('meta-formset');
         const totalForms = document.getElementById('id_documentmeta_set-TOTAL_FORMS');
-
+    
         addButton.addEventListener('click', function () {
             const currentFormCount = parseInt(totalForms.value);
             if (currentFormCount < 8) {
                 const firstForm = formsetDiv.querySelector('.meta-form');
                 const newForm = firstForm.cloneNode(true);
-
-                newForm.querySelectorAll('input').forEach((input) => {
-                    let oldName = input.name;
-                    let newName = oldName.replace(/-(\d+)-/, `-${currentFormCount}-`);
-                    input.name = newName;
-                    input.value = '';
+    
+                // Update all inputs, textareas, and labels
+                newForm.querySelectorAll('input, textarea, label').forEach((el) => {
+                    if (el.name) {
+                        let newName = el.name.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                        el.name = newName;
+                    }
+    
+                    if (el.id) {
+                        let newId = el.id.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                        el.id = newId;
+                    }
+    
+                    // For labels, update the "for" attribute
+                    if (el.tagName.toLowerCase() === 'label' && el.htmlFor) {
+                        el.htmlFor = el.htmlFor.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                    }
+    
+                    // Clear value (for input/textarea)
+                    if (el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'textarea') {
+                        el.value = '';
+                    }
                 });
-
+    
                 formsetDiv.appendChild(newForm);
                 totalForms.value = currentFormCount + 1;
             } else {
                 alert("Max 8 meta entries allowed.");
             }
         });
-
+    
         formsetDiv.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-meta')) {
                 const formBlocks = document.querySelectorAll('.meta-form');
@@ -181,6 +201,7 @@
             }
         });
     });
+    
 
     document.addEventListener('DOMContentLoaded', function () {
         const headerFooterAddBtn = document.getElementById('add-header-footer');

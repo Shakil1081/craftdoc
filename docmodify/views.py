@@ -178,7 +178,7 @@ def letterhead(request):  # <-- receive the document_id from URL
     if not request.user.is_active:
         messages.warning(request, 'Please verify your email to access all features.')
 
-    document_id = 5  # static ID
+    document_id = 26  # static ID
     document = get_object_or_404(Document, pk=document_id)
     documents = Document.objects.all()
 
