@@ -238,6 +238,7 @@ class SettingForm(forms.ModelForm):
             'value': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter value',
+                'rows': 3
             }),
         }
 

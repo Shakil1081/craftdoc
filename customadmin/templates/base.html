@@ -155,11 +155,11 @@
           <a href="{% url 'custom_admin_dashboard' %}" class="brand-link">
 
             <img
-              src="../../dist/assets/img/AdminLTELogo.png"
+              src="{% static 'images/craftdoc-logo.png' %}"
               alt="AdminLTE Logo"
               class="brand-image opacity-75 shadow"
             />
-            <span class="brand-text fw-light">AdminLTE 4</span>
+            {% comment %} <span class="brand-text fw-light">CraftDoc</span> {% endcomment %}
 
           </a>
 

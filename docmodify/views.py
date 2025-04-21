@@ -101,8 +101,9 @@ def verify_email(request, uidb64, token):
     )
 
     if verification_status:
-        user.verify_email()  # Updates email_verified_at and clears token
+        user.verify_email()  # Updates email_verified_at
         messages.success(request, 'Email verified successfully!')
+        user.earn_credit("signup_bonus")
         return redirect('login')
     else:
         messages.error(request, 'Invalid or expired verification link')
