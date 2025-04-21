@@ -29,7 +29,12 @@ class PublicLoginForm(forms.Form):
 
 
 class ForgotPasswordForm(forms.Form):
-    email = forms.EmailField()
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Email',
+        })
+    )
 
 class ResetPasswordForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
