@@ -302,7 +302,7 @@ def reset_password(request, uidb64, token):
             form = ResetPasswordForm(request.POST)
             if form.is_valid():
                 user.set_password(form.cleaned_data['password'])
-                user.password_reset_token = None
+                # user.password_reset_token = None
                 user.save()
                 messages.success(request, 'Password reset successfully!')
                 return redirect('login')

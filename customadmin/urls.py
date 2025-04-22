@@ -46,11 +46,10 @@ urlpatterns = [
     path('groups/view/<int:group_id>/', auth_group_views.group_view, name='group_view'),
     path('group/delete/<int:group_id>/', auth_group_views.group_delete, name='group_delete'),
 
-    path("password_reset/", CustomPasswordResetView.as_view(), name="password_reset"),
-    # path("password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
-    path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
-    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path("password_reset/", views.forgot_password, name="password_reset"),
+    path("password_reset/done/", views.mail_send_done, name="password_reset_done"),
+    path('reset_admin_password/<uidb64>/<token>/', views.reset_password, name="password_reset_confirm"),
+    # path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
 
 
     path('categories/', category_views.category_list, name='category_list'),
