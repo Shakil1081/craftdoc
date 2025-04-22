@@ -23,10 +23,10 @@
         <div class="template-layout">
           <!-- Left Panel -->
           <div class="left-panel scroll-panel">
-            <div class="row row-cols-2 g-4 template-list">
+            <div class="row row-cols-2 g-2 template-list">
               {% for singleDocument in documents %}
                 {% with img=images_by_document|get_item:singleDocument.id %}
-                <div class="col">
+                <div class="">
                   <div class="template-item {% if forloop.first %}selected{% endif %}" 
                        data-id="{{ singleDocument.id }}"
                        data-header="{{ img.header }}"
@@ -215,15 +215,16 @@
         });
       }
     }
-
+ 
     // Initial Load
     const defaultId = $('.template-item.selected').data('id');
     if (defaultId && defaultImagesByDocument[defaultId]) {
       setTemplateImages(defaultImagesByDocument[defaultId]);
     }
 
-    // On click
+    // On click 
     $templateItems.on('click', function () {
+     
       $templateItems.removeClass('selected');
       $(this).addClass('selected');
 

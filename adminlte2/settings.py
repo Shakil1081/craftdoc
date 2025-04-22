@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     # 'rolepermissions',
     'customadmin',
     'docmodify',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
