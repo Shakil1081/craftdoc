@@ -14,9 +14,13 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
 from .forms import UserRegistrationForm
+from .forms import ResetPasswordForm, ForgotPasswordForm
 from django.contrib.auth import login, authenticate
 from django.utils.timezone import now 
-
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
 
 def register(request):
     if request.method == 'POST':
@@ -170,6 +174,9 @@ class CustomPasswordResetView(PasswordResetView):
         msg = EmailMultiAlternatives(subject, body, from_email, [to_email])
         msg.attach_alternative(html_email, "text/html")  # Attach the HTML version
         msg.send()
+
+
+
 @login_required
 def edit_profile(request):
     user = request.user  # Get logged-in user
@@ -183,5 +190,79 @@ def edit_profile(request):
         form = ProfileEditForm(instance=user)
 
     return render(request, "customadmin/profile_edit.html", {"form": form, "user": user})
+from django.urls import reverse
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        form = ForgotPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = user.generate_password_reset_token()
+                reset_link = request.build_absolute_uri(
+                    reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+                )
+                protocol = 'https' if request.is_secure() else 'http'
+                current_site = get_current_site(request)
+                domain = current_site.domain
+
+                context = {
+                    'user': user,
+                    'protocol': protocol,
+                    'reset_link': reset_link,
+                    'site_name': 'CraftDOC'
+                }
+
+                # Render both HTML and plain text versions
+                html_content = render_to_string('registration/password_reset_email.html', context)
+                text_content = render_to_string('registration/password_reset_mail.txt', context)
+
+                # Send the email
+                email = EmailMultiAlternatives(
+                    subject="Password Reset | CraftDOC",
+                    body=text_content,  # Plain text fallback
+                    from_email="noreply@craftdoc.com",
+                    to=[user.email]
+                )
+                email.attach_alternative(html_content, "text/html")  # HTML version
+                email.send()
+
+                return redirect('password_reset_done')
+            except User.DoesNotExist:
+                form.add_error('email', 'No user with this email found.')
+    else:
+        form = ResetPasswordForm()
+    return render(request, 'registration/password_reset_form.html', {'form': form})
+
+def mail_send_done(request):
+    return render(request, 'registration/password_reset_done.html')
+
+def reset_password(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+        user = None 
+
+    if user is not None and user.password_reset_token == token:
+        if request.method == 'POST':
+            form = ResetPasswordForm(request.POST)
+            if form.is_valid():
+                user.set_password(form.cleaned_data['password'])
+                # user.password_reset_token = None
+                user.save()
+                messages.success(request, 'Password reset successfully!')
+                return redirect('login')
+            else:
+                messages.error(request, 'There was an error with your submission. Please try again.')
+        else:
+            form = ResetPasswordForm()
+        return render(request, 'registration/password_reset_confirm.html', {'form': form})
+    else:
+        messages.error(request, 'Invalid or expired password reset link.')
+        return redirect('password_reset')
 
 
