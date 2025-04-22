@@ -1,106 +1,76 @@
+{% extends 'docmodify/auth/base-auth.html' %}
+
+{% block content %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE 4 | Login Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="AdminLTE 4 | Login Page" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS." />
-    <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link href="{% static 'assets/css/adminlte.min.css' %}" rel="stylesheet" />
+  <section id="login" class="d-flex align-items-center pb-5">
+    <div class="login-panel">
+      <img class="logo" src="{% static 'img/logo_light.png' %}" alt="" />
+      <div class="login-section">
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="profile" role="tabpanel">
+            <div class="tab-pane fade show active" id="home" role="tabpanel">
+              <div class="pt-4">
+                <h3 class="text-center mb-3 text-secondary">Sign In</h3>
+                {% if messages %}
+                  {% for message in messages %}
+                      <p style="color:red;">{{ message }}</p>
+                  {% endfor %}
+                {% endif %}
+                <form method="POST">
+                  {% csrf_token %}
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">
+                        <img src="{% static 'img/icon/email.svg' %}" alt="" />
+                      </span>
+                    </div>
+                    <input type="text" name="username" class="form-control" placeholder="Email" />
+                    {% if form.username.errors %}
+                      <p style="color:red;">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                  </div>
 
-    <style>
-      body {
-        background-color: #f4f6f9;
-        font-family: "Source Sans 3", sans-serif;
-      }
-      .login-box {
-        width: 400px;
-        margin: 80px auto;
-      }
-      .login-logo a {
-        font-size: 26px;
-        font-weight: bold;
-        color: #007bff;
-        text-decoration: none;
-      }
-      .card {
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      }
-      .card-body {
-        text-align: center;
-        padding: 30px;
-      }
-      h2 {
-        color: #333;
-        margin-bottom: 10px;
-      }
-      p {
-        color: #555;
-      }
-      .footer {
-        margin-top: 20px;
-        font-size: 14px;
-        color: #777;
-      }
-    </style>
-    <!--end::Required Plugin(AdminLTE)-->
-  </head>
-  <body class="login-page bg-body-secondary">
-    <div class="login-box">
-      <div class="login-logo">
-        <a href="/">CraftDOC</a>
-      </div>
-      <div class="card">
-        <div class="card-body login-card-body">
-          <p class="login-box-msg">Sign in to start your session</p>
-          <form method="post">
-            {% csrf_token %}
-            <div class="input-group mb-3">
-              <input type="text" name="username" class="form-control" placeholder="Username" />
-              <div class="input-group-text">
-                <span class="bi bi-person"></span>
-              </div>
-            </div>
-            <div class="input-group mb-3">
-              <input type="password" name="password" class="form-control" placeholder="Password" />
-              <div class="input-group-text">
-                <span class="bi bi-lock-fill"></span>
-              </div>
-            </div>
+                  <div class="mb-3">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">
+                          <img
+                            src="{% static 'img/icon/lock.svg' %}"
+                            alt=""
+                          />
+                        </span>
+                      </div>
+                      <input type="password" name="password" class="form-control password" placeholder="Password" />
+                      {% if form.password.errors %}
+                        <p style="color:red;">{{ form.password.errors.0 }}</p>
+                      {% endif %}
+                      <div class="input-group-append">
+                        <button
+                          type="button"
+                          class="btn input-group-text password-view password-icon"
+                        >
+                          <i class="far fa-eye"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <button class="btn submit-btn" type="submit">
+                      Login
+                    </button>
+                  </div>
+                </form>
 
-            <!-- Error messages section -->
-            {% if messages %}
-              <div class="alert alert-danger">
-                {% for message in messages %}
-                  <p>{{ message }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-            
-            <div class="row">
-              <div class="col-4">
-                <div class="d-grid gap-2">
-                  <button type="submit" class="btn btn-primary">Sign In</button>
+                <div class="mb-3 forget d-flex justify-content-between">
+                  <a href="{% url 'password_reset' %}" class="text-primary"
+                    >Forget Password?
+                  </a>
                 </div>
               </div>
             </div>
-          </form>
-
-          <p class="mb-1">
-            <a href="{% url 'password_reset' %}">I forgot my password</a>
-          </p>
-          <p class="mb-0">
-            <a href="{% url 'register' %}" class="text-center"> Sign Up </a>
-          </p>
+          </div>
         </div>
       </div>
     </div>
-  </body>
-</html>
+  </section>
+{% endblock %}
