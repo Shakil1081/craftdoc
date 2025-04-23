@@ -156,9 +156,12 @@ body {
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     transform-origin: top center;
-    transform: scale(0.6);
+    transform: scale(1);
     transition: transform 0.2s ease;
     overflow: hidden;
+    background-position: top, bottom;
+    background-repeat: no-repeat;
+    background-size: 100% auto, 100% auto;
   }
   
   .header-section,
@@ -237,7 +240,6 @@ body {
   /* Optional: Highlight selected template */
   .template-item.selected {
     border: 2px solid #007bff;
-    padding: 2px;
     border-radius: 5px;
   }
 
