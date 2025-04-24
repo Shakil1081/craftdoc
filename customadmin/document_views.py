@@ -4,6 +4,9 @@ from .models import Document
 from .forms import DocumentForm, DocumentMetaFormSet, DocumentCategoryForm, DocumentHeaderFooterImageFormSet
 
 # views.py
+from django.contrib import messages
+from django.db import transaction
+
 def document_create(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -11,30 +14,60 @@ def document_create(request):
         formset = DocumentMetaFormSet(request.POST, request.FILES)
         header_footer_image_formset = DocumentHeaderFooterImageFormSet(request.POST, request.FILES)
 
-        if form.is_valid() and category_form.is_valid() and formset.is_valid() and header_footer_image_formset.is_valid():
-            # Save the main Document object
-            document = form.save()
+        # Check individual validation
+        is_valid = True
 
-            # Save the category object (assumes FK to Document)
-            category = category_form.save(commit=False)
-            category.document = document
-            category.save()
+        if not form.is_valid():
+            is_valid = False
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"DocumentForm - {field}: {error}")
 
-            # Save DocumentMeta formset (assumes FK to Document)
-            formset.instance = document
-            formset.save()
+        if not category_form.is_valid():
+            is_valid = False
+            for field, errors in category_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"CategoryForm - {field}: {error}")
 
-            # Save HeaderFooterImage formset (assumes FK to Document)
-            header_footer_image_formset.instance = document
-            header_footer_image_formset.save()
+        if not formset.is_valid():
+            is_valid = False
+            for form_index, subform in enumerate(formset.forms):
+                for field, errors in subform.errors.items():
+                    for error in errors:
+                        messages.error(request, f"MetaForm #{form_index + 1} - {field}: {error}")
 
-            return redirect('document_list')
-        else:
-            # Optional: Log form errors
-            print("DocumentForm errors:", form.errors)
-            print("CategoryForm errors:", category_form.errors)
-            print("Meta Formset errors:", formset.errors)
-            print("Header/Footer Formset errors:", header_footer_image_formset.errors)
+        if not header_footer_image_formset.is_valid():
+            is_valid = False
+            for form_index, subform in enumerate(header_footer_image_formset.forms):
+                for field, errors in subform.errors.items():
+                    for error in errors:
+                        messages.error(request, f"HeaderFooterImageForm #{form_index + 1} - {field}: {error}")
+
+        if is_valid:
+            try:
+                with transaction.atomic():
+                    # Save the main Document object
+                    document = form.save()
+
+                    # Save the category object (FK to Document)
+                    category = category_form.save(commit=False)
+                    category.document = document
+                    category.save()
+
+                    # Save DocumentMeta formset (FK to Document)
+                    formset.instance = document
+                    formset.save()
+
+                    # Save HeaderFooterImage formset (FK to Document)
+                    header_footer_image_formset.instance = document
+                    header_footer_image_formset.save()
+
+                    messages.success(request, "Document created successfully.")
+                    return redirect('document_list')
+
+            except Exception as e:
+                messages.error(request, f"An unexpected error occurred: {str(e)}")
+
     else:
         form = DocumentForm()
         category_form = DocumentCategoryForm()
@@ -47,6 +80,7 @@ def document_create(request):
         'formset': formset,
         'header_footer_image_formset': header_footer_image_formset,
     })
+
 
 
 def document_list(request):

@@ -179,7 +179,7 @@ def letterhead(request):
     if not request.user.is_active:
         messages.warning(request, 'Please verify your email to access all features.')
 
-    document_id = 26
+    document_id = 2
     document = get_object_or_404(Document, pk=document_id)
     documents = Document.objects.all().order_by('id')
 
