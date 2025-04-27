@@ -23,6 +23,9 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
 from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from collections import defaultdict
 
 def hello_there(request):
     return render(request, 'docmodify/letterhead_upload.html')
@@ -175,11 +178,11 @@ def public_dashboard(request):
     return render(request, 'docmodify/dashboard.html')
 
 @login_required
-def letterhead(request):
+def letterhead(request, document_id):
     if not request.user.is_active:
         messages.warning(request, 'Please verify your email to access all features.')
 
-    document_id = 2
+    # Fetch the selected document dynamically
     document = get_object_or_404(Document, pk=document_id)
     documents = Document.objects.all().order_by('id')
 
@@ -194,8 +197,8 @@ def letterhead(request):
         doc_id = img.document.id
         images_by_document[doc_id] = {
             'header': img.header.url if img.header else '',
-            'body': img.preview_image.url if img.preview_image else '',
-            'footer': img.footer.url if img.footer else ''
+            'footer': img.footer.url if img.footer else '',
+            'body': img.preview_image.url if img.preview_image else ''
         }
 
     context = {
@@ -205,9 +208,26 @@ def letterhead(request):
         'metas': metas,
         'header_footer_images': header_footer_images,
         'fonts': fonts,
-        'images_by_document': dict(images_by_document)
+        'images_by_document': dict(images_by_document),
     }
 
+    # Check if the request is an AJAX request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Return JSON response for AJAX requests
+        data = {
+            'header_footer_images': [
+                {
+                    'id': hf.id,
+                    'header': hf.header.url if hf.header else None,
+                    'footer': hf.footer.url if hf.footer else None,
+                    'is_default': hf.is_default,
+                }
+                for hf in header_footer_images
+            ],
+        }
+        return JsonResponse(data)
+
+    # Render the template for normal requests
     return render(request, 'docmodify/document/letterhead.html', context)
 
 def public_login(request):

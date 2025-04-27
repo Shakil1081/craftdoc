@@ -1,0 +1,32 @@
+<!-- docmodify/document/_letterhead_detail.html -->
+<h2>Document: {{ document.name }}</h2>
+
+<h3>Categories</h3>
+<ul>
+  {% for category in categories %}
+    <li>{{ category.name }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Meta Info</h3>
+<ul>
+  {% for meta in metas %}
+    <li>{{ meta.key }}: {{ meta.value }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Header/Footer Images</h3>
+{% for img in header_footer_images %}
+  <div>
+    <p>
+      Header:{% if img.header %}
+        <img src="{{ img.header.url }}" width="100" />
+      {% endif %}
+    </p>
+    <p>
+      Footer:{% if img.footer %}
+        <img src="{{ img.footer.url }}" width="100" />
+      {% endif %}
+    </p>
+  </div>
+{% endfor %}

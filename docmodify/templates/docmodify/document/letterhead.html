@@ -1,156 +1,200 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="{% static 'css/lh_style.css' %}" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="{% static 'css/lh_style.css' %}" />
 
-    {% for font in fonts %}
-      <link rel="stylesheet" href="{{ font.url }}" />
-    {% endfor %}
+  {% for font in fonts %}
+    <link rel="stylesheet" href="{{ font.url }}" />
+  {% endfor %}
 
-    <title>Document</title>
-  </head>
+  <title>Letterhead</title>
+</head>
 
-  <body>
-    {% load custom_filters %}
-    <div id="letterhead-body">
-      <div class="left-panel">
-        <div class="row row-cols-2 g-2 letterhead-items">
-          {% for singleDocument in documents %}
-            {% with img=images_by_document|get_item:singleDocument.id %}
-              <div class="letterhead-item {% if forloop.first %}selected{% endif %}" data-document-id="{{ singleDocument.id }}" data-header="{{ img.header }}" data-footer="{{ img.footer }}" data-phone="{{ singleDocument.phone|default:'' }}" data-email="{{ singleDocument.email|default:'' }}" data-location="{{ singleDocument.location|default:'' }}">
-                <img class="preview-image" src="{{ singleDocument.file_path.url }}" alt="Template {{ forloop.counter }}" />
-              </div>
-            {% endwith %}
-          {% endfor %}
-        </div>
-      </div>
-
-      <div class="content-panel">
-        <div class="zoom-buttons">
-          <div class="input-group input-group-sm">
-            <button id="zoomOutBtn" class="input-group-text">-</button>
-            <div id="zoomInput" class="form-control text-center">100%</div>
-            <button id="zoomInBtn" class="input-group-text">+</button>
-          </div>
-        </div>
-        <div class="content">
-          <div id="a4panel">
-            <div id="logo">
-              <img id="logoPreview" src="{% static 'img/logo.jpg' %}" alt="Logo" />
+<body>
+  {% load custom_filters %}
+  <div id="letterhead-body">
+    <!-- Left Panel: Letterhead Items -->
+    <div class="left-panel">
+      <div class="row row-cols-2 g-2 letterhead-items">
+        {% for singleDocument in documents %}
+          {% with img=images_by_document|get_item:singleDocument.id %}
+            <div class="letterhead-item {% if forloop.first %}selected{% endif %}" 
+                 data-document-id="{{ singleDocument.id }}" 
+                 data-header="{{ img.header }}" 
+                 data-footer="{{ img.footer }}" 
+                 data-phone="{{ singleDocument.phone|default:'' }}" 
+                 data-email="{{ singleDocument.email|default:'' }}" 
+                 data-location="{{ singleDocument.location|default:'' }}">
+              <img class="preview-image" src="{{ singleDocument.file_path.url }}" alt="Template {{ forloop.counter }}" />
             </div>
-            <div id="contactShow">01736234377 01916120927</div>
-            <div id="emailShow">admin@gmail.com mail@example.com</div>
-            <div id="locationShow">123, Main Street, Dhaka, Bangladesh.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="right-panel">
-        <!-- Download Buttons -->
-        <div class="d-flex align-items-center mb-3 gap-3">
-          <h5 class="m-0">Download</h5>
-          <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-danger">PDF</button>
-            <button class="btn btn-outline-secondary">PNG</button>
-            <button class="btn btn-outline-success">JPG</button>
-          </div>
-        </div>
-
-        <!-- Logo Change -->
-        <div class="logo-change-panel">
-          <h5>Logo</h5>
-          <div class="logo-panel">
-            <img id="logoPreview" class="logo" src="{% static 'img/logo.jpg' %}" alt="Logo Preview" />
-            <label for="logoInput" class="change-logo">Change</label>
-          </div>
-          <input type="file" hidden id="logoInput" class="form-control" accept="image/*" />
-        </div>
-
-        <hr />
-
-        <!-- Text Areas -->
-        <div class="single-content-panel">
-          <h5 class="title">Phone</h5>
-          <textarea id="phoneField" rows="2" class="form-control form-control-sm"></textarea>
-        </div>
-
-        <div class="single-content-panel">
-          <h5 class="title">Email</h5>
-          <textarea id="emailField" rows="2" class="form-control form-control-sm"></textarea>
-        </div>
-
-        <div class="single-content-panel">
-          <h5 class="title">Location</h5>
-          <textarea id="locationField" rows="2" class="form-control form-control-sm"></textarea>
-        </div>
-
-        <!-- Header Select -->
-        <div class="single-content-panel header">
-          <h5 class="title">Header</h5>
-          <div id="headerChangePanel">
-            {% for hf in header_footer_images %}
-              {% if hf.header %}
-                <div class="header-item {% if forloop.first %}selected{% endif %}" data-hf-id="{{ hf.id }}" data-header="{{ hf.header.url }}">
-                  <img class="header-item-img" src="{{ hf.header.url }}" alt="Header {{ forloop.counter }}" />
-                </div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Footer Select -->
-        <div class="single-content-panel footer">
-          <h5 class="title">Footer</h5>
-          <div id="footerChangePanel">
-            {% for hf in header_footer_images %}
-              {% if hf.footer %}
-                <div class="footer-item {% if forloop.first %}selected{% endif %}" data-hf-id="{{ hf.id }}" data-footer="{{ hf.footer.url }}">
-                  <img class="footer-item-img" src="{{ hf.footer.url }}" alt="Footer {{ forloop.counter }}" />
-                </div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
+          {% endwith %}
+        {% endfor %}
       </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/lh_custom.js' %}"></script>
-    <script>
-      $(document).ready(function () {
-        $('.letterhead-item').on('click', function () {
-          $('.letterhead-item').removeClass('selected')
-          $(this).addClass('selected')
-      
-          const header = $(this).data('header')
-          const footer = $(this).data('footer')
-          const phone = $(this).data('phone') || ''
-          const email = $(this).data('email') || ''
-          const location = $(this).data('location') || ''
-      
-          // Select header
-          $('#headerChangePanel .header-item').removeClass('selected').filter(`[data-header="${header}"]`).addClass('selected')
-      
-          // Select footer
-          $('#footerChangePanel .footer-item').removeClass('selected').filter(`[data-footer="${footer}"]`).addClass('selected')
-      
-          // Update text fields
-          $('#contactShow').text(phone)
-          $('#emailShow').text(email)
-          $('#locationShow').text(location)
-          $('#phoneField').val(phone)
-          $('#emailField').val(email)
-          $('#locationField').val(location)
-        })
-      
-        // Trigger default selection
-        $('.letterhead-item').first().trigger('click')
-      })
-    </script>
-  </body>
+    <div class="content-panel">
+      <div class="zoom-buttons">
+          <div class="input-group input-group-sm">
+              <button id="zoomOutBtn" class="input-group-text">-</button>
+              <div id="zoomInput" class="form-control  text-center">
+                  100%
+              </div>
+              <button id="zoomInBtn" class="input-group-text">+</button>
+          </div>
+      </div>
+      <div class="content">
+          <div id="a4panel">
+              <div id="logo">
+                  <img src="img/logo.jpg" alt="">
+              </div>
+              <div id="contactShow">
+                  01736234377
+                  01916120927
+              </div>
+              <div id="emailShow">
+                  admin@gmail.com
+                  mail@example.com
+              </div>
+              <div id="locationShow">
+                  123, Main Street,
+                  Dhaka, Bangladesh.
+              </div>
+          </div>
+      </div>
+  </div>
+
+    <!-- Right Panel: Header/Footer Selection -->
+    <div class="right-panel">
+      <!-- // logo change panel with preview  -->
+      <div class="d-flex align-items-center mb-3 gap-3">
+        <h5 class="m-0">Download </h5>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-danger">PDF</button>
+            <button class="btn btn-outline-secondary">PNG</button>
+            <button class="btn btn-outline-success">JPG</button>
+        </div>
+      </div>
+      <div class="logo-change-panel">
+          <h5>Logo </h5>
+          <div class="logo-panel">
+              <img id="logoPreview" class="logo" src="img/logo.jpg" alt="Logo Preview">
+              <label for="logoInput" class="change-logo">Change</label>
+          </div>
+          <input type="file" hidden id="logoInput" class="form-control" accept="image/*">
+      </div>
+      <hr>
+      <div class="single-content-panel">
+          <h5 class="title">Phone</h5>
+              <textarea name="" rows="2" class="form-control form-control-sm"></textarea>
+      </div>
+
+      <div class="single-content-panel">
+          <h5 class="title">Email</h5>
+              <textarea name="" rows="2" class="form-control form-control-sm"></textarea>
+      </div>
+
+      <div class="single-content-panel">
+          <h5 class="title">Location</h5>
+              <textarea name="" rows="2" class="form-control form-control-sm"></textarea>
+      </div>
+      <!-- Header Section -->
+      <div class="single-content-panel header">
+        <h5 class="title">Header</h5>
+        <div id="headerChangePanel">
+          <!-- Headers will be dynamically loaded here via AJAX -->
+        </div>
+      </div>
+
+      <hr />
+
+      <!-- Footer Section -->
+      <div class="single-content-panel footer">
+        <h5 class="title">Footer</h5>
+        <div id="footerChangePanel">
+          <!-- Footers will be dynamically loaded here via AJAX -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/lh_custom.js' %}"></script>
+
+  <!-- Inline JavaScript for AJAX Functionality -->
+  <script>
+    $(document).ready(function () {
+      // Function to load header/footer data via AJAX
+      function loadHeaderFooterData(documentId) {
+        $.ajax({
+          url: `/letterhead/${documentId}/`,
+          type: 'GET',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          success: function (response) {
+            const headerFooterImages = response.header_footer_images;
+
+            // Clear existing header/footer panels
+            $('#headerChangePanel').empty();
+            $('#footerChangePanel').empty();
+
+            // Populate header panel
+            headerFooterImages.forEach(hf => {
+              if (hf.header) {
+                const isSelected = hf.is_default ? 'selected' : '';
+                $('#headerChangePanel').append(`
+                  <div class="header-item ${isSelected}" data-hf-id="${hf.id}" data-header="${hf.header}">
+                    <img class="header-item-img" src="${hf.header}" alt="Header" />
+                  </div>
+                `);
+              }
+            });
+
+            // Populate footer panel
+            headerFooterImages.forEach(hf => {
+              if (hf.footer) {
+                const isSelected = hf.is_default ? 'selected' : '';
+                $('#footerChangePanel').append(`
+                  <div class="footer-item ${isSelected}" data-hf-id="${hf.id}" data-footer="${hf.footer}">
+                    <img class="footer-item-img" src="${hf.footer}" alt="Footer" />
+                  </div>
+                `);
+              }
+            });
+          },
+          error: function (error) {
+            console.error('Error fetching header/footer data:', error);
+          }
+        });
+      }
+
+      // Handle click on letterhead items
+      $('.letterhead-item').on('click', function () {
+        // Remove 'selected' class from all items
+        $('.letterhead-item').removeClass('selected');
+        $(this).addClass('selected');
+
+        // Get the selected document ID
+        const documentId = $(this).data('document-id');
+
+        // Load header/footer data for the selected document
+        loadHeaderFooterData(documentId);
+
+        // Update the URL dynamically
+        const newUrl = `/letterhead/${documentId}/`;
+        window.history.pushState({}, '', newUrl);
+      });
+
+      // Trigger default selection
+      const initialDocumentId = $('.letterhead-item').first().data('document-id');
+      loadHeaderFooterData(initialDocumentId);
+    });
+  </script>
+</body>
 </html>
