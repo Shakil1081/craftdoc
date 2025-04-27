@@ -1,8 +1,10 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Document
 from .forms import DocumentForm, DocumentMetaFormSet, DocumentCategoryForm, DocumentHeaderFooterImageFormSet
-
+from collections import defaultdict
+from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse
+from .models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
 # views.py
 from django.contrib import messages
 from django.db import transaction
@@ -92,3 +94,51 @@ def document_delete(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     doc.delete()
     return redirect('document_list')
+
+
+def document_lhsetup(request, document_id):
+    # Only fetch the selected document
+    document = get_object_or_404(Document, pk=document_id)
+
+    categories = DocumentCategory.objects.filter(document=document)
+    metas = DocumentMeta.objects.filter(document=document)
+    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
+    fonts = Font.objects.all()
+
+    # Group default image (for initial selection)
+    default_header_footer = None
+    for img in header_footer_images:
+        if img.is_default:
+            default_header_footer = {
+                'header': img.header.url if img.header else '',
+                'footer': img.footer.url if img.footer else '',
+                'body': img.preview_image.url if img.preview_image else '',
+                'css': img.css,
+                'id': img.id,
+            }
+            break
+
+    context = {
+        'document': document,
+        'categories': categories,
+        'metas': metas,
+        'header_footer_images': header_footer_images,
+        'fonts': fonts,
+        'default_header_footer': default_header_footer,
+    }
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # AJAX request to save selected css
+        if request.method == "POST":
+            selected_id = request.POST.get('selected_id')
+            css = request.POST.get('css')
+
+            try:
+                hf_image = DocumentHeaderFooterImage.objects.get(id=selected_id)
+                hf_image.css = css
+                hf_image.save()
+                return JsonResponse({'success': True})
+            except DocumentHeaderFooterImage.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Not found'})
+
+    return render(request, 'customadmin/document/letterhead_setup.html', context)

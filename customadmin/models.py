@@ -213,6 +213,7 @@ class CreditUsesHistory(models.Model):
 class DocumentHeaderFooterImage(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='header_footer_images')
     color = models.CharField(max_length=50, blank=True, null=True)
+    css = models.CharField(blank=True, null=True)
     header = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
     footer = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
     preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
@@ -220,6 +221,7 @@ class DocumentHeaderFooterImage(models.Model):
 
     def __str__(self):
         return f"Header/Footer for {self.document.title}"
+
     
 class SettingManager(models.Manager):
     def get_value(self, key, default=None):

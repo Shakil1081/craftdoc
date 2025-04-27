@@ -1,0 +1,141 @@
+#logoShow {
+    width: 100px;
+    position: absolute;
+    z-index: 3;
+    font-weight: 500;
+}
+#emailShow {
+    position: absolute;
+    z-index: 3;
+    font-weight: 500;
+    left: 100px;
+    top: 200px;
+    min-height: 2.3em;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+}
+#phoneShow {
+    position: absolute;
+    z-index: 3;
+    font-weight: 500;
+    left: 300px;
+    top: 200px;
+    line-height: 1.15;
+    min-height: 2.3em;
+    display: flex;
+    align-items: center;
+}
+#locationShow {
+    position: absolute;
+    z-index: 3;
+    font-weight: 500;
+    line-height: 1.15;
+    left: 300px;
+    top: 400px;
+    min-height: 2.3em;
+    display: flex;
+    align-items: center;
+}
+.align-icon {
+    color: #999;
+    cursor: pointer;
+    &.selected {
+        color: #000;
+    }
+}
+//selected bold button
+#phoneBoldInput {
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    cursor: pointer;
+    color: #999;
+    &.selected {
+        font-weight: bold;
+        color: #000;
+    }
+}
+#phoneItalicInput {
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    color: #999;
+    &.selected {
+        font-weight: bold;
+        color: #000;
+    }
+}
+
+/* Bold button for Phone */
+#phoneBoldInput {
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    cursor: pointer;
+    color: #999;
+}
+
+#phoneBoldInput.selected {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Italic button for Phone */
+#phoneItalicInput {
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    color: #999;
+}
+
+#phoneItalicInput.selected {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Bold button for Email */
+#emailBoldInput {
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    cursor: pointer;
+    color: #999;
+}
+
+#emailBoldInput.selected {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Italic button for Email */
+#emailItalicInput {
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    color: #999;
+}
+
+#emailItalicInput.selected {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Bold button for Location */
+#locationBoldInput {
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    cursor: pointer;
+    color: #999;
+}
+
+#locationBoldInput.selected {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Italic button for Location */
+#locationItalicInput {
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    color: #999;
+}
+
+#locationItalicInput.selected {
+    font-weight: bold;
+    color: #000;
+}
