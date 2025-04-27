@@ -44,43 +44,43 @@ $(document).ready(function () {
     setHeaderFooter();
   });
 
-  //header item click event
-  $(document).on("click", ".header-item", function () {
-    $(".header-item").removeClass("selected");
-    $(this).addClass("selected");
-    const headerSrc = $(this).data("header");
-    const bgImages = $("#a4panel").css("background-image").split(",");
+  // //header item click event
+  // $(document).on("click", ".header-item", function () {
+  //   $(".header-item").removeClass("selected");
+  //   $(this).addClass("selected");
+  //   const headerSrc = $(this).data("header");
+  //   const bgImages = $("#a4panel").css("background-image").split(",");
 
-    // Trim and update only the first one (header)
-    if (bgImages.length > 1) {
-      bgImages[0] = `url("${headerSrc}")`; // Update header
-    } else {
-      // Fallback: only one image exists, just add the second manually if needed
-      bgImages[0] = `url("${headerSrc}")`;
-      bgImages[1] = `url("default-footer.png")`; // change this to your actual footer URL
-    }
+  //   // Trim and update only the first one (header)
+  //   if (bgImages.length > 1) {
+  //     bgImages[0] = `url("${headerSrc}")`; // Update header
+  //   } else {
+  //     // Fallback: only one image exists, just add the second manually if needed
+  //     bgImages[0] = `url("${headerSrc}")`;
+  //     bgImages[1] = `url("default-footer.png")`; // change this to your actual footer URL
+  //   }
 
-    $("#a4panel").css("background-image", bgImages.join(","));
-  });
-  //footer item click event
-  $(document).on("click", ".footer-item", function () {
-    $(".footer-item").removeClass("selected");
-    $(this).addClass("selected");
+  //   $("#a4panel").css("background-image", bgImages.join(","));
+  // });
+  // //footer item click event
+  // $(document).on("click", ".footer-item", function () {
+  //   $(".footer-item").removeClass("selected");
+  //   $(this).addClass("selected");
 
-    const footerSrc = $(this).data("footer");
-    const bgImages = $("#a4panel").css("background-image").split(",");
+  //   const footerSrc = $(this).data("footer");
+  //   const bgImages = $("#a4panel").css("background-image").split(",");
 
-    // Ensure both background layers exist
-    if (bgImages.length > 1) {
-      bgImages[1] = `url("${footerSrc}")`;
-    } else {
-      // Fallback: only one image exists, add a header placeholder
-      bgImages[0] = bgImages[0] || `url("default-header.png")`;
-      bgImages[1] = `url("${footerSrc}")`;
-    }
+  //   // Ensure both background layers exist
+  //   if (bgImages.length > 1) {
+  //     bgImages[1] = `url("${footerSrc}")`;
+  //   } else {
+  //     // Fallback: only one image exists, add a header placeholder
+  //     bgImages[0] = bgImages[0] || `url("default-header.png")`;
+  //     bgImages[1] = `url("${footerSrc}")`;
+  //   }
 
-    $("#a4panel").css("background-image", bgImages.join(","));
-  });
+  //   $("#a4panel").css("background-image", bgImages.join(","));
+  // });
 
   $("#emailInput").on("input", function () {
     const email = $(this).val();

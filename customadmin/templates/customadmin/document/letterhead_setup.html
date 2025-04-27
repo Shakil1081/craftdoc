@@ -290,7 +290,24 @@
     {% csrf_token %}
     <script>
         $(document).ready(function() {
+//header item click event
+    $(document).on("click", ".header-item, .footer-item", function () {
+        $(".header-item").removeClass("selected");
+        $(".footer-item").removeClass("selected");
+        const dataId = $(this).data("hf-id");
 
+        const headerItem = $('.header-item[data-hf-id="' + dataId + '"]');
+        const headerSrc = headerItem.data("header");
+
+        const footerItem = $('.footer-item[data-hf-id="' + dataId + '"]');
+        const footerSrc = footerItem.data("footer");
+
+        headerItem.addClass("selected");
+        footerItem.addClass("selected");
+
+        $("#a4panel").css("background-image", `url('${headerSrc}'), url('${footerSrc}')`);
+    });
+  
             // get css
   function getCss() {
     const elements = {
@@ -355,18 +372,7 @@
 
 
             // Handle header item selection
-            $('.header-item').on('click', function() {
-                // Get the selected header's ID
-                const selectedId = $(this).data('hf-id');
-        
-                // Update header items
-                $('.header-item').removeClass('selected');
-                $(this).addClass('selected');
-        
-                // Update corresponding footer item with matching data-hf-id
-                $('.footer-item').removeClass('selected');
-                $(`.footer-item[data-hf-id="${selectedId}"]`).addClass('selected');
-            });
+          
         
             // Handle footer item selection
             $('.footer-item').on('click', function() {
@@ -390,7 +396,6 @@
                   .data("hf-id");
                 // Get the CSS using the getCss function
                 const css = getCss();
-                console.log(css);
                 // Send AJAX request to save the CSS
                 $.ajax({
                   url: "", // The same URL as the current page
