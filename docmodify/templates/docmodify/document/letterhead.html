@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="{% static 'css/lh_style.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
 
   {% for font in fonts %}
     <link rel="stylesheet" href="{{ font.url }}" />
@@ -22,7 +23,7 @@
       <div class="row row-cols-2 g-2 letterhead-items">
         {% for singleDocument in documents %}
           {% with img=images_by_document|get_item:singleDocument.id %}
-            <div class="letterhead-item {% if forloop.first %}selected{% endif %}" 
+            <div class="letterhead-item {% if singleDocument.id == document.id %}selected{% endif %}" 
                  data-document-id="{{ singleDocument.id }}" 
                  data-header="{{ img.header }}" 
                  data-footer="{{ img.footer }}" 
@@ -48,76 +49,266 @@
       </div>
       <div class="content">
           <div id="a4panel">
-              <div id="logo">
-                  <img src="img/logo.jpg" alt="">
+              <img id="logoShow" 
+                  src="{{ document.logo_path.url }}" 
+                  alt="Logo">
+          
+              <div id="phoneShow">
+                  {% if document.phone %}
+                      {{ document.phone|linebreaksbr }}
+                  {% else %}
+                      01736234377<br>01916120927
+                  {% endif %}
               </div>
-              <div id="contactShow">
-                  01736234377
-                  01916120927
-              </div>
+          
               <div id="emailShow">
-                  admin@gmail.com
-                  mail@example.com
+                  {% if document.email %}
+                      {{ document.email|linebreaksbr }}
+                  {% else %}
+                      admin@gmail.com<br>mail@example.com
+                  {% endif %}
               </div>
+          
               <div id="locationShow">
-                  123, Main Street,
-                  Dhaka, Bangladesh.
+                  {% if document.location %}
+                      {{ document.location|linebreaksbr }}
+                  {% else %}
+                      123, Main Street,<br>Dhaka, Bangladesh.
+                  {% endif %}
               </div>
-          </div>
+          </div>                
       </div>
   </div>
 
     <!-- Right Panel: Header/Footer Selection -->
     <div class="right-panel">
-      <!-- // logo change panel with preview  -->
+      <div class="mb-3 d-none">
+          <button class="btn btn-primary" id="getCss">Get CSS</button>
+          <button class="btn btn-success" id="saveCss">Save</button>
+          {% if header_footer_images.count > 1 %}
+              <button class="btn btn-warning" id="saveAllCss">Save All</button>
+          {% endif %}
+      </div>
+      <div id="messageBox" class="alert d-none" role="alert"></div>
       <div class="d-flex align-items-center mb-3 gap-3">
-        <h5 class="m-0">Download </h5>
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-danger">PDF</button>
-            <button class="btn btn-outline-secondary">PNG</button>
-            <button class="btn btn-outline-success">JPG</button>
-        </div>
+          <h5 class="m-0">Download </h5>
+          <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-danger" id="downloadPdf">PDF</button>
+              <button class="btn btn-outline-secondary" id="downloadPng">PNG</button>
+              <button class="btn btn-outline-success" id="downloadJpg">JPG</button>
+          </div>
       </div>
       <div class="logo-change-panel">
           <h5>Logo </h5>
           <div class="logo-panel">
-              <img id="logoPreview" class="logo" src="img/logo.jpg" alt="Logo Preview">
+              <img id="logoPreview" class="logo" src="{{ document.logo_path.url }}" alt="Logo Preview">
               <label for="logoInput" class="change-logo">Change</label>
           </div>
           <input type="file" hidden id="logoInput" class="form-control" accept="image/*">
+          <div class="input-group input-group-sm mt-1 d-none">
+              <input type="number" class="form-control" id="logoLeft" placeholder="Left">
+              <input type="number" class="form-control" id="logoRight" placeholder="Right">
+              <input type="number" class="form-control" id="logoTop" placeholder="Top">
+              <input type="number" class="form-control" id="logoBottom" placeholder="Bottom">
+          </div>
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">Width</span>
+              <input type="number" class="form-control" id="logoWidthInput" placeholder="Width">
+              <span class="input-group-text">Height</span>
+              <input type="number" class="form-control" id="logoHeightInput" placeholder="Height">
+          </div>
+
       </div>
       <hr>
       <div class="single-content-panel">
           <h5 class="title">Phone</h5>
-              <textarea name="" rows="2" class="form-control form-control-sm"></textarea>
+          {% comment %} <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm"></textarea> {% endcomment %}
+          <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm">{{ document.phone }}</textarea>
+
+          <div class="input-group  input-group-sm d-none">
+              <input type="number" class="form-control" id="phoneLeft" placeholder="Left">
+              <input type="number" class="form-control" id="phoneRight" placeholder="Right">
+              <input type="number" class="form-control" id="phoneTop" placeholder="Top">
+              <input type="number" class="form-control" id="phoneBottom" placeholder="Bottom">
+          </div>
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">
+                  <i id="phoneLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="phoneCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="phoneRightAlign" class="fa-solid fa-align-right align-icon"></i>
+              </span>
+              <b class="input-group-text">
+                  <span style="width: 16px;" id="phoneBoldInput">B</span>
+              </b>
+              <i class="input-group-text">
+                  <span style="width: 16px;" id="phoneItalicInput">i</span>
+              </i>
+              <input type="color" class="form-control form-control-sm form-control-color" id="phoneColorInput">
+          </div>
+          <div class="input-group input-group-sm d-none">
+              <select name="" id="phoneFontFamily" class="form-select form-select-sm">
+                  <option value="">Font Family</option>
+                  <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                  <option value='"Courier New", Courier, monospace'>Courier New</option>
+                  <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                  <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                  <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                  <option value='"Georgia", serif'>Georgia</option>
+                  <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                  <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                  <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+              </select>
+
+              <input type="number" style="max-width: 80px;" class="form-control d-none" id="phoneFontSize"
+                  placeholder="Size">
+          </div>
       </div>
 
       <div class="single-content-panel">
           <h5 class="title">Email</h5>
-              <textarea name="" rows="2" class="form-control form-control-sm"></textarea>
+          {% comment %} <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+          <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm">{{ document.email }}</textarea>
+
+          <div class="input-group input-group-sm d-none">
+              <input type="number" class="form-control" id="emailLeft" placeholder="Left">
+              <input type="number" class="form-control" id="emailRight" placeholder="Right">
+              <input type="number" class="form-control" id="emailTop" placeholder="Top">
+              <input type="number" class="form-control" id="emailBottom" placeholder="Bottom">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">
+                  <i id="emailLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="emailCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="emailRightAlign" class="fa-solid fa-align-right align-icon"></i>
+              </span>
+              <b class="input-group-text">
+                  <span style="width: 16px;" id="emailBoldInput">B</span>
+              </b>
+              <i class="input-group-text">
+                  <span style="width: 16px;" id="emailItalicInput">i</span>
+              </i>
+              <input type="color" class="form-control form-control-sm form-control-color" id="emailColorInput">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <select name="" id="emailFontFamily" class="form-select form-select-sm">
+                  <option value="">Font Family</option>
+                  <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                  <option value='"Courier New", Courier, monospace'>Courier New</option>
+                  <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                  <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                  <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                  <option value='"Georgia", serif'>Georgia</option>
+                  <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                  <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                  <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+              </select>
+
+              <input type="number" style="max-width: 80px;" class="form-control d-none" id="emailFontSize"
+                  placeholder="Size">
+          </div>
+
       </div>
 
       <div class="single-content-panel">
           <h5 class="title">Location</h5>
-              <textarea name="" rows="2" class="form-control form-control-sm"></textarea>
+          {% comment %} <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+          <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm">{{ document.location }}</textarea>
+
+          <div class="input-group input-group-sm d-none">
+              <input type="number" class="form-control" id="locationLeft" placeholder="Left">
+              <input type="number" class="form-control" id="locationRight" placeholder="Right">
+              <input type="number" class="form-control" id="locationTop" placeholder="Top">
+              <input type="number" class="form-control" id="locationBottom" placeholder="Bottom">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">
+                  <i id="locationLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="locationCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="locationRightAlign" class="fa-solid fa-align-right align-icon"></i>
+              </span>
+              <b class="input-group-text">
+                  <span style="width: 16px;" id="locationBoldInput">B</span>
+              </b>
+              <i class="input-group-text">
+                  <span style="width: 16px;" id="locationItalicInput">i</span>
+              </i>
+              <input type="color" class="form-control form-control-sm form-control-color" id="locationColorInput">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <select name="" id="locationFontFamily" class="form-select form-select-sm">
+                  <option value="">Font Family</option>
+                  {% for font in fonts %}
+                      <option value="{{ font.font_family }}">{{ font.name }}</option>
+                  {% empty %}
+                      <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                      <option value='"Courier New", Courier, monospace'>Courier New</option>
+                      <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                      <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                      <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                      <option value='"Georgia", serif'>Georgia</option>
+                      <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                      <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                      <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                  {% endfor %}
+              </select>
+              <input type="number" style="max-width: 80px;" class="form-control d-none" id="locationFontSize" placeholder="Size">
+          </div>
+
       </div>
-      <!-- Header Section -->
+
       <div class="single-content-panel header">
-        <h5 class="title">Header</h5>
-        <div id="headerChangePanel">
-          <!-- Headers will be dynamically loaded here via AJAX -->
-        </div>
+          <h5 class="title">Header</h5>
+          <div id="headerChangePanel">
+              {% for img in header_footer_images %}
+                  {% if img.header %}
+                  <div class="header-item {% if img.is_default %}selected{% endif %}" 
+                       data-hf-id="{{ img.id }}" 
+                       data-header="{{ img.header.url }}">
+                      <img class="header-item-img" src="{{ img.header.url }}" alt="Header Image">
+                  </div>
+                  {% endif %}
+              {% empty %}
+                  <div class="header-item" data-hf-id="" data-header="">
+                      <img class="header-item-img" src="" alt="No Header Available">
+                  </div>
+              {% endfor %}
+          </div>
       </div>
-
-      <hr />
-
-      <!-- Footer Section -->
+      
       <div class="single-content-panel footer">
-        <h5 class="title">Footer</h5>
-        <div id="footerChangePanel">
-          <!-- Footers will be dynamically loaded here via AJAX -->
-        </div>
-      </div>
+          <h5 class="title">Footer</h5>
+          <div id="footerChangePanel">
+              {% for img in header_footer_images %}
+                  {% if img.footer %}
+                  <div class="footer-item {% if img.is_default %}selected{% endif %}" 
+                       data-hf-id="{{ img.id }}" 
+                       data-footer="{{ img.footer.url }}">
+                      <img class="footer-item-img" src="{{ img.footer.url }}" alt="Footer Image">
+                  </div>
+                  {% endif %}
+              {% empty %}
+                  <div class="footer-item" data-hf-id="" data-footer="">
+                      <img class="footer-item-img" src="" alt="No Footer Available">
+                  </div>
+              {% endfor %}
+          </div>
+      </div>            
     </div>
   </div>
 

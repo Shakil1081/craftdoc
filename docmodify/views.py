@@ -55,6 +55,64 @@ def hello_there(request):
     # Render the template with context
     return render(request, 'docmodify/index.html', context)
 
+@login_required
+def letterhead(request, document_id):
+    if not request.user.is_active:
+        messages.warning(request, 'Please verify your email to access all features.')
+
+     # Fetch the selected document
+    document = get_object_or_404(Document, id=document_id)
+    
+    # Get all documents
+    documents = Document.objects.all()
+    
+    # Reorder the documents list to make the selected document first
+    documents = [document] + [doc for doc in documents if doc != document]
+
+    categories = DocumentCategory.objects.filter(document=document)
+    metas = DocumentMeta.objects.filter(document=document)
+    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
+    fonts = Font.objects.all()
+
+    # Group images by document ID
+    images_by_document = defaultdict(dict)
+    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
+        doc_id = img.document.id
+        images_by_document[doc_id] = {
+            'header': img.header.url if img.header else '',
+            'footer': img.footer.url if img.footer else '',
+            'body': img.preview_image.url if img.preview_image else ''
+        }
+
+    context = {
+        'document': document,
+        'documents': documents,
+        'categories': categories,
+        'metas': metas,
+        'header_footer_images': header_footer_images,
+        'fonts': fonts,
+        'images_by_document': dict(images_by_document),
+    }
+
+    # Check if the request is an AJAX request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Return JSON response for AJAX requests
+        data = {
+            'header_footer_images': [
+                {
+                    'id': hf.id,
+                    'header': hf.header.url if hf.header else None,
+                    'footer': hf.footer.url if hf.footer else None,
+                    'is_default': hf.is_default,
+                }
+                for hf in header_footer_images
+            ],
+        }
+        return JsonResponse(data)
+
+    # Render the template for normal requests
+    return render(request, 'docmodify/document/letterhead.html', context)
+
 def register(request):
     if request.method == 'POST':
         form = PublicUserRegistrationForm(request.POST)
@@ -202,61 +260,8 @@ def public_dashboard(request):
         messages.warning(request, 'Please verify your email to access all features.')
     return render(request, 'docmodify/dashboard.html')
 
-@login_required
-def letterhead(request, document_id):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
-
-    # Fetch the selected document dynamically
-    document = get_object_or_404(Document, pk=document_id)
-    documents = Document.objects.all().order_by('id')
-
-    categories = DocumentCategory.objects.filter(document=document)
-    metas = DocumentMeta.objects.filter(document=document)
-    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
-    fonts = Font.objects.all()
-
-    # Group images by document ID
-    images_by_document = defaultdict(dict)
-    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
-        doc_id = img.document.id
-        images_by_document[doc_id] = {
-            'header': img.header.url if img.header else '',
-            'footer': img.footer.url if img.footer else '',
-            'body': img.preview_image.url if img.preview_image else ''
-        }
-
-    context = {
-        'document': document,
-        'documents': documents,
-        'categories': categories,
-        'metas': metas,
-        'header_footer_images': header_footer_images,
-        'fonts': fonts,
-        'images_by_document': dict(images_by_document),
-    }
-
-    # Check if the request is an AJAX request
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Return JSON response for AJAX requests
-        data = {
-            'header_footer_images': [
-                {
-                    'id': hf.id,
-                    'header': hf.header.url if hf.header else None,
-                    'footer': hf.footer.url if hf.footer else None,
-                    'is_default': hf.is_default,
-                }
-                for hf in header_footer_images
-            ],
-        }
-        return JsonResponse(data)
-
-    # Render the template for normal requests
-    return render(request, 'docmodify/document/letterhead.html', context)
-
 def public_login(request):
-    if request.user.is_authenticated and not request.user.is_superuser:
+    if request.user.is_authenticated and request.user.is_superuser == False:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    
@@ -279,8 +284,11 @@ def public_login(request):
                     messages.error(request, "Account not verified. Please enter your email for verification link.")
                     return redirect('resend_verification')
                 else:
-                    login(request, user)
-                    return redirect('public_dashboard')
+                    if request.user.is_superuser == False:                        
+                        login(request, user)
+                        return redirect('public_dashboard')
+                    else:
+                        return redirect('admin-login')
             else:
                 messages.error(request, "Invalid email or password.")
     else:
