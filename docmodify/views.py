@@ -231,7 +231,7 @@ def letterhead(request, document_id):
     return render(request, 'docmodify/document/letterhead.html', context)
 
 def public_login(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    

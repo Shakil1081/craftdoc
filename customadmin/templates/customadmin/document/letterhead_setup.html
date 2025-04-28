@@ -79,6 +79,7 @@
                     <button class="btn btn-warning" id="saveAllCss">Save All</button>
                 {% endif %}
             </div>
+            <div id="messageBox" class="alert d-none" role="alert"></div>
             <div class="d-flex align-items-center mb-3 gap-3">
                 <h5 class="m-0">Download </h5>
                 <div class="btn-group btn-group-sm">
@@ -312,88 +313,104 @@
     {% csrf_token %}
     <script>
         $(document).ready(function() {
-//header item click event
-    $(document).on("click", ".header-item, .footer-item", function () {
-        $(".header-item").removeClass("selected");
-        $(".footer-item").removeClass("selected");
-        const dataId = $(this).data("hf-id");
+            //header item click event
+            $(document).on("click", ".header-item, .footer-item", function () {
+                $(".header-item").removeClass("selected");
+                $(".footer-item").removeClass("selected");
+                const dataId = $(this).data("hf-id");
 
-        const headerItem = $('.header-item[data-hf-id="' + dataId + '"]');
-        const headerSrc = headerItem.data("header");
+                const headerItem = $('.header-item[data-hf-id="' + dataId + '"]');
+                const headerSrc = headerItem.data("header");
 
-        const footerItem = $('.footer-item[data-hf-id="' + dataId + '"]');
-        const footerSrc = footerItem.data("footer");
+                const footerItem = $('.footer-item[data-hf-id="' + dataId + '"]');
+                const footerSrc = footerItem.data("footer");
 
-        headerItem.addClass("selected");
-        footerItem.addClass("selected");
+                headerItem.addClass("selected");
+                footerItem.addClass("selected");
 
-        $("#a4panel").css("background-image", `url('${headerSrc}'), url('${footerSrc}')`);
-    });
+                $("#a4panel").css("background-image", `url('${headerSrc}'), url('${footerSrc}')`);
+            });
   
             // get css
-  function getCss() {
-    const elements = {
-      phoneShow: [
-        "left",
-        "right",
-        "top",
-        "bottom",
-        "font-weight",
-        "font-style",
-        "font-family",
-        "font-size",
-        "color",
-        "text-align",
-      ],
-      emailShow: [
-        "left",
-        "right",
-        "top",
-        "bottom",
-        "font-weight",
-        "font-style",
-        "font-family",
-        "font-size",
-        "color",
-        "text-align",
-      ],
-      locationShow: [
-        "left",
-        "right",
-        "top",
-        "bottom",
-        "font-weight",
-        "font-style",
-        "font-family",
-        "font-size",
-        "color",
-        "text-align",
-      ],
-      logoShow: ["left", "right", "top", "bottom", "height", "width"],
-    };
+            function getCss() {
+                const elements = {
+                phoneShow: [
+                    "left",
+                    "right",
+                    "top",
+                    "bottom",
+                    "font-weight",
+                    "font-style",
+                    "font-family",
+                    "font-size",
+                    "color",
+                    "text-align",
+                ],
+                emailShow: [
+                    "left",
+                    "right",
+                    "top",
+                    "bottom",
+                    "font-weight",
+                    "font-style",
+                    "font-family",
+                    "font-size",
+                    "color",
+                    "text-align",
+                ],
+                locationShow: [
+                    "left",
+                    "right",
+                    "top",
+                    "bottom",
+                    "font-weight",
+                    "font-style",
+                    "font-family",
+                    "font-size",
+                    "color",
+                    "text-align",
+                ],
+                logoShow: ["left", "right", "top", "bottom", "height", "width"],
+                };
 
-    let cssOutput = "";
+                let cssOutput = "";
 
-    Object.entries(elements).forEach(([id, props]) => {
-      const el = document.getElementById(id);
-      if (el) {
-        const styles = window.getComputedStyle(el);
-        cssOutput += `#${id}{`;
-        props.forEach((prop) => {
-          const val = styles.getPropertyValue(prop);
-          if (val && val.trim()) {
-            cssOutput += `${prop}:${val.trim()};`;
-          }
-        });
-        cssOutput += "}";
-      }
-    });
+                Object.entries(elements).forEach(([id, props]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const styles = window.getComputedStyle(el);
+                    cssOutput += `#${id}{`;
+                    props.forEach((prop) => {
+                    const val = styles.getPropertyValue(prop);
+                    if (val && val.trim()) {
+                        cssOutput += `${prop}:${val.trim()};`;
+                    }
+                    });
+                    cssOutput += "}";
+                }
+                });
 
-    return cssOutput;
-  }
+                return cssOutput;
+            }
 
 
-            // Handle header item selection
+            function showMessage(message, type) {
+                const messageBox = $("#messageBox");
+                messageBox.removeClass("d-none alert-success alert-danger");
+                
+                if (type === "success") {
+                    messageBox.addClass("alert-success");
+                } else if (type === "error") {
+                    messageBox.addClass("alert-danger");
+                }
+            
+                messageBox.text(message);
+            
+                // Hide the message after 30 seconds (30,000 milliseconds)
+                setTimeout(function () {
+                    messageBox.addClass("d-none");
+                }, 10000);
+            }
           
         
             // Handle footer item selection
@@ -438,20 +455,18 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            console.log("CSS saved successfully");
+                            showMessage("CSS saved successfully");
                             // Optionally show a success message or update UI
                         } else {
-                            console.error("Error:", response.error);
+                            showMessage("Error:", response.error);
                         }
                     },
                     error: function () {
                         console.error("AJAX request failed");
                     },
                 });
-            });
-            
+            });            
         });
-
     </script>
 
 </body>

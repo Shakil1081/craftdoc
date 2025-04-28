@@ -43,6 +43,9 @@ def register(request):
 
 # Login view for checking email verification
 def login_view(request):
+    if request.user.is_authenticated and request.user.is_active and request.user.is_superuser:
+        return redirect('custom_admin_dashboard')
+    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
