@@ -153,7 +153,11 @@ class Document(models.Model):
     description = models.TextField()
     html_body = models.TextField()
     css_body = models.TextField()
-    file_path = models.FileField(upload_to='documents/files/', blank=True, null=True)
+    file_path = models.FileField(upload_to='documents/files/')
+    logo_path = models.FileField(upload_to='documents/files/')
+    email = models.TextField(blank=True, null=True)
+    phone = models.TextField(blank=True, null=True)
+    location = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.title

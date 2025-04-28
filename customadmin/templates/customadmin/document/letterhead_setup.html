@@ -41,20 +41,34 @@
             </div>
             <div class="content">
                 <div id="a4panel">
-                    <img id="logoShow" src="img/logo.jpg" alt="">
+                    <img id="logoShow" 
+                        src="{{ document.logo_path.url }}" 
+                        alt="Logo">
+                
                     <div id="phoneShow">
-                        01736234377 asdasd<br>
-                        01916120927
+                        {% if document.phone %}
+                            {{ document.phone|linebreaksbr }}
+                        {% else %}
+                            01736234377<br>01916120927
+                        {% endif %}
                     </div>
+                
                     <div id="emailShow">
-                        admin@gmail.com <br>
-                        mail@example.com
+                        {% if document.email %}
+                            {{ document.email|linebreaksbr }}
+                        {% else %}
+                            admin@gmail.com<br>mail@example.com
+                        {% endif %}
                     </div>
+                
                     <div id="locationShow">
-                        123, Main Street, <br>
-                        Dhaka, Bangladesh.
+                        {% if document.location %}
+                            {{ document.location|linebreaksbr }}
+                        {% else %}
+                            123, Main Street,<br>Dhaka, Bangladesh.
+                        {% endif %}
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
         <div class="right-panel">
@@ -73,7 +87,7 @@
             <div class="logo-change-panel">
                 <h5>Logo </h5>
                 <div class="logo-panel">
-                    <img id="logoPreview" class="logo" src="img/logo.jpg" alt="Logo Preview">
+                    <img id="logoPreview" class="logo" src="{{ document.logo_path.url }}" alt="Logo Preview">
                     <label for="logoInput" class="change-logo">Change</label>
                 </div>
                 <input type="file" hidden id="logoInput" class="form-control" accept="image/*">
@@ -94,7 +108,9 @@
             <hr>
             <div class="single-content-panel">
                 <h5 class="title">Phone</h5>
-                <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm"></textarea>
+                {% comment %} <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm"></textarea> {% endcomment %}
+                <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm">{{ document.phone }}</textarea>
+
                 <div class="input-group  input-group-sm">
                     <input type="number" class="form-control" id="phoneLeft" placeholder="Left">
                     <input type="number" class="form-control" id="phoneRight" placeholder="Right">
@@ -140,7 +156,9 @@
 
             <div class="single-content-panel">
                 <h5 class="title">Email</h5>
-                <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm"></textarea>
+                {% comment %} <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+                <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm">{{ document.email }}</textarea>
+
                 <div class="input-group input-group-sm">
                     <input type="number" class="form-control" id="emailLeft" placeholder="Left">
                     <input type="number" class="form-control" id="emailRight" placeholder="Right">
@@ -189,7 +207,8 @@
 
             <div class="single-content-panel">
                 <h5 class="title">Location</h5>
-                <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm"></textarea>
+                {% comment %} <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+                <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm">{{ document.location }}</textarea>
 
                 <div class="input-group input-group-sm">
                     <input type="number" class="form-control" id="locationLeft" placeholder="Left">
