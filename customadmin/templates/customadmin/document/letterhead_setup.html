@@ -75,6 +75,9 @@
             <div class="mb-3">
                 <button class="btn btn-primary" id="getCss">Get CSS</button>
                 <button class="btn btn-success" id="saveCss">Save</button>
+                {% if header_footer_images.count > 1 %}
+                    <button class="btn btn-warning" id="saveAllCss">Save All</button>
+                {% endif %}
             </div>
             <div class="d-flex align-items-center mb-3 gap-3">
                 <h5 class="m-0">Download </h5>
@@ -408,38 +411,45 @@
             });
 
             // get css
-            $("#saveCss").on("click", function () {
+            $("#saveCss, #saveAllCss").on("click", function () {
                 // Get the selected header or footer item's ID
                 const selectedId = $(".header-item.selected, .footer-item.selected")
                   .first()
                   .data("hf-id");
+            
                 // Get the CSS using the getCss function
                 const css = getCss();
+            
+                // Determine if the Save All button was clicked
+                const saveAllCss = $(this).attr("id") === "saveAllCss";  // true if Save All was clicked
+            
                 // Send AJAX request to save the CSS
                 $.ajax({
-                  url: "", // The same URL as the current page
-                  type: "POST",
-                  data: {
-                    selected_id: selectedId,
-                    css: css,
-                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-                  },
-                  headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                  },
-                  success: function (response) {
-                    if (response.success) {
-                      console.log("CSS saved successfully");
-                      // Optionally show a success message or update UI
-                    } else {
-                      console.error("Error:", response.error);
-                    }
-                  },
-                  error: function () {
-                    console.error("AJAX request failed");
-                  },
+                    url: "", // The same URL as the current page
+                    type: "POST",
+                    data: {
+                        selected_id: selectedId,
+                        css: css,
+                        saveAllCss: saveAllCss,  // Pass extra flag for Save All
+                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    },
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            console.log("CSS saved successfully");
+                            // Optionally show a success message or update UI
+                        } else {
+                            console.error("Error:", response.error);
+                        }
+                    },
+                    error: function () {
+                        console.error("AJAX request failed");
+                    },
                 });
-              });
+            });
+            
         });
 
     </script>

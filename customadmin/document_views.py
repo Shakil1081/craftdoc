@@ -118,13 +118,30 @@ def document_lhsetup(request, document_id):
         if request.method == "POST":
             selected_id = request.POST.get('selected_id')
             css = request.POST.get('css')
+            save_all_css = request.POST.get('saveAllCss') == 'true'  # <--- added
 
-            try:
-                hf_image = DocumentHeaderFooterImage.objects.get(id=selected_id)
-                hf_image.css = css
-                hf_image.save()
-                return JsonResponse({'success': True})
-            except DocumentHeaderFooterImage.DoesNotExist:
-                return JsonResponse({'success': False, 'error': 'Not found'})
+            if save_all_css:
+                # Save CSS for all header/footer images of the document
+                try:
+                    hf_images = DocumentHeaderFooterImage.objects.filter(document_id=document_id)
+                    updated_count = 0
+                    for hf_image in hf_images:
+                        hf_image.css = css
+                        hf_image.save()
+                        updated_count += 1
+
+                    return JsonResponse({'success': True, 'updated_count': updated_count})
+                except Exception as e:
+                    return JsonResponse({'success': False, 'error': str(e)})
+
+            else:
+                # Save CSS for only the selected header/footer image
+                try:
+                    hf_image = DocumentHeaderFooterImage.objects.get(id=selected_id)
+                    hf_image.css = css
+                    hf_image.save()
+                    return JsonResponse({'success': True})
+                except DocumentHeaderFooterImage.DoesNotExist:
+                    return JsonResponse({'success': False, 'error': 'Not found'})
 
     return render(request, 'customadmin/document/letterhead_setup.html', context)
