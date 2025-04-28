@@ -28,7 +28,32 @@ from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 
 def hello_there(request):
-    return render(request, 'docmodify/letterhead_upload.html')
+    # Fetch documents, categories, and header/footer images
+    documents = Document.objects.all().order_by('id')
+    document = Document.objects.first()  # Assuming you need a specific document, for example, the first one
+    categories = DocumentCategory.objects.filter(document=document)
+    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
+    
+    # Group images by document ID
+    images_by_document = defaultdict(dict)
+    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
+        doc_id = img.document.id
+        images_by_document[doc_id] = {
+            'header': img.header.url if img.header else '',
+            'footer': img.footer.url if img.footer else '',
+            'body': img.preview_image.url if img.preview_image else ''
+        }
+
+    # Prepare context data for the template
+    context = {
+        'documents': documents,
+        'categories': categories,
+        'header_footer_images': header_footer_images,
+        'images_by_document': dict(images_by_document),  # Convert defaultdict to regular dict before passing to the template
+    }
+
+    # Render the template with context
+    return render(request, 'docmodify/index.html', context)
 
 def register(request):
     if request.method == 'POST':
