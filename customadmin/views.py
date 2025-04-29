@@ -59,11 +59,15 @@ def login_view(request):
             else:
                 # Check if the user's email is verified for non-admin users
                 if user.email_verified_at is None:
+                    login(request, user)
                     messages.error(request, 'Please verify your email before logging in.')
                     return redirect('verification_sent')  # Redirect to verification page
                 else:
-                    login(request, user)
-                    return redirect('custom_admin_dashboard')  # Redirect to the dashboard after successful login
+                    if request.user.is_superuser:
+                        login(request, user)
+                        return redirect('custom_admin_dashboard')
+                    else:
+                        return redirect('login') 
         else:
             messages.error(request, 'Invalid credentials. Please try again.')
 

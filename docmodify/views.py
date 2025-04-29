@@ -76,7 +76,8 @@ def letterhead(request, document_id):
 
     # Group images by document ID
     images_by_document = defaultdict(dict)
-    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
+    default_images = DocumentHeaderFooterImage.objects.filter(is_default=True)
+    for img in default_images:
         doc_id = img.document.id
         images_by_document[doc_id] = {
             'header': img.header.url if img.header else '',
@@ -98,16 +99,34 @@ def letterhead(request, document_id):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         # Return JSON response for AJAX requests
         data = {
+            'fonts': [
+                {
+                    'id': font.id,
+                    'name': font.name,
+                    'url': font.url,
+                }
+                for font in fonts
+            ],
+            'document': {
+                'id': document.id,
+                'logo': document.logo_path.url if document.logo_path else '',
+                'phone': document.phone,
+                'email': document.email,
+                'location': document.location,
+                # add more fields if needed
+            },
             'header_footer_images': [
                 {
                     'id': hf.id,
                     'header': hf.header.url if hf.header else None,
                     'footer': hf.footer.url if hf.footer else None,
+                    'css': hf.css if hf.css else None,
                     'is_default': hf.is_default,
                 }
                 for hf in header_footer_images
             ],
         }
+
         return JsonResponse(data)
 
     # Render the template for normal requests
@@ -261,7 +280,7 @@ def public_dashboard(request):
     return render(request, 'docmodify/dashboard.html')
 
 def public_login(request):
-    if request.user.is_authenticated and request.user.is_superuser == False:
+    if request.user.is_authenticated and not request.user.is_superuser:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    
@@ -284,7 +303,7 @@ def public_login(request):
                     messages.error(request, "Account not verified. Please enter your email for verification link.")
                     return redirect('resend_verification')
                 else:
-                    if request.user.is_superuser == False:                        
+                    if not request.user.is_superuser:                        
                         login(request, user)
                         return redirect('public_dashboard')
                     else:
