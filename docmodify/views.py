@@ -280,7 +280,7 @@ def public_dashboard(request):
     return render(request, 'docmodify/dashboard.html')
 
 def public_login(request):
-    if request.user.is_authenticated and not request.user.is_superuser:
+    if request.user.is_authenticated and request.user.is_active and not request.user.is_superuser:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    
