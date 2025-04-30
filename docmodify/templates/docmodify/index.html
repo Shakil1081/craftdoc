@@ -166,14 +166,21 @@
       <div class="container">
         <!-- Search Section -->
         <section class="search-section">
-          <input type="text" id="search-bar" placeholder="Search..." class="search-bar" />
-          <select id="category-filter" class="category-filter">
-            <option value="all">All Categories</option>
-            <option value="category1">Category 1</option>
-            <option value="category2">Category 2</option>
-            <option value="category3">Category 3</option>
-          </select>
-          <button class="search-button">Search</button>
+          <!-- Search bar to capture the search term -->
+          <form method="get" action="{% url 'hello_there' %}">
+              <input type="text" id="search-bar" name="search" placeholder="Search..." value="{{ search_query }}" class="search-bar" />
+              
+              <!-- Category filter -->
+              <select id="category-filter" name="category" class="category-filter">
+                  <option value="all" {% if category_filter == 'all' %}selected{% endif %}>All Categories</option>
+                  {% for category in categories %}
+                      <option value="{{ category.name }}" {% if category.name == category_filter %}selected{% endif %}>{{ category.name }}</option>
+                  {% endfor %}
+              </select>
+
+              <!-- Submit Button -->
+              <button type="submit" class="search-button">Search</button>
+          </form>
         </section>
 
         <!-- Content Section -->
@@ -184,38 +191,40 @@
 
         <!-- Letterhead Preview Grid -->
         <section class="letterhead-preview">
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
-            {% for singleDocument in documents %}
-              {% with img=images_by_document|get_item:singleDocument.id %}
-                <div>
-                  <a class="letterhead-card d-block" href="{% url 'letterhead' singleDocument.id %}"><img src="{{ img.body|default:'img/background/default.png' }}" alt="Letterhead {{ forloop.counter }}" /></a>
-                </div>
-              {% endwith %}
-            {% endfor %}
-          </div>
+          {% if documents %}
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
+                  {% for singleDocument in documents %}
+                      {% with img=images_by_document|get_item:singleDocument.id %}
+                          <div>
+                              <a class="letterhead-card d-block" href="{% url 'letterhead' singleDocument.id %}">
+                                  <img src="{{ img.body|default:'img/background/default.png' }}" alt="Letterhead {{ forloop.counter }}" />
+                              </a>
+                          </div>
+                      {% endwith %}
+                  {% endfor %}
+              </div>
+
+              <!-- Pagination Controls below the Letterhead Grid -->
+              <nav aria-label="Page navigation example" class="pagination">
+                  <ul class="pagination">
+                      <li class="page-item {% if not documents.has_previous %}disabled{% endif %}">
+                          <a class="page-link" href="?page=1">Previous</a>
+                      </li>
+                      {% for page_num in documents.paginator.page_range %}
+                          <li class="page-item {% if documents.number == page_num %}active{% endif %}">
+                              <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                          </li>
+                      {% endfor %}
+                      <li class="page-item {% if not documents.has_next %}disabled{% endif %}">
+                          <a class="page-link" href="?page={{ documents.paginator.num_pages }}">Next</a>
+                      </li>
+                  </ul>
+              </nav>
+          {% else %}
+              <p>No data found.</p>
+          {% endif %}
         </section>
 
-        <!-- Pagination Controls below the Letterhead Grid -->
-        <!-- pagination -->
-        <nav aria-label="Page navigation example" class="pagination">
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="#">Previous</a>
-            </li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">3</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav>
       </div>
     </main>
 

@@ -22,16 +22,40 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
-from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
+from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 
+from django.core.paginator import Paginator
+
 def hello_there(request):
+    # Get the search term from the GET request
+    search_query = request.GET.get('search', '')
+    category_filter = request.GET.get('category', 'all')
+
     # Fetch documents, categories, and header/footer images
     documents = Document.objects.all().order_by('id')
-    document = Document.objects.first()  # Assuming you need a specific document, for example, the first one
-    categories = DocumentCategory.objects.filter(document=document)
+
+    # Filter documents by search query
+    if search_query:
+        documents = documents.filter(title=search_query)
+
+    # Handle category filtering
+    if category_filter != 'all':
+        # Fetch category object based on category filter
+        category = Category.objects.get(name=category_filter)
+        # Filter documents by this category
+        documents = documents.filter(documentcategory__category=category)
+
+    # Pagination
+    paginator = Paginator(documents, 10)  # Show 10 documents per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Get the first document (or any other document as needed)
+    document = Document.objects.first()  
+    categories = Category.objects.all()
     header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
     
     # Group images by document ID
@@ -46,14 +70,17 @@ def hello_there(request):
 
     # Prepare context data for the template
     context = {
-        'documents': documents,
+        'documents': page_obj,
         'categories': categories,
         'header_footer_images': header_footer_images,
-        'images_by_document': dict(images_by_document),  # Convert defaultdict to regular dict before passing to the template
+        'images_by_document': dict(images_by_document),
+        'search_query': search_query,
+        'category_filter': category_filter,
     }
 
     # Render the template with context
     return render(request, 'docmodify/index.html', context)
+
 
 @login_required
 def letterhead(request, document_id):
