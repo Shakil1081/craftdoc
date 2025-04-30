@@ -56,7 +56,6 @@ def hello_there(request):
     # Get the first document (or any other document as needed)
     document = Document.objects.first()  
     categories = Category.objects.all()
-    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
     
     # Group images by document ID
     images_by_document = defaultdict(dict)
@@ -72,7 +71,6 @@ def hello_there(request):
     context = {
         'documents': page_obj,
         'categories': categories,
-        'header_footer_images': header_footer_images,
         'images_by_document': dict(images_by_document),
         'search_query': search_query,
         'category_filter': category_filter,
