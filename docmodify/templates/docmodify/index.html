@@ -148,6 +148,44 @@
         justify-content: center;
         margin-top: 30px;
       }
+
+      /* Header Buttons Styles */
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-signup {
+  background-color: #f3931c; /* Secondary color */
+  color: white;
+  border: none;
+}
+
+.btn-signup:hover {
+  background-color: #e57b0e;
+}
+
+.btn-signin {
+  background-color: #040444; /* Primary color */
+  color: white;
+  border: none;
+}
+
+.btn-signin:hover {
+  background-color: #030336;
+}
+
     </style>
   </head>
 
@@ -158,6 +196,10 @@
       <div class="letterhead">
         <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" class="logo" />
         <p>Empowering your business, one step at a time.</p>
+      </div>
+      <div class="header-buttons">
+        <a href="{% url 'login' %}" class="btn btn-signup">Sign Up</a>
+        <a href="{% url 'register' %}" class="btn btn-signup">Sign In</a>
       </div>
     </header>
 
@@ -172,7 +214,7 @@
               
               <!-- Category filter -->
               <select id="category-filter" name="category" class="category-filter">
-                  <option value="all" {% if category_filter == 'all' %}selected{% endif %}>All Categories</option>
+                <option value="all" {% if category_filter == 'all' %} selected {% endif %}>All Categories</option>
                   {% for category in categories %}
                       <option value="{{ category.name }}" {% if category.name == category_filter %}selected{% endif %}>{{ category.name }}</option>
                   {% endfor %}
@@ -187,6 +229,8 @@
         <section class="content-section">
           <h2>Explore Our Services</h2>
           <p>We offer top-notch services tailored to your needs. Find the best solutions with us!</p>
+
+         
         </section>
 
         <!-- Letterhead Preview Grid -->
@@ -230,7 +274,7 @@
 
     <!-- Footer Section -->
     <footer class="footer">
-      <p>&copy; 2025 Your Company. All rights reserved.</p>
+      <p>&copy; 2025 Your Company. All rights reserved.<a class="ms-3 text-warning text-decoration-none" href="{% url 'admin-login' %}">Admin Login</a></p>
     </footer>
 
     <!-- Bootstrap JS and Popper.js -->
