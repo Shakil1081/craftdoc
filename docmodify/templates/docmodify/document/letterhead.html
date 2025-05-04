@@ -31,7 +31,7 @@
                  data-phone="{{ singleDocument.phone|default:'' }}" 
                  data-email="{{ singleDocument.email|default:'' }}" 
                  data-location="{{ singleDocument.location|default:'' }}">
-              <img class="preview-image" src="{{ singleDocument.file_path.url }}" alt="Template {{ forloop.counter }}" />
+              <img class="preview-image" src="{{ img.body|default:'img/background/default.png' }}" alt="Template {{ forloop.counter }}" />
             </div>
           {% endwith %}
         {% endfor %}
@@ -430,6 +430,7 @@
                 $('#customCss').empty();
                 $('#customCss').html(selectedHF.css);
             } else {
+                $('#customCss').empty();
                 console.log('No default CSS found.');
             }
 
