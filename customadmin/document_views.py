@@ -111,6 +111,7 @@ def document_lhsetup(request, document_id):
         'header_footer_images': header_footer_images,
         'fonts': fonts,
         'default_header_footer': default_header_footer,
+        'default_css': default_header_footer['css'] if default_header_footer else '',
     }
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

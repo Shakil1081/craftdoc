@@ -11,6 +11,10 @@
 
     <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
     <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
+    <style id="preview-css">
+        {{ default_css|safe }}
+    </style>
+    
     <title>Document</title>
 </head>
 
@@ -268,7 +272,7 @@
                     {% for img in header_footer_images %}
                         {% if img.header %}
                         <div class="header-item {% if img.is_default %}selected{% endif %}" 
-                             data-hf-id="{{ img.id }}" 
+                             data-hf-id="{{ img.id }}" data-css="{{ img.css }}"
                              data-header="{{ img.header.url }}">
                             <img class="header-item-img" src="{{ img.header.url }}" alt="Header Image">
                         </div>
@@ -287,7 +291,7 @@
                     {% for img in header_footer_images %}
                         {% if img.footer %}
                         <div class="footer-item {% if img.is_default %}selected{% endif %}" 
-                             data-hf-id="{{ img.id }}" 
+                             data-hf-id="{{ img.id }}" data-css="{{ img.css }}"
                              data-footer="{{ img.footer.url }}">
                             <img class="footer-item-img" src="{{ img.footer.url }}" alt="Footer Image">
                         </div>
@@ -312,12 +316,23 @@
     <script src="{%static 'js/lh_setup_custom.js' %}"></script>
     {% csrf_token %}
     <script>
+        const defaultCss = `{{ default_css|escapejs }}`;
+        
         $(document).ready(function() {
             //header item click event
             $(document).on("click", ".header-item, .footer-item", function () {
                 $(".header-item").removeClass("selected");
                 $(".footer-item").removeClass("selected");
+                $(this).addClass("selected");
+                
                 const dataId = $(this).data("hf-id");
+                const css = $(this).data("css");
+                
+                if (css) {
+                    $("#preview-css").html(css);
+                } else {
+                    $("#preview-css").html(defaultCss);
+                }
 
                 const headerItem = $('.header-item[data-hf-id="' + dataId + '"]');
                 const headerSrc = headerItem.data("header");
