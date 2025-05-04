@@ -10,13 +10,14 @@
             <p>{{ error }}</p>
         {% endfor %}
     </div>
-    {% if messages %}
+    
+    {% comment %} {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">
             {{ message }}
             </div>
         {% endfor %}
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
@@ -35,49 +36,27 @@
             <div class="text-danger">{{ form.description.errors }}</div>
         </div>
 
-        <!-- HTML Body -->
-        <div class="mb-3">
-            <label for="html_body" class="form-label">HTML Body</label>
-            <textarea name="html_body" id="html_body" class="form-control {% if form.html_body.errors %}is-invalid{% endif %}">{{ form.html_body.value|default:'' }}</textarea>
-            <div class="text-danger">{{ form.html_body.errors }}</div>
-        </div>
-
-        <!-- CSS Body -->
-        <div class="mb-3">
-            <label for="css_body" class="form-label">CSS Body</label>
-            <textarea name="css_body" id="css_body" class="form-control {% if form.css_body.errors %}is-invalid{% endif %}">{{ form.css_body.value|default:'' }}</textarea>
-            <div class="text-danger">{{ form.css_body.errors }}</div>
-        </div>
-
-
-        <!-- File Path -->
-        <div class="mb-3">
-            <label for="file_path" class="form-label">Upload File</label>
-            <input type="file" name="file_path" id="file_path" class="form-control {% if form.file_path.errors %}is-invalid{% endif %}">
-            <div class="text-danger">{{ form.file_path.errors }}</div>
-        </div>
-
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <textarea name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}">{{ form.email.value }}</textarea>
+            <textarea name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}">{{ form.email.value|default:'' }}</textarea>
             <div class="text-danger">{{ form.email.errors }}</div>
         </div>
         
         <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
-            <textarea name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}">{{ form.phone.value }}</textarea>
+            <textarea name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}">{{ form.phone.value|default:'' }}</textarea>
             <div class="text-danger">{{ form.phone.errors }}</div>
         </div>
         
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
-            <textarea name="location" id="location" class="form-control {% if form.location.errors %}is-invalid{% endif %}">{{ form.location.value }}</textarea>
+            <textarea name="location" id="location" class="form-control {% if form.location.errors %}is-invalid{% endif %}">{{ form.location.value|default:'' }}</textarea>
             <div class="text-danger">{{ form.location.errors }}</div>
         </div>
         
         <div class="mb-3">
             <label for="logo_path" class="form-label">Upload Logo File</label>
-            <input type="file" name="logo_path" id="logo_path" class="form-control {% if form.logo_path.errors %}is-invalid{% endif %}">
+            <input type="file" name="logo_path" id="logo_path" class="form-control {% if form.logo_path.errors %}is-invalid{% endif %}" required>
             <div class="text-danger">{{ form.logo_path.errors }}</div>
         </div>
 
@@ -153,11 +132,13 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Header Image</label>
-                            <input type="file" name="{{ form.header.html_name }}" class="form-control">
+                            <input type="file" name="{{ form.header.html_name }}" class="form-control" required>
+                            <div class="text-danger">{{ form.header.errors }}</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Footer Image</label>
-                            <input type="file" name="{{ form.footer.html_name }}" class="form-control">
+                            <input type="file" name="{{ form.footer.html_name }}" class="form-control" required>
+                            <div class="text-danger">{{ form.footer.errors }}</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Preview Image</label>

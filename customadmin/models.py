@@ -150,10 +150,7 @@ class Category(models.Model):
 
 class Document(models.Model):
     title = models.CharField(max_length=255)
-    description = models.TextField()
-    html_body = models.TextField()
-    css_body = models.TextField()
-    file_path = models.FileField(upload_to='documents/files/')
+    description = models.TextField(blank=True, null=True)
     logo_path = models.FileField(upload_to='documents/files/')
     email = models.TextField(blank=True, null=True)
     phone = models.TextField(blank=True, null=True)
@@ -218,8 +215,8 @@ class DocumentHeaderFooterImage(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='header_footer_images')
     color = models.CharField(max_length=50, blank=True, null=True)
     css = models.CharField(blank=True, null=True)
-    header = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
-    footer = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
+    header = models.ImageField(upload_to='documents/previews/')
+    footer = models.ImageField(upload_to='documents/previews/')
     preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
     is_default = models.BooleanField(null=True)
 

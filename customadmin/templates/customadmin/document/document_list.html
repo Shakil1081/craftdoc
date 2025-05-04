@@ -3,6 +3,13 @@
 {% block content %}
   <div class="container mt-4">
     <h2>Document List</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     <a href="{% url 'document_create' %}" class="btn btn-primary mb-2">Add Document</a>
     <table class="table table-bordered">
       <thead>
