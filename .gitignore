@@ -9,8 +9,8 @@ adminlte2/settings.py
 __pycache__/
 
 # any folder inside __pycache__ ignore it
-# adminlte2/__pycache__/*
-# customadmin/__pycache__/*
-# docmodify/__pycache__/*
+adminlte2/__pycache__/*
+customadmin/__pycache__/*
+docmodify/__pycache__/*
 # C extensions
 *.so
