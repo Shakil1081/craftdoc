@@ -339,12 +339,12 @@ def role_based_redirect(request):
 
 @login_required
 def public_dashboard(request):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
+    # if not request.user.is_active:
+    #     messages.warning(request, 'Please verify your email to access all features.')
     return render(request, 'docmodify/dashboard.html')
 
 def public_login(request):
-    if request.user.is_authenticated and request.user.is_active and not request.user.is_superuser:
+    if request.user.is_authenticated and not request.user.is_superuser:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    
@@ -362,14 +362,14 @@ def public_login(request):
             if user is not None:
                 if not user.check_password(password):
                     messages.error(request, "Invalid email or password.")
-                elif not user.is_active:
-                    login(request, user)
-                    messages.error(request, "Account not verified. Please enter your email for verification link.")
-                    return redirect('resend_verification')
+                # elif not user.is_active:
+                #     login(request, user)
+                #     messages.error(request, "Account not verified. Please enter your email for verification link.")
+                #     return redirect('resend_verification')
                 else:
                     if not request.user.is_superuser:                        
                         login(request, user)
-                        return redirect('public_dashboard')
+                        return redirect('hello_there')
                     else:
                         return redirect('admin-login')
             else:
