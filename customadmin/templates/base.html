@@ -40,18 +40,9 @@
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img src="{% if user.profile_image %}
-                    
-                    
-                    
                     /media/{{ user.profile_image }}
                   {% else %}
-                    
-                    
-                    
                     /media/default-avater.jpeg
-
-
-
                   {% endif %}"
                   class="user-image rounded-circle shadow"
                   alt="" />
@@ -62,18 +53,9 @@
                 <!-- begin::User Image -->
                 <li class="user-header text-bg-primary">
                   <img src="{% if user.profile_image %}
-                      
-                      
-                      
                       /media/{{ user.profile_image }}
                     {% else %}
-                      
-                      
-                      
                       /media/default-avater.jpeg
-
-
-
                     {% endif %}"
                     class="rounded-circle shadow"
                     alt="User Image" />
@@ -100,7 +82,7 @@
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
           <a href="{% url 'custom_admin_dashboard' %}" class="brand-link">
-            <img src="{% static 'img/logo_light.png' %}" alt="AdminLTE Logo" class="brand-image shadow" style="max-height: 45px;" />
+            <img src="{% static 'images/craftdoc-logo.png' %}" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
             {% comment %} <span class="brand-text fw-light">CraftDoc</span> {% endcomment %}
           </a>
         </div>
@@ -162,7 +144,7 @@
                 </a>
               </li>
 
-              <!--     <li class="nav-item">
+              <!--  <li class="nav-item">
                 <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-box-seam-fill"></i>
                   <p>
@@ -190,7 +172,7 @@
                     </a>
                   </li>
                 </ul>
-              </li>     -->
+              </li>  -->
             </ul>
             <!-- end::Sidebar Menu -->
           </nav>
@@ -213,7 +195,7 @@
         <!-- end::To the end -->
         <!-- begin::Copyright -->
         <strong>
-          Copyright &copy;{% now 'Y' %}&nbsp;
+          Copyright &copy;  {% now "Y" %}&nbsp;
           <a href="/" class="text-decoration-none">CraftDOC</a>.
         </strong>
         All rights reserved.

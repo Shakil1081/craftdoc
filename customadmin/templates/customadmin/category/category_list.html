@@ -14,7 +14,7 @@
           <th>Name</th>
           <th>Short Name</th>
           <th>Parent Category</th>
-          {% comment %} <th>Category Level</th> {% endcomment %}
+          <th>Category Level</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -30,7 +30,7 @@
                 None
               {% endif %}
             </td>
-            {% comment %} <td>{{ category.category_level }}</td> {% endcomment %}
+            <td>{{ category.category_level }}</td>
             <td>
               <a href="{% url 'category_edit' category.pk %}" class="btn btn-warning btn-sm">Edit</a>
               <button class="btn btn-sm btn-danger delete-btn" data-category-id="{{ category.id }}">Delete</button>
