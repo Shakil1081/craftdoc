@@ -85,9 +85,9 @@
       <div class="d-flex align-items-center mb-3 gap-3">
           <h5 class="m-0">Download </h5>
           <div class="btn-group btn-group-sm">
-              <button class="btn btn-outline-danger" id="downloadPdf" onclick="downloadAsPDF()">PDF</button>
-              <button class="btn btn-outline-secondary" id="downloadPng" onclick="downloadAsImage('png')">PNG</button>
-              <button class="btn btn-outline-success" id="downloadJpg" onclick="downloadAsImage('jpg')">JPG</button>
+              <button class="btn btn-outline-danger" id="downloadPdf">PDF</button>
+              <button class="btn btn-outline-secondary" id="downloadPng">PNG</button>
+              <button class="btn btn-outline-success" id="downloadJpg">JPG</button>
           </div>
       </div>
       <div class="logo-change-panel">
@@ -447,67 +447,85 @@
         });        
     });
     
+    // Download functions
     async function downloadAsPDF() {
         const { jsPDF } = window.jspdf;
         const a4panel = document.getElementById('a4panel');
-    
-        // Wait for images and content to load
-        await Promise.all(
-            Array.from(a4panel.querySelectorAll('img')).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(resolve => {
-                    img.onload = resolve;
-                    img.onerror = resolve; // Handle broken images
-                });
-            })
-        );
-    
-        // Add a small delay to ensure styles are applied
-        await new Promise(resolve => setTimeout(resolve, 500));
-    
-        html2canvas(a4panel, {
-            scale: 2, // Higher resolution
-            useCORS: true, // Handle cross-origin images
-            logging: true // Enable logging for debugging
-        }).then(canvas => {
+
+        try {
+            // Wait for fonts and images to load
+            await document.fonts.ready;
+            await Promise.all(
+                Array.from(a4panel.querySelectorAll('img')).map(img => {
+                    if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve; // Handle broken images
+                    });
+                })
+            );
+
+            // Small delay to ensure styles are applied
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const canvas = await html2canvas(a4panel, {
+                scale: 3, // High resolution
+                useCORS: true, // Handle cross-origin images
+                logging: true, // Debug rendering issues
+                width: a4panel.offsetWidth,
+                height: a4panel.offsetHeight
+            });
+
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
             pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
             pdf.save("letterhead.pdf");
-        }).catch(error => {
+        } catch (error) {
             console.error('Error generating PDF:', error);
-        });
+            alert('Failed to generate PDF. Check console for details.');
+        }
     }
-    
-    function downloadAsImage(type = 'png') {
+
+    async function downloadAsImage(type = 'png') {
         const a4panel = document.getElementById('a4panel');
-    
-        // Wait for images to load
-        Promise.all(
-            Array.from(a4panel.querySelectorAll('img')).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(resolve => {
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                });
-            })
-        ).then(() => {
-            html2canvas(a4panel, {
-                scale: 2,
+
+        try {
+            // Wait for fonts and images to load
+            await document.fonts.ready;
+            await Promise.all(
+                Array.from(a4panel.querySelectorAll('img')).map(img => {
+                    if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                })
+            );
+
+            const canvas = await html2canvas(a4panel, {
+                scale: 3,
                 useCORS: true,
-                logging: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `letterhead.${type}`;
-                link.href = canvas.toDataURL(`image/${type}`);
-                link.click();
-            }).catch(error => {
-                console.error(`Error generating ${type.toUpperCase()}:`, error);
+                logging: true,
+                width: a4panel.offsetWidth,
+                height: a4panel.offsetHeight
             });
-        });
+
+            const link = document.createElement('a');
+            link.download = `letterhead.${type}`;
+            link.href = canvas.toDataURL(`image/${type}`);
+            link.click();
+        } catch (error) {
+            console.error(`Error generating ${type.toUpperCase()}:`, error);
+            alert(`Failed to generate ${type.toUpperCase()}. Check console for details.`);
+        }
     }
+
+    // Attach download functions to buttons
+    $('#downloadPdf').on('click', downloadAsPDF);
+    $('#downloadPng').on('click', () => downloadAsImage('png'));
+    $('#downloadJpg').on('click', () => downloadAsImage('jpg'));
   </script>
 </body>
 </html>

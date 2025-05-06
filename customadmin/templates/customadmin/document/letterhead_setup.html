@@ -349,43 +349,43 @@
             // get css
             function getCss() {
                 const elements = {
-                phoneShow: [
-                    "left",
-                    "right",
-                    "top",
-                    "bottom",
-                    "font-weight",
-                    "font-style",
-                    "font-family",
-                    "font-size",
-                    "color",
-                    "text-align",
-                ],
-                emailShow: [
-                    "left",
-                    "right",
-                    "top",
-                    "bottom",
-                    "font-weight",
-                    "font-style",
-                    "font-family",
-                    "font-size",
-                    "color",
-                    "text-align",
-                ],
-                locationShow: [
-                    "left",
-                    "right",
-                    "top",
-                    "bottom",
-                    "font-weight",
-                    "font-style",
-                    "font-family",
-                    "font-size",
-                    "color",
-                    "text-align",
-                ],
-                logoShow: ["left", "right", "top", "bottom", "height", "width"],
+                    phoneShow: [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "font-weight",
+                        "font-style",
+                        "font-family",
+                        "font-size",
+                        "color",
+                        "text-align",
+                    ],
+                    emailShow: [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "font-weight",
+                        "font-style",
+                        "font-family",
+                        "font-size",
+                        "color",
+                        "text-align",
+                    ],
+                    locationShow: [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "font-weight",
+                        "font-style",
+                        "font-family",
+                        "font-size",
+                        "color",
+                        "text-align",
+                    ],
+                    logoShow: ["left", "right", "top", "bottom", "height", "width"],
                 };
 
                 let cssOutput = "";
@@ -404,7 +404,7 @@
                     cssOutput += "}";
                 }
                 });
-
+                
                 return cssOutput;
             }
 
@@ -480,7 +480,11 @@
                         console.error("AJAX request failed");
                     },
                 });
-            });            
+            });    
+            
+            $("#getCss").on("click", function () {
+                console.log(getCss());
+            });
         });
     </script>
 

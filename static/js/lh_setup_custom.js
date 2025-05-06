@@ -391,8 +391,4 @@ $(document).ready(function () {
       });
     }
   });
-
-  $("#getCss").on("click", function () {
-    console.log(getCss());
-  });
 });
