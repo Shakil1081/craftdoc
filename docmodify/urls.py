@@ -29,4 +29,5 @@ urlpatterns = [
     path('credit-uses-history', views.credit_uses_history, name='credit_uses_history'),
 
     path('letterhead/<int:document_id>/', views.letterhead, name='letterhead'),
+    path('save-download-history/', views.save_download_history, name='save_download_history'),
 ]

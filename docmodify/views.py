@@ -22,11 +22,11 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
-from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
+from customadmin.models import Document,DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
-
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 
 def hello_there(request):
@@ -156,6 +156,44 @@ def letterhead(request, document_id):
 
     # Render the template for normal requests
     return render(request, 'docmodify/document/letterhead.html', context)
+
+@csrf_exempt
+@login_required
+def save_download_history(request):
+    if request.method == 'POST':
+        user = request.user
+        document_id = request.POST.get('documentId')
+        document_hf_id = request.POST.get('document_hf_id')
+        logo_path = request.POST.get('logo_path')
+        contact = request.POST.get('contact')
+        email = request.POST.get('email')
+        location = request.POST.get('location')
+        css = request.POST.get('css')
+        download_type = request.POST.get('download_type')
+        
+        try:
+            document = Document.objects.get(pk=document_id)            
+            document_hf = DocumentHeaderFooterImage.objects.get(pk=document_hf_id)
+            
+            DownloadHistory.objects.create(
+                user=user,
+                document_id=document.pk,
+                document_hf=document_hf,
+                logo_path=logo_path,
+                contact=contact,
+                email=email,
+                location=location,
+                css=css,
+                header_path=document_hf.header.url if document_hf.header else '',
+                footer_path=document_hf.footer.url if document_hf.footer else '',
+                download_type=download_type
+            )
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid method'})
 
 def register(request):
     if request.method == 'POST':

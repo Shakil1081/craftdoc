@@ -242,3 +242,19 @@ class Setting(models.Model):
     def __str__(self):
         return f"{self.title} ({self.key})"
 
+class DownloadHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document_hf = models.ForeignKey(DocumentHeaderFooterImage, on_delete=models.CASCADE)
+    logo_path = models.CharField(max_length=255, blank=True)
+    contact = models.CharField(max_length=255, blank=True)
+    email = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    css = models.TextField(blank=True)
+    header_path = models.CharField(max_length=255, blank=True)
+    footer_path = models.CharField(max_length=255, blank=True)
+    download_type = models.CharField(max_length=10)  # 'pdf', 'jpg', 'png'
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} ({self.created_at})"

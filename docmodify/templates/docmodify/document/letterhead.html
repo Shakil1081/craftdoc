@@ -84,7 +84,7 @@
       <div id="messageBox" class="alert d-none" role="alert"></div>
       <div class="d-flex align-items-center mb-3 gap-3">
           <h5 class="m-0">Download </h5>
-          <div class="btn-group btn-group-sm">
+          <div class="btn-group btn-group-sm download-btn">
               <button class="btn btn-outline-danger" id="downloadPdf">PDF</button>
               <button class="btn btn-outline-secondary" id="downloadPng">PNG</button>
               <button class="btn btn-outline-success" id="downloadJpg">JPG</button>
@@ -273,7 +273,7 @@
                        data-hf-id="{{ img.id }}" 
                        data-header="{{ img.header.url }}">
                       <img class="header-item-img" src="{{ img.header.url }}" alt="Header Image">
-                  </div>
+                  </div>0
                   {% endif %}
               {% empty %}
                   <div class="header-item" data-hf-id="" data-header="">
@@ -300,6 +300,7 @@
                   </div>
               {% endfor %}
           </div>
+          {% csrf_token %}
       </div>            
     </div>
   </div>
@@ -318,101 +319,101 @@
     $(document).ready(function () {
         // Function to load header/footer data via AJAX
         function loadHeaderFooterData(documentId) {
-        $.ajax({
-            url: `/letterhead/${documentId}/`,
-            type: 'GET',
-            headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-            },
-            success: function (response) {
-            headerFooterImages = response.header_footer_images;
-            const document = response.document;            
+            $.ajax({
+                url: `/letterhead/${documentId}/`,
+                type: 'GET',
+                headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (response) {
+                headerFooterImages = response.header_footer_images;
+                const document = response.document;            
 
-            // Find the default header/footer image
-            const defaultImage = headerFooterImages.find(hf => hf.is_default);
+                // Find the default header/footer image
+                const defaultImage = headerFooterImages.find(hf => hf.is_default);
 
-            if (defaultImage && defaultImage.css) {
-                $('#customCss').html(defaultImage.css);
-            } else {
-                console.log('No default CSS found.');
-            }
-
-            // Update logo
-            if (document.logo) {
-                $('#logoPreview').attr('src', document.logo);
-                $('#logoShow').attr('src', document.logo);
-            }
-            
-            // Update phone, email, location
-            $('#phoneInput').val(document.phone || '');
-            $('#emailInput').val(document.email || '');
-            $('#locationInput').val(document.location || '');
-            
-            $('#phoneShow').empty();
-            $('#emailShow').empty();
-            $('#locationShow').empty();
-
-            // Update phone, email, location
-            if (document.phone) {
-                $('#phoneShow').append(document.phone.replace(/\n/g, '<br>'));
-            } else {
-                $('#phoneShow').append('');
-            }
-            if (document.email) {
-                $('#emailShow').append(document.email.replace(/\n/g, '<br>'));
-            } else {
-                $('#emailShow').append('');
-            }
-            if (document.location) {
-                $('#locationShow').append(document.location.replace(/\n/g, '<br>'));
-            } else {
-                $('#locationShow').append('');
-            }
-
-            // Clear and repopulate header/footer
-            $('#headerChangePanel').empty();
-            $('#footerChangePanel').empty();
-            
-            headerFooterImages.forEach(hf => {
-                if (hf.header) {
-                const isSelected = hf.is_default ? 'selected' : '';
-                $('#headerChangePanel').append(`
-                    <div class="header-item ${isSelected}" data-hf-id="${hf.id}" data-header="${hf.header}">
-                    <img class="header-item-img" src="${hf.header}" alt="Header" />
-                    </div>
-                `);
+                if (defaultImage && defaultImage.css) {
+                    $('#customCss').html(defaultImage.css);
+                } else {
+                    console.log('No default CSS found.');
                 }
-                if (hf.footer) {
-                const isSelected = hf.is_default ? 'selected' : '';
-                $('#footerChangePanel').append(`
-                    <div class="footer-item ${isSelected}" data-hf-id="${hf.id}" data-footer="${hf.footer}">
-                    <img class="footer-item-img" src="${hf.footer}" alt="Footer" />
-                    </div>
-                `);
+
+                // Update logo
+                if (document.logo) {
+                    $('#logoPreview').attr('src', document.logo);
+                    $('#logoShow').attr('src', document.logo);
                 }
-            });
-            },          
-            error: function (error) {
-            console.error('Error fetching header/footer data:', error);
-            }
-        });
+                
+                // Update phone, email, location
+                $('#phoneInput').val(document.phone || '');
+                $('#emailInput').val(document.email || '');
+                $('#locationInput').val(document.location || '');
+                
+                $('#phoneShow').empty();
+                $('#emailShow').empty();
+                $('#locationShow').empty();
+
+                // Update phone, email, location
+                if (document.phone) {
+                    $('#phoneShow').append(document.phone.replace(/\n/g, '<br>'));
+                } else {
+                    $('#phoneShow').append('');
+                }
+                if (document.email) {
+                    $('#emailShow').append(document.email.replace(/\n/g, '<br>'));
+                } else {
+                    $('#emailShow').append('');
+                }
+                if (document.location) {
+                    $('#locationShow').append(document.location.replace(/\n/g, '<br>'));
+                } else {
+                    $('#locationShow').append('');
+                }
+
+                // Clear and repopulate header/footer
+                $('#headerChangePanel').empty();
+                $('#footerChangePanel').empty();
+                
+                headerFooterImages.forEach(hf => {
+                    if (hf.header) {
+                    const isSelected = hf.is_default ? 'selected' : '';
+                    $('#headerChangePanel').append(`
+                        <div class="header-item ${isSelected}" data-hf-id="${hf.id}" data-header="${hf.header}">
+                        <img class="header-item-img" src="${hf.header}" alt="Header" />
+                        </div>
+                    `);
+                    }
+                    if (hf.footer) {
+                    const isSelected = hf.is_default ? 'selected' : '';
+                    $('#footerChangePanel').append(`
+                        <div class="footer-item ${isSelected}" data-hf-id="${hf.id}" data-footer="${hf.footer}">
+                        <img class="footer-item-img" src="${hf.footer}" alt="Footer" />
+                        </div>
+                    `);
+                    }
+                });
+                },          
+                error: function (error) {
+                console.error('Error fetching header/footer data:', error);
+                }
+            });                      
         }
 
         // Handle click on letterhead items
         $('.letterhead-item').on('click', function () {
-        // Remove 'selected' class from all items
-        $('.letterhead-item').removeClass('selected');
-        $(this).addClass('selected');
+            // Remove 'selected' class from all items
+            $('.letterhead-item').removeClass('selected');
+            $(this).addClass('selected');
 
-        // Get the selected document ID
-        const documentId = $(this).data('document-id');
+            // Get the selected document ID
+            const documentId = $(this).data('document-id');
 
-        // Load header/footer data for the selected document
-        loadHeaderFooterData(documentId);
+            // Load header/footer data for the selected document
+            loadHeaderFooterData(documentId);
 
-        // Update the URL dynamically
-        const newUrl = `/letterhead/${documentId}/`;
-        window.history.pushState({}, '', newUrl);
+            // Update the URL dynamically
+            const newUrl = `/letterhead/${documentId}/`;
+            window.history.pushState({}, '', newUrl);
         });
 
         // Trigger default selection
@@ -444,88 +445,40 @@
             footerItem.addClass("selected");
 
             $("#a4panel").css("background-image", `url('${headerSrc}'), url('${footerSrc}')`);
-        });        
+        });     
+        
+        $('.download-btn button').on('click', function () {
+            const downloadType = $(this).attr('id').replace('download', '').toLowerCase(); // pdf, jpg, png
+        
+            const data = {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                download_type: downloadType,
+                documentId: $('.letterhead-item.selected').data('document-id'),
+                document_hf_id: $('.header-item.selected').data('hf-id'),
+                logo_path: $('#logoShow').attr('src') || '',
+                contact: $('#phoneShow').text().trim(),
+                email: $('#emailShow').text().trim(),
+                location: $('#locationShow').text().trim(),
+                css: $('#customCss').html().trim()
+            };
+            console.log(data);
+            $.ajax({
+                url: '/save-download-history/',
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    if (res.success) {
+                        console.log("Download history saved.");
+                        // Optionally trigger actual download
+                    } else {
+                        console.error("Failed to save download history");
+                    }
+                }
+            });
+        }); 
     });
     
-    // Download functions
-    async function downloadAsPDF() {
-        const { jsPDF } = window.jspdf;
-        const a4panel = document.getElementById('a4panel');
-
-        try {
-            // Wait for fonts and images to load
-            await document.fonts.ready;
-            await Promise.all(
-                Array.from(a4panel.querySelectorAll('img')).map(img => {
-                    if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
-                    return new Promise(resolve => {
-                        img.onload = resolve;
-                        img.onerror = resolve; // Handle broken images
-                    });
-                })
-            );
-
-            // Small delay to ensure styles are applied
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            const canvas = await html2canvas(a4panel, {
-                scale: 3, // High resolution
-                useCORS: true, // Handle cross-origin images
-                logging: true, // Debug rendering issues
-                width: a4panel.offsetWidth,
-                height: a4panel.offsetHeight
-            });
-
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save("letterhead.pdf");
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-            alert('Failed to generate PDF. Check console for details.');
-        }
-    }
-
-    async function downloadAsImage(type = 'png') {
-        const a4panel = document.getElementById('a4panel');
-
-        try {
-            // Wait for fonts and images to load
-            await document.fonts.ready;
-            await Promise.all(
-                Array.from(a4panel.querySelectorAll('img')).map(img => {
-                    if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
-                    return new Promise(resolve => {
-                        img.onload = resolve;
-                        img.onerror = resolve;
-                    });
-                })
-            );
-
-            const canvas = await html2canvas(a4panel, {
-                scale: 3,
-                useCORS: true,
-                logging: true,
-                width: a4panel.offsetWidth,
-                height: a4panel.offsetHeight
-            });
-
-            const link = document.createElement('a');
-            link.download = `letterhead.${type}`;
-            link.href = canvas.toDataURL(`image/${type}`);
-            link.click();
-        } catch (error) {
-            console.error(`Error generating ${type.toUpperCase()}:`, error);
-            alert(`Failed to generate ${type.toUpperCase()}. Check console for details.`);
-        }
-    }
-
-    // Attach download functions to buttons
-    $('#downloadPdf').on('click', downloadAsPDF);
-    $('#downloadPng').on('click', () => downloadAsImage('png'));
-    $('#downloadJpg').on('click', () => downloadAsImage('jpg'));
+    
   </script>
 </body>
 </html>
