@@ -175,7 +175,7 @@ def save_download_history(request):
             document = Document.objects.get(pk=document_id)            
             document_hf = DocumentHeaderFooterImage.objects.get(pk=document_hf_id)
             
-            DownloadHistory.objects.create(
+            download_history = DownloadHistory.objects.create(
                 user=user,
                 document_id=document.pk,
                 document_hf=document_hf,
@@ -189,7 +189,8 @@ def save_download_history(request):
                 download_type=download_type
             )
 
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'download_history_id': download_history.pk})
+            
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
