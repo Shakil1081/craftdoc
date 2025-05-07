@@ -377,7 +377,7 @@ def public_login(request):
                 #     messages.error(request, "Account not verified. Please enter your email for verification link.")
                 #     return redirect('resend_verification')
                 else:
-                    if not request.user.is_superuser:                        
+                    if not user.is_superuser:                        
                         login(request, user)
                         return redirect(next_url or 'hello_there')
                     else:

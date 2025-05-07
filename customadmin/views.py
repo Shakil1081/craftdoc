@@ -52,7 +52,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            if request.user.is_superuser:
+            if user.is_superuser:
                 login(request, user)
                 return redirect('custom_admin_dashboard')
             else:
