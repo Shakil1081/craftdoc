@@ -22,7 +22,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
-from customadmin.models import Document,DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
+from customadmin.models import Document, Setting, DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
@@ -198,7 +198,7 @@ def save_download_history(request):
                 footer_path=document_hf.footer if document_hf.footer else '',
                 download_type=download_type
             )
-
+            user.use_credit("credit_per_template")
             return JsonResponse({'success': True, 'download_history_id': download_history.pk})
             
         except Exception as e:
@@ -460,7 +460,10 @@ def reset_password(request, uidb64, token):
         return redirect('forgot_password')
     
 def earn_credit(request):
-    return render(request, 'docmodify/credit/earn.html')
+    credit_setting = Setting.objects.filter(key='credit_per_bdt').first()
+    return render(request, 'docmodify/credit/earn.html', {
+        'credit_setting': credit_setting
+    })
 
 def credit_earn_history(request):
     user_credit_history = CreditEarnHistory.objects.filter(user=request.user)
