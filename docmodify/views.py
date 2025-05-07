@@ -214,45 +214,45 @@ def register(request):
             user.is_active = False  # User inactive until email verified
             user.set_password(form.cleaned_data['password'])
             user.save()
+            user.earn_credit("signup_bonus")
+            # # Generate and store 150-char token
+            # token = user.generate_verification_token()
 
-            # Generate and store 150-char token
-            token = user.generate_verification_token()
+            # # Assign 'user' group
+            # user_group, created = Group.objects.get_or_create(name='user')
+            # user.groups.add(user_group)
 
-            # Assign 'user' group
-            user_group, created = Group.objects.get_or_create(name='user')
-            user.groups.add(user_group)
+            # # Send verification email
+            # # token = account_activation_token.make_token(user)
+            # uid = urlsafe_base64_encode(force_bytes(user.pk))
+            # protocol = 'https' if request.is_secure() else 'http'
+            # current_site = get_current_site(request)
+            # domain = current_site.domain
 
-            # Send verification email
-            # token = account_activation_token.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            protocol = 'https' if request.is_secure() else 'http'
-            current_site = get_current_site(request)
-            domain = current_site.domain
+            # context = {
+            #     'user': user,
+            #     'protocol': protocol,
+            #     'domain': domain,
+            #     'uid': uid,
+            #     'token': token,
+            #     'site_name': 'CraftDOC'
+            # }
 
-            context = {
-                'user': user,
-                'protocol': protocol,
-                'domain': domain,
-                'uid': uid,
-                'token': token,
-                'site_name': 'CraftDOC'
-            }
+            # # Render both HTML and plain text versions
+            # html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
+            # text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
 
-            # Render both HTML and plain text versions
-            html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
-            text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
+            # # Send the email
+            # email = EmailMultiAlternatives(
+            #     subject="Verify Your Email | CraftDOC",
+            #     body=text_content,  # Plain text fallback
+            #     from_email="noreply@craftdoc.com",
+            #     to=[user.email]
+            # )
+            # email.attach_alternative(html_content, "text/html")  # HTML version
+            # email.send()
 
-            # Send the email
-            email = EmailMultiAlternatives(
-                subject="Verify Your Email | CraftDOC",
-                body=text_content,  # Plain text fallback
-                from_email="noreply@craftdoc.com",
-                to=[user.email]
-            )
-            email.attach_alternative(html_content, "text/html")  # HTML version
-            email.send()
-
-            return redirect('verification_mail_sent')
+            # return redirect('verification_mail_sent')
     else:
         form = PublicUserRegistrationForm()
 
