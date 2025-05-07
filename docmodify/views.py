@@ -28,6 +28,7 @@ from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.core.files.storage import default_storage
 
 def hello_there(request):
     # Get the search term from the GET request
@@ -82,8 +83,8 @@ def hello_there(request):
 
 @login_required
 def letterhead(request, document_id):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
+    # if not request.user.is_active:
+    #     messages.warning(request, 'Please verify your email to access all features.')
 
      # Fetch the selected document
     document = get_object_or_404(Document, id=document_id)
@@ -162,9 +163,11 @@ def letterhead(request, document_id):
 def save_download_history(request):
     if request.method == 'POST':
         user = request.user
-        document_id = request.POST.get('documentId')
+        document_id = request.POST.get('document_id')
         document_hf_id = request.POST.get('document_hf_id')
-        logo_path = request.POST.get('logo_path')
+        logo_file = request.FILES.get('logo_file')  # Handle uploaded file
+
+        # Other fields...
         contact = request.POST.get('contact')
         email = request.POST.get('email')
         location = request.POST.get('location')
@@ -175,6 +178,13 @@ def save_download_history(request):
             document = Document.objects.get(pk=document_id)            
             document_hf = DocumentHeaderFooterImage.objects.get(pk=document_hf_id)
             
+            # Optional: Save logo file to media
+            logo_path = None
+            if logo_file:
+                logo_path = default_storage.save(f'documents/files/{logo_file.name}', logo_file)
+            else:
+                logo_path = document.logo_path
+            
             download_history = DownloadHistory.objects.create(
                 user=user,
                 document_id=document.pk,
@@ -184,8 +194,8 @@ def save_download_history(request):
                 email=email,
                 location=location,
                 css=css,
-                header_path=document_hf.header.url if document_hf.header else '',
-                footer_path=document_hf.footer.url if document_hf.footer else '',
+                header_path=document_hf.header if document_hf.header else '',
+                footer_path=document_hf.footer if document_hf.footer else '',
                 download_type=download_type
             )
 
@@ -353,7 +363,7 @@ def public_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-
+            next_url = request.POST.get('next')
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
@@ -369,7 +379,7 @@ def public_login(request):
                 else:
                     if not request.user.is_superuser:                        
                         login(request, user)
-                        return redirect('hello_there')
+                        return redirect(next_url or 'hello_there')
                     else:
                         return redirect('admin-login')
             else:
