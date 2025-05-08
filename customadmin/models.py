@@ -155,6 +155,7 @@ class Document(models.Model):
     email = models.TextField(blank=True, null=True)
     phone = models.TextField(blank=True, null=True)
     location = models.TextField(blank=True, null=True)
+    letterhead_content = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.title
