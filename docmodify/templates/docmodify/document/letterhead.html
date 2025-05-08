@@ -541,29 +541,39 @@
         $('.download-btn button').on('click', function () {
             const downloadType = $(this).attr('id').replace('download', '').toLowerCase(); // pdf, jpg, png
         
-            const data = {
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                download_type: downloadType,
-                documentId: $('.letterhead-item.selected').data('document-id'),
-                document_hf_id: $('.header-item.selected').data('hf-id'),
-                logo_path: $('#logoShow').attr('src') || '',
-                contact: $('#phoneShow').text().trim(),
-                email: $('#emailShow').text().trim(),
-                location: $('#locationShow').text().trim(),
-                css: $('#customCss').html().trim()
-            };
-            console.log(data);
+            const formData = new FormData();
+
+            // Add CSRF token
+            formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+
+            // Add regular text fields
+            formData.append('download_type', downloadType);
+            formData.append('document_id', $('.letterhead-item.selected').data('document-id'));
+            formData.append('document_hf_id', $('.header-item.selected').data('hf-id'));
+            formData.append('contact', $('#phoneShow').text().trim());
+            formData.append('email', $('#emailShow').text().trim());
+            formData.append('location', $('#locationShow').text().trim());
+            formData.append('css', $('#customCss').html().trim());
+
+            // Add media file (e.g., logo file input)
+            const logoInput = $('#logoInput')[0];  // Assuming you have <input type="file" id="logoInput">
+            if (logoInput && logoInput.files.length > 0) {
+                formData.append('logo_file', logoInput.files[0]);
+            }
+            console.log(formData.logo_file);
             $.ajax({
                 url: '/save-download-history/',
                 type: 'POST',
-                data: data,
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (res) {
                     if (res.success) {
                         console.log("Download history saved.");
                         // Optionally trigger actual download
                         window.location.href = 'http://127.10.10.10:8000/download/pdf/' + res.download_history_id;
                     } else {
-                        console.error("Failed to save download history");
+                        console.error(res.error);
                     }
                 }
             });

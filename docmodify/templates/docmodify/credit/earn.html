@@ -191,8 +191,9 @@
   // Calculate total credits when the amount changes
   amountInput.addEventListener("input", () => {
     const amount = parseFloat(amountInput.value);
+    const credit_setting = {{ credit_setting.value|floatformat:2 }};
     if (!isNaN(amount)) {
-      totalCredits.value = amount * 25;
+      totalCredits.value = amount * credit_setting;
     } else {
       totalCredits.value = "";
     }
