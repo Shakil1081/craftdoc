@@ -12,10 +12,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
   <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
-
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
-
-
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
   <title>Letterhead</title>
   <style>
     .modal-backdrop{
@@ -42,6 +39,9 @@
         height: 11.69in;
     }
     #letterheadContentShow p{
+        margin: 0;
+    }
+    #letterhead-body .content-panel .zoom-buttons{
         margin: 0;
     }
   </style>
@@ -71,19 +71,20 @@
     </div>
 
     <div class="content-panel">
-      <div class="zoom-buttons">
-          <div class="input-group input-group-sm">
-              <button id="zoomOutBtn" class="input-group-text">-</button>
-              <div id="zoomInput" class="form-control  text-center">
-                  100%
-              </div>
-              <button id="zoomInBtn" class="input-group-text">+</button>
-          </div>
-    </div>
-    {% comment %} //center align button {% endcomment %}
-    <div class="text-center my-3">
-        <button class="btn btn-sm btn-success " data-bs-toggle="modal" data-bs-target="#contentModal">Add Content to Letterhead</button>
-    </div>
+      <div class="d-flex justify-content-between mb-3">
+        <div class="zoom-buttons">
+            <div class="input-group input-group-sm">
+                <button id="zoomOutBtn" class="input-group-text">-</button>
+                <div id="zoomInput" class="form-control  text-center">
+                    100%
+                </div>
+                <button id="zoomInBtn" class="input-group-text">+</button>
+            </div>
+      </div>
+      <div class="text-center">
+          <button class="btn btn-sm btn-success " data-bs-toggle="modal" data-bs-target="#contentModal">Add Content to Letterhead</button>
+      </div>
+      </div>
 
 
           {% comment %} open modal  {% endcomment %}
