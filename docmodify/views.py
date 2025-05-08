@@ -174,7 +174,8 @@ def save_download_history(request):
         location = request.POST.get('location')
         css = request.POST.get('css')
         download_type = request.POST.get('download_type')
-        
+        letterhead_content = request.POST.get('letterhead_content')
+
         try:
             document = Document.objects.get(pk=document_id)            
             document_hf = DocumentHeaderFooterImage.objects.get(pk=document_hf_id)
@@ -197,7 +198,8 @@ def save_download_history(request):
                 css=css,
                 header_path=document_hf.header if document_hf.header else '',
                 footer_path=document_hf.footer if document_hf.footer else '',
-                download_type=download_type
+                download_type=download_type,
+                letterhead_content = letterhead_content
             )
             user.use_credit("credit_per_template")
             return JsonResponse({'success': True, 'download_history_id': download_history.pk})

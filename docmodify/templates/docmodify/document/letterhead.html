@@ -100,6 +100,8 @@
                       </div>
                       <div class="modal-body">
                          <div id="modalEditor" style="height: 320px"></div>
+                         <!-- Hidden input to store Quill content -->
+                         <input type="hidden" name="letterhead_content" id="letterhead_content_input">
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -555,6 +557,11 @@
         
             const formData = new FormData();
 
+            const content = quill.root.innerHTML;
+            if (content.trim() !== '' && content !== '<p><br></p>') {
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
+
             // Add CSRF token
             formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
 
@@ -566,7 +573,8 @@
             formData.append('email', $('#emailShow').text().trim());
             formData.append('location', $('#locationShow').text().trim());
             formData.append('css', $('#customCss').html().trim());
-            
+            formData.append('letterhead_content', $('#letterhead_content_input').val());
+
             // Add media file (e.g., logo file input)
             const logoInput = $('#logoInput')[0];  // Assuming you have <input type="file" id="logoInput">
             if (logoInput && logoInput.files.length > 0) {

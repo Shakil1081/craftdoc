@@ -164,7 +164,7 @@
         $('form').on('submit', function (e) {
             // Update hidden input with editor content
             const content = quill.root.innerHTML;
-            if(!(content == '<p><br></p>' || content == '') ){
+            if (content.trim() !== '' && content !== '<p><br></p>') {
                 $('#letterhead_content_input').val(quill.root.innerHTML);
             }
         });
