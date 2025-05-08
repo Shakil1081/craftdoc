@@ -44,43 +44,6 @@ $(document).ready(function () {
     setHeaderFooter();
   });
 
-  // //header item click event
-  // $(document).on("click", ".header-item", function () {
-  //   $(".header-item").removeClass("selected");
-  //   $(this).addClass("selected");
-  //   const headerSrc = $(this).data("header");
-  //   const bgImages = $("#a4panel").css("background-image").split(",");
-
-  //   // Trim and update only the first one (header)
-  //   if (bgImages.length > 1) {
-  //     bgImages[0] = `url("${headerSrc}")`; // Update header
-  //   } else {
-  //     // Fallback: only one image exists, just add the second manually if needed
-  //     bgImages[0] = `url("${headerSrc}")`;
-  //     bgImages[1] = `url("default-footer.png")`; // change this to your actual footer URL
-  //   }
-
-  //   $("#a4panel").css("background-image", bgImages.join(","));
-  // });
-  // //footer item click event
-  // $(document).on("click", ".footer-item", function () {
-  //   $(".footer-item").removeClass("selected");
-  //   $(this).addClass("selected");
-
-  //   const footerSrc = $(this).data("footer");
-  //   const bgImages = $("#a4panel").css("background-image").split(",");
-
-  //   // Ensure both background layers exist
-  //   if (bgImages.length > 1) {
-  //     bgImages[1] = `url("${footerSrc}")`;
-  //   } else {
-  //     // Fallback: only one image exists, add a header placeholder
-  //     bgImages[0] = bgImages[0] || `url("default-header.png")`;
-  //     bgImages[1] = `url("${footerSrc}")`;
-  //   }
-
-  //   $("#a4panel").css("background-image", bgImages.join(","));
-  // });
 
   $("#emailInput").on("input", function () {
     const email = $(this).val();
@@ -126,19 +89,19 @@ $(document).ready(function () {
       // Update CSS based on left and right
       if (this.id === "phoneLeft") {
         $("#phoneRight").val(""); // Clear the right input when left is changed
-        $("#phoneShow").css({ left: `${left}px`, right: "unset" }); // Set left, reset right
+        $("#phoneShow").css({ left: `${left}px`, right: "auto" }); // Set left, reset right
       } else if (this.id === "phoneRight") {
         $("#phoneLeft").val(""); // Clear the left input when right is changed
-        $("#phoneShow").css({ right: `${right}px`, left: "unset" }); // Set right, reset left
+        $("#phoneShow").css({ right: `${right}px`, left: "auto" }); // Set right, reset left
       }
 
       // Update CSS based on top and bottom
       if (this.id === "phoneTop") {
         $("#phoneBottom").val(""); // Clear the bottom input when top is changed
-        $("#phoneShow").css({ top: `${top}px`, bottom: "unset" }); // Set top, reset bottom
+        $("#phoneShow").css({ top: `${top}px`, bottom: "auto" }); // Set top, reset bottom
       } else if (this.id === "phoneBottom") {
         $("#phoneTop").val(""); // Clear the top input when bottom is changed
-        $("#phoneShow").css({ bottom: `${bottom}px`, top: "unset" }); // Set bottom, reset top
+        $("#phoneShow").css({ bottom: `${bottom}px`, top: "auto" }); // Set bottom, reset top
       }
     }
   );
@@ -153,18 +116,18 @@ $(document).ready(function () {
 
       if (this.id === "emailLeft") {
         $("#emailRight").val("");
-        $("#emailShow").css({ left: `${left}px`, right: "unset" });
+        $("#emailShow").css({ left: `${left}px`, right: "auto" });
       } else if (this.id === "emailRight") {
         $("#emailLeft").val("");
-        $("#emailShow").css({ right: `${right}px`, left: "unset" });
+        $("#emailShow").css({ right: `${right}px`, left: "auto" });
       }
 
       if (this.id === "emailTop") {
         $("#emailBottom").val("");
-        $("#emailShow").css({ top: `${top}px`, bottom: "unset" });
+        $("#emailShow").css({ top: `${top}px`, bottom: "auto" });
       } else if (this.id === "emailBottom") {
         $("#emailTop").val("");
-        $("#emailShow").css({ bottom: `${bottom}px`, top: "unset" });
+        $("#emailShow").css({ bottom: `${bottom}px`, top: "auto" });
       }
     }
   );
@@ -179,18 +142,18 @@ $(document).ready(function () {
 
       if (this.id === "locationLeft") {
         $("#locationRight").val("");
-        $("#locationShow").css({ left: `${left}px`, right: "unset" });
+        $("#locationShow").css({ left: `${left}px`, right: "auto" });
       } else if (this.id === "locationRight") {
         $("#locationLeft").val("");
-        $("#locationShow").css({ right: `${right}px`, left: "unset" });
+        $("#locationShow").css({ right: `${right}px`, left: "auto" });
       }
 
       if (this.id === "locationTop") {
         $("#locationBottom").val("");
-        $("#locationShow").css({ top: `${top}px`, bottom: "unset" });
+        $("#locationShow").css({ top: `${top}px`, bottom: "auto" });
       } else if (this.id === "locationBottom") {
         $("#locationTop").val("");
-        $("#locationShow").css({ bottom: `${bottom}px`, top: "unset" });
+        $("#locationShow").css({ bottom: `${bottom}px`, top: "auto" });
       }
     }
   );
