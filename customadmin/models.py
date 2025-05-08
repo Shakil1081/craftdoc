@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from decimal import Decimal
+from django.utils import timezone
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
@@ -198,7 +199,7 @@ class CreditEarnHistory(models.Model):
     target_id = models.IntegerField()
     description = models.TextField()
     earned_credit = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.user.username} earned {self.earned_credit}"
@@ -209,7 +210,7 @@ class CreditUsesHistory(models.Model):
     target_id = models.IntegerField()
     description = models.TextField()
     usage_credit = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.user.username} used {self.usage_credit}"
@@ -257,7 +258,8 @@ class DownloadHistory(models.Model):
     header_path = models.CharField(max_length=255, blank=True)
     footer_path = models.CharField(max_length=255, blank=True)
     download_type = models.CharField(max_length=10)  # 'pdf', 'jpg', 'png'
-    created_at = models.DateTimeField(auto_now_add=True)
+    letterhead_content = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.user} ({self.created_at})"
