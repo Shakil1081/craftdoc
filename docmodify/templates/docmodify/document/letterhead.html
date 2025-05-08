@@ -33,6 +33,17 @@
     .ql-font-poppins {
         font-family: 'Poppins', sans-serif;
     }
+    #letterheadContentShow{
+        font-family: 'Roboto', sans-serif;
+        padding-top: 115px;
+        padding-bottom: 230px;
+        padding-left: 70px;
+        padding-right: 70px;
+        height: 11.69in;
+    }
+    #letterheadContentShow p{
+        margin: 0;
+    }
   </style>
   <style id="customCss"></style>
 </head>
@@ -91,7 +102,7 @@
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="button" id="setContentBtn" class="btn btn-primary">Set Content</button>
+                          <button type="button" id="setContentBtn" class="btn btn-primary" data-bs-dismiss="modal">Set Content</button>
                       </div>
                   </div>
               </div>
@@ -105,21 +116,18 @@
                   src="" 
                   alt="Logo">
 
+                <div id="letterheadContentShow">
+                    
+                </div>
                 
           
               <div id="phoneShow">
-                  {% comment %} 01736234377<br>
-                  01916120927 {% endcomment %}
               </div>
           
               <div id="emailShow">
-                {% comment %} admin@gmail.com<br>
-                mail@example.com {% endcomment %}
               </div>
           
               <div id="locationShow">
-                {% comment %} 123, Main Street,<br>
-                Dhaka, Bangladesh. {% endcomment %}
               </div>
           </div>                
       </div>
@@ -395,6 +403,7 @@
           $('#setContentBtn').on('click', function () {
             const content = quill.root.innerHTML;
             console.log(content);
+            $('#letterheadContentShow').html(content);
           });
           
 
