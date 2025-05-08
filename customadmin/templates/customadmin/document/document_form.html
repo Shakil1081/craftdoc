@@ -163,7 +163,10 @@
         // Intercept form submission
         $('form').on('submit', function (e) {
             // Update hidden input with editor content
-            $('#letterhead_content_input').val(quill.root.innerHTML);
+            const content = quill.root.innerHTML;
+            if(!(content == '<p><br></p>' || content == '') ){
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
         });
     });
 

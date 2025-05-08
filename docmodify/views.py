@@ -139,6 +139,7 @@ def letterhead(request, document_id):
                 'phone': document.phone,
                 'email': document.email,
                 'location': document.location,
+                'letterhead_content': document.letterhead_content,
                 # add more fields if needed
             },
             'header_footer_images': [

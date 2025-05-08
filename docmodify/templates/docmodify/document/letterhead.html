@@ -398,16 +398,26 @@
                 ['blockquote', 'code-block']
               ]
             }
-          });
+        });
           
-          
-          $('#setContentBtn').on('click', function () {
-            const content = quill.root.innerHTML;
-            console.log(content);
-            $('#letterheadContentShow').html(content);
-          });
-          
+        // Fill editor with existing content if available
+        function loadLHContent(document) {
+            var initialContent = document.letterhead_content ?? '';
+            console.log(initialContent);
+            if (initialContent) {
+                quill.root.innerHTML = initialContent;
+            }else{
+                quill.root.innerHTML = null;
+            }
 
+            const content = quill.root.innerHTML;
+            $('#letterheadContentShow').html(content);
+        }
+
+        $('#setContentBtn').on('click', function () {
+            const content = quill.root.innerHTML;
+            $('#letterheadContentShow').html(content);
+        });
 
         function loadHeaderFooterData(documentId) {
             $.ajax({
@@ -419,6 +429,8 @@
                 success: function (response) {
                 headerFooterImages = response.header_footer_images;
                 const document = response.document;            
+
+                loadLHContent(document)
 
                 // Find the default header/footer image
                 const defaultImage = headerFooterImages.find(hf => hf.is_default);
