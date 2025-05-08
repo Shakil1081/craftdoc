@@ -1,7 +1,276 @@
 {% extends 'docmodify/public_base.html' %} {% block css %}
 <style>
-  
-</style>
-{% endblock %} {% block content %}
 
+</style>
 {% endblock %}
+
+{% block content %}
+<style>
+    /* Base card styling */
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Header Styling */
+    .card-header {
+        background: #1e2a3a;
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 20px 0;
+        border: none;
+    }
+
+    /* Body Styling */
+    .card-body {
+        text-align: center;
+        padding: 30px;
+        background-color: #fff;
+    }
+
+    .card-body .fa {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #6c757d;
+    }
+
+    .card-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    /* Colorful gradient backgrounds for different cards */
+    .bg-account-balance {
+        background: linear-gradient(135deg, #56ccf2, #2f80ed);
+        color: white;
+    }
+
+    .bg-earned-credit {
+        background: linear-gradient(135deg, #f2994a, #f2c94c);
+        color: white;
+    }
+
+    .bg-total-credit {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+    }
+
+    .bg-available-credit {
+        background: linear-gradient(135deg, #d38312, #a83279);
+        color: white;
+    }
+
+    /* Make cards responsive and well-spaced */
+    .card-columns {
+        column-count: 4;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .card-columns {
+            column-count: 1;
+        }
+    }
+
+    /* Custom Styling for Tables */
+    .table-custom {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .table-custom th {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+    }
+
+    .table-custom td {
+        background-color: #ffffff;
+    }
+
+    .table-custom thead th {
+        text-align: center;
+    }
+
+    .table-custom tbody td {
+        text-align: center;
+    }
+
+    .table-container {
+        margin-top: 30px;
+    }
+
+    /* Responsive design for tables */
+    @media (max-width: 768px) {
+        .table-container .col-md-6 {
+            margin-bottom: 20px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+    <div class="container mt-2">
+        <div class="row card-columns">
+            <!-- Total Account Balance Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card bg-account-balance">
+                    <div class="card-header">
+                        <i class="fas fa-wallet"></i> Total Account Balance
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">$450</h5>
+                        <p class="card-text">The total balance in your account.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Earned Credit Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card bg-earned-credit">
+                    <div class="card-header">
+                        <i class="fas fa-credit-card"></i> Total Earned Credit
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">250</h5>
+                        <p class="card-text">Total amount of credit earned from transactions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Credit Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card bg-total-credit">
+                    <div class="card-header">
+                        <i class="fas fa-credit-card-alt"></i> Total Credit
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">1000</h5>
+                        <p class="card-text">Total credit available to you, including earned</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Credit Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card bg-available-credit">
+                    <div class="card-header">
+                        <i class="fas fa-money-bill-wave"></i> Available Credit
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">520</h5>
+                        <p class="card-text">The amount of credit currently available for use.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+    </div>
+    <div class="container mt-2">
+        <div class="row table-container">
+            <!-- Credit Earning History Table -->
+            <div class="col-md-6">
+                <div class="table-custom">
+                    <h5 class="text-center p-2" style=" color: rgb(0, 0, 0);">Credit Earning History
+                    </h5>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Target Type</th>
+                                <th>Target ID</th>
+                                <th>Description</th>
+                                <th>Credit Earned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Referral</td>
+                                <td>1001</td>
+                                <td>New user referral</td>
+                                <td>$100</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Purchase</td>
+                                <td>2001</td>
+                                <td>Product purchase</td>
+                                <td>$50</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Promo</td>
+                                <td>3001</td>
+                                <td>Promo code used</td>
+                                <td>$200</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Credit Usage History Table -->
+            <div class="col-md-6">
+                <div class="table-custom">
+                    <h5 class="text-center p-2" style=" color: rgb(0, 0, 0);">Credit Usage History
+                    </h5>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Target Type</th>
+                                <th>Target ID</th>
+                                <th>Description</th>
+                                <th>Credit Used</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Subscription</td>
+                                <td>5001</td>
+                                <td>Monthly subscription</td>
+                                <td>$50</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Purchase</td>
+                                <td>6001</td>
+                                <td>Product purchase</td>
+                                <td>$120</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Service Fee</td>
+                                <td>7001</td>
+                                <td>Service fee payment</td>
+                                <td>$30</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

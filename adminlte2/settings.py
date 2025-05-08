@@ -77,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL engine
         'NAME': 'myproject_db',  # Replace with your PostgreSQL database name
         'USER': 'postgres',  # PostgreSQL user (typically 'postgres')
-        'PASSWORD': 'admin',  # Replace with your PostgreSQL password
+        'PASSWORD': 'Admin@1234',  # Replace with your PostgreSQL password
         'HOST': '127.0.0.1',  # Localhost for PostgreSQL
         'PORT': '5432',  # Default PostgreSQL port
     }
@@ -156,6 +156,6 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "mdashrafulislam369@gmail.com"
-EMAIL_HOST_PASSWORD = "pltm hcib zjfa rdnu"
+EMAIL_HOST_USER = "jahirulnewgen@gmail.com"
+EMAIL_HOST_PASSWORD = "spkq ozps uhnb zqwh"
 DEFAULT_FROM_EMAIL = 'CraftDOC Support <support@craftdoc.com>'
