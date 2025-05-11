@@ -470,14 +470,16 @@ def earn_credit(request):
 
 def credit_earn_history(request):
     user_credit_history = CreditEarnHistory.objects.filter(user=request.user)
-    paginator = Paginator(user_credit_history, 10)  # Show 10 records per page
+    paginator = Paginator(user_credit_history, 5)  # Show 10 records per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'docmodify/credit/earn_history.html', {'page_obj': page_obj})
-
+    start_index = (page_obj.number - 1) * paginator.per_page
+    return render(request, 'docmodify/credit/earn_history.html', {'page_obj': page_obj, 'start_index': start_index})
+   
 def credit_uses_history(request):
     user_credit_history = CreditUsesHistory.objects.filter(user=request.user)
-    paginator = Paginator(user_credit_history, 10)  # Show 10 records per page
+    paginator = Paginator(user_credit_history, 5)  # Show 10 records per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj})
+    start_index = (page_obj.number - 1) * paginator.per_page
+    return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj, 'start_index': start_index})

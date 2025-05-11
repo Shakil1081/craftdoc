@@ -1,59 +1,189 @@
-{% extends 'docmodify/public_base.html' %}{% load static %} {% block css %}
+{% extends 'docmodify/public_base.html' %}
+{% load static %}
+{% block css %}
 <style>
-  .modal-body {
-    padding: 0;
+  :root {
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
+
+  .card {
+    border: none;
+    border-radius: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    filter: brightness(0.9);
+    z-index: 0;
+  }
+
+  .card-body {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .frist-card-icon {
+    margin-left: 100px;
+  }
+
+  .second-card-icon {
+    margin-left: 80px;
+  }
+
+  .btn-custom {
+    padding: 0.75rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-custom::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .btn-custom:hover::after {
+    opacity: 1;
+  }
+
   .modal-content {
-    border-radius: 10px;
+    border: none;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: #f8fafc;
   }
+
+  .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+    background: var(--gradient-primary);
+    color: white;
+  }
+
+  .modal-title {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+
   iframe {
     width: 100%;
     height: 400px;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
   }
+
   .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
-  .payment-method-img{
+
+  .form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  .payment-method-img {
     width: 100%;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: white;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease;
+  }
+
+  .payment-method-img:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .card {
+      min-height: 220px;
+    }
+
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.75rem;
+    }
+
+    iframe {
+      height: 250px;
+    }
   }
 </style>
-{% endblock %} {% block content %}
-<!-- Smart Cards -->
-<div class="container text-center mt-5">
-  <div class="row">
+{% endblock %}
+
+{% block content %}
+<!-- Modern Card Grid -->
+<div class="container py-5">
+  <div class="row g-4">
     <!-- View Ad Card -->
-    <div class="col-md-6 mb-4">
-      <div class="card bg-primary text-white">
-        <div class="card-body">
-          <i class="fas fa-play-circle card-icon"></i>
-          <h5 class="card-title">View Ad</h5>
-          <p class="card-text">Watch an ad to earn credits.</p>
-          <button
-            type="button"
-            class="btn btn-light btn-custom"
-            data-bs-toggle="modal"
-            data-bs-target="#videoModal"
-          >
-            Watch Now
+    <div class="col-lg-6">
+      <div class="card bg-primary text-white" style="background: var(--gradient-primary);">
+        <div class="card-body text-center">
+          <i class="fas fa-play-circle card-icon  frist-card-icon"></i>
+          <h3 class="card-title mb-3">Watch & Earn</h3>
+          <p class="card-text opacity-90 mb-4">Enjoy short videos and earn credits instantly</p>
+          <button class="btn btn-light btn-custom px-4" data-bs-toggle="modal" data-bs-target="#videoModal">
+            Start Watching
           </button>
         </div>
       </div>
     </div>
 
     <!-- Buy Credit Card -->
-    <div class="col-md-6 mb-4">
-      <div class="card bg-success text-white">
-        <div class="card-body">
-          <i class="fas fa-coins card-icon"></i>
-          <h5 class="card-title">Buy Credit</h5>
-          <p class="card-text">Purchase credits to unlock features.</p>
-          <button
-            type="button"
-            class="btn btn-light btn-custom"
-            data-bs-toggle="modal"
-            data-bs-target="#buyCreditModal"
-          >
-            Buy Now
+    <div class="col-lg-6">
+      <div class="card bg-success text-white" style="background: var(--gradient-success);">
+        <div class="card-body text-center">
+          <i class="fas fa-wallet card-icon second-card-icon"></i>
+          <h3 class="card-title mb-3">Instant Credit</h3>
+          <p class="card-text opacity-90 mb-4">Top up your account securely</p>
+          <button class="btn btn-light btn-custom px-4" data-bs-toggle="modal" data-bs-target="#buyCreditModal">
+            Add Credits
           </button>
         </div>
       </div>
@@ -61,104 +191,74 @@
   </div>
 </div>
 
-<!-- View Ad Modal -->
-<div
-  class="modal fade"
-  id="videoModal"
-  tabindex="-1"
-  aria-labelledby="videoModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+<!-- Modern Video Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="videoModalLabel">View Ad</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h5 class="modal-title">Sponsored Content</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <!-- Modified YouTube Embed Code -->
-        <iframe
-          id="youtubeVideo"
-          src="https://www.youtube.com/embed/lXmuuUKlndY?list=RDlXmuuUKlndY"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
+      <div class="modal-body p-4">
+        <div class="ratio ratio-16x9">
+          <iframe id="youtubeVideo" src="https://www.youtube.com/embed/lXmuuUKlndY?list=RDlXmuuUKlndY"
+            allowfullscreen></iframe>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Buy Credit Modal -->
-<div
-  class="modal fade"
-  id="buyCreditModal"
-  tabindex="-1"
-  aria-labelledby="buyCreditModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
+<!-- Modern Purchase Modal -->
+<div class="modal fade" id="buyCreditModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="buyCreditModalLabel">Buy Credit</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h5 class="modal-title">Credit Purchase</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body p-3">
-        <form id="creditForm">
-          <!-- Amount Input Field -->
-          <div class="form-group">
-            <label for="amountInput" class="form-label">Amount ($)</label>
-            <input
-              type="number"
-              class="form-control"
-              id="amountInput"
-              placeholder="Enter amount"
-              required
-            />
-          </div>
+      <div class="modal-body p-4">
+        <form id="creditForm" class="needs-validation" novalidate>
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label fw-semibold">Amount (USD)</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="amountInput" placeholder="0.00" min="1" step="1"
+                    required>
+                  <div class="invalid-feedback">
+                    Please enter a valid amount
+                  </div>
+                </div>
+              </div>
 
-          <!-- Total Credits Display -->
-          <div class="form-group">
-            <label for="totalCredits" class="form-label">Total Credits</label>
-            <input
-              type="text"
-              class="form-control"
-              id="totalCredits"
-              readonly
-            />
-          </div>
+              <div class="form-group">
+                <label class="form-label fw-semibold">You'll Receive</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-coins"></i></span>
+                  <input type="text" class="form-control bg-light" id="totalCredits" value="0 Credits" readonly>
+                </div>
+              </div>
+            </div>
 
-          <div class="">
-            <p>Payment Methods:</p>
-            <img
-            src="{% static 'assets/payment-methods.png' %}"
-            alt="Default Payment Method"
-            class="payment-method-img"
-          />
-          </div/>
+            <div class="col-md-6">
+              <div class="bg-white p-3 rounded-3 shadow-sm">
+                <p class="text-muted mb-3">Secure Payment Methods</p>
+                <img src="{% static 'assets/payment-methods.png' %}" alt="Payment methods" class="payment-method-img">
+                <div class="mt-3 text-muted small">
+                  <i class="fas fa-lock me-2"></i>
+                  All transactions are SSL secured
+                </div>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Cancel
-        </button>
-        <button type="button" class="btn btn-primary" id="submitCredit">
-          Submit
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="submitCredit">
+          Confirm Payment
         </button>
       </div>
     </div>
@@ -166,27 +266,28 @@
 </div>
 
 <script>
-  // View Ad Modal Logic
-  const videoModal = document.getElementById("videoModal");
-  const youtubeIframe = document.getElementById("youtubeVideo");
+  // Enhanced Video Modal Handling
+  const videoModal = new bootstrap.Modal('#videoModal')
+  const youtubeIframe = document.getElementById('youtubeVideo')
+  const baseSrc = 'https://www.youtube.com/embed/lXmuuUKlndY?list=RDlXmuuUKlndY'
 
-  // Initialize the iframe without autoplay
-  const baseSrc =
-    "https://www.youtube.com/embed/lXmuuUKlndY?list=RDlXmuuUKlndY";
-  youtubeIframe.src = baseSrc + "&autoplay=0";
+  document.getElementById('videoModal').addEventListener('show.bs.modal', () => {
+    youtubeIframe.src = `${baseSrc}&autoplay=1&mute=0`
+  })
 
-  videoModal.addEventListener("shown.bs.modal", () => {
-    youtubeIframe.src = baseSrc + "&autoplay=1";
-  });
+  document.getElementById('videoModal').addEventListener('hide.bs.modal', () => {
+    youtubeIframe.src = `${baseSrc}&autoplay=0&mute=1`
+  })
 
-  videoModal.addEventListener("hidden.bs.modal", () => {
-    youtubeIframe.src = baseSrc + "&autoplay=0";
-  });
+  // Modern Form Validation
+  const form = document.getElementById('creditForm')
+  const amountInput = document.getElementById('amountInput')
+  const totalCredits = document.getElementById('totalCredits')
 
-  // Buy Credit Modal Logic
-  const amountInput = document.getElementById("amountInput");
-  const totalCredits = document.getElementById("totalCredits");
-  const submitCredit = document.getElementById("submitCredit");
+  amountInput.addEventListener('input', (e) => {
+    const amount = parseFloat(e.target.value) || 0
+    totalCredits.value = `${Math.floor(amount * 25)} Credits`
+  })
 
   // Calculate total credits when the amount changes
   amountInput.addEventListener("input", () => {
@@ -198,26 +299,27 @@
       totalCredits.value = "";
     }
   });
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
 
-  // Handle form submission
-  submitCredit.addEventListener("click", () => {
-    const amount = amountInput.value;
-    const credits = totalCredits.value;
-    const paymentMethod = document.getElementById("paymentMethod").value;
-
-    if (!amount || !credits) {
-      alert("Please enter a valid amount.");
-      return;
+    if (!form.checkValidity()) {
+      e.stopPropagation()
+      form.classList.add('was-validated')
+      return
     }
 
-    // Log the data (or send it to the server)
-    console.log({
-      amount: amount,
-      credits: credits,
-      paymentMethod: paymentMethod,
-    });
+    const formData = {
+      amount: amountInput.value,
+      credits: totalCredits.value,
+    }
 
-    alert(`You are buying ${credits} credits using ${paymentMethod}.`);
-  });
+    // Simulate API call
+    new bootstrap.Modal('#buyCreditModal').hide()
+    new bootstrap.Toast({
+      body: `Success! ${formData.credits} added to your account`,
+      className: 'bg-success text-white',
+      delay: 3000
+    }).show()
+  })
 </script>
 {% endblock %}

@@ -1,63 +1,188 @@
-{% extends 'docmodify/public_base.html' %} {% load static %} 
-{% block css %} 
+{% extends 'docmodify/public_base.html' %}
+{% load static %}
+{% block css %}
 <style>
-    .table-bordered {
-        border: 1px solid #ddd;
-      }
-      .pagination {
-        margin-top: 20px;
-      }
-      .step-links a {
-        margin: 0 5px;
-        text-decoration: none;
-      }
+  :root {
+    --card-bg: #ffffff;
+    --dark: #1e293b;
+    --gray: #64748b;
+    --primary: #3b82f6;
+  }
+
+  .tables-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .table-wrapper {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+  }
+
+  .table-title {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 20px 24px;
+    color: var(--dark);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    text-align: left;
+    padding: 16px 24px;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: var(--gray);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  td {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    font-size: 14px;
+    color: var(--dark);
+    text-align: center;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background-color: rgba(67, 97, 238, 0.03);
+  }
+
+  .credit-amount {
+    font-weight: 600;
+    color: var(--primary);
+    text-align: center;
+  }
+
+  .table-sl,
+  .table-description {
+    text-align: left;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--gray);
+  }
+
+  .pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .step-links a {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: var(--dark);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .step-links a:hover {
+    background: var(--primary);
+    color: white;
+  }
+
+  .current {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .table-wrapper {
+      border-radius: 12px;
+    }
+
+    th,
+    td {
+      padding: 12px 16px;
+    }
+
+    .table-title {
+      padding: 16px;
+      font-size: 16px;
+    }
+  }
 </style>
-{% endblock %} 
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Credit Earning History</h2>
-  
-    <!-- Table to Display Credit Earning History -->
-    <table class="table table-bordered">
+<div class="tables-container">
+  <div class="table-wrapper">
+    <div class="table-title">
+      <i class="fas fa-arrow-up"></i> Credit Earning History
+    </div>
+
+    <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Title</th>
+          <th>Serial</th>
+          <th>Description</th>
           <th>Credit Earned</th>
         </tr>
       </thead>
       <tbody>
         {% for record in page_obj.object_list %}
         <tr>
-          <td>{{ forloop.counter }}</td> <!-- Row Number -->
-          <td>{{ record.description }}</td> <!-- Description -->
-          <td>{{ record.earned_credit }}</td> <!-- Credit Earned -->
+          <td class="table-sl">{{ forloop.counter|add:start_index }}</td>
+          <td class="table-description">{{ record.description }}</td>
+          <td class="credit-amount">{{ record.earned_credit }}</td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" class="text-center">No credit earning history available.</td>
+          <td colspan="4" class="empty-state">
+            <i class="fas fa-file-invoice-dollar fa-2x mb-3"></i>
+            <p>No credit usage history available</p>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  
-  <!-- Pagination -->
-  <div class="pagination">
-    <span class="step-links">
-      {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; First</a>
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      {% endif %}
-  
-      <span class="current">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-      </span>
-  
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
-      {% endif %}
+</div>
+
+<div class="pagination">
+  <span class="step-links">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; First</a>
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
     </span>
-  </div>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
 {% endblock %}
