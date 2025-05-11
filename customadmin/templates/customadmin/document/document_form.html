@@ -5,11 +5,11 @@
 <div class="container my-4">
     <h2>{% if document %}Edit Document{% else %}Add New Document{% endif %}</h2>
 
-    <div class="text-danger">
+    {% comment %} <div class="text-danger">
         {% for error in form.title.errors %}
             <p>{{ error }}</p>
         {% endfor %}
-    </div>
+    </div> {% endcomment %}
     
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
