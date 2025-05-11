@@ -5,11 +5,11 @@
 <div class="container my-4">
     <h2>Add New Document</h2>
 
-    <div class="text-danger">
+    {% comment %} <div class="text-danger">
         {% for error in form.title.errors %}
             <p>{{ error }}</p>
         {% endfor %}
-    </div>
+    </div> {% endcomment %}
     
     {% comment %} {% if messages %}
         {% for message in messages %}
