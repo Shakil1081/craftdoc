@@ -23,12 +23,13 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
 from customadmin.models import Document, Setting, DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
+from weasyprint import HTML 
 
 def hello_there(request):
     # Get the search term from the GET request
@@ -208,6 +209,53 @@ def save_download_history(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid method'})
+
+def download_history_pdf(request, id):
+    try:
+        history = DownloadHistory.objects.get(pk=id)
+    except DownloadHistory.DoesNotExist:
+        raise Http404("Download history not found.")
+
+    def build_media_url(path):
+        if path:
+            return request.build_absolute_uri(settings.MEDIA_URL + path)
+        return ''
+
+    # Convert all media paths to absolute URLs
+    context = {
+        'history': history,
+        'logo_url': build_media_url(history.logo_path),
+        'header_url': build_media_url(history.header_path),
+        'footer_url': build_media_url(history.footer_path),
+    }
+
+    html_string = render_to_string('docmodify/pdf/download_document_pdf.html', context)
+    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+    pdf_file = html.write_pdf()
+
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=download_history_{id}.pdf'
+
+    return response
+
+
+    history = get_object_or_404(DownloadHistory, pk=id)
+
+    def build_media_url(path):
+        if path:
+            return request.build_absolute_uri(settings.MEDIA_URL + path)
+        return ''
+
+    context = {
+        'history': history,
+        'logo_url': build_media_url(history.logo_path),
+        'header_url': build_media_url(history.header_path),
+        'footer_url': build_media_url(history.footer_path),
+    }
+
+    return render(request, 'docmodify/pdf/download_document_pdf.html', context)
+
+
 
 def register(request):
     if request.method == 'POST':

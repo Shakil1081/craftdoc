@@ -70,6 +70,66 @@ def document_create(request):
     })
 
 
+def document_edit(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES, instance=document)
+        category_form = DocumentCategoryForm(request.POST, instance=getattr(document, 'documentcategory', None))
+        header_footer_image_formset = DocumentHeaderFooterImageFormSet(request.POST, request.FILES, instance=document)
+
+        is_valid = True
+
+        if not form.is_valid():
+            is_valid = False
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"DocumentForm - {field}: {error}")
+
+        if not category_form.is_valid():
+            is_valid = False
+            for field, errors in category_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"CategoryForm - {field}: {error}")
+
+        if not header_footer_image_formset.is_valid():
+            is_valid = False
+            for form_index, subform in enumerate(header_footer_image_formset.forms):
+                for field, errors in subform.errors.items():
+                    for error in errors:
+                        messages.error(request, f"HeaderFooterImageForm #{form_index + 1} - {field}: {error}")
+
+        if is_valid:
+            try:
+                with transaction.atomic():
+                    document = form.save()
+
+                    category = category_form.save(commit=False)
+                    category.document = document
+                    category.save()
+
+                    header_footer_image_formset.instance = document
+                    header_footer_image_formset.save()
+
+                    messages.success(request, "Document updated successfully.")
+                    return redirect('document_list')
+
+            except Exception as e:
+                messages.error(request, f"An unexpected error occurred: {str(e)}")
+
+    else:
+        form = DocumentForm(instance=document)
+        category_form = DocumentCategoryForm(instance=getattr(document, 'documentcategory', None))
+        header_footer_image_formset = DocumentHeaderFooterImageFormSet(instance=document)
+
+    return render(request, 'customadmin/document/document_form.html', {
+        'form': form,
+        'category_form': category_form,
+        'header_footer_image_formset': header_footer_image_formset,
+        'edit_mode': True,  # Optional: to toggle buttons/labels in the template
+        'document_id': document.id,
+    })
+
 
 def document_list(request):
     documents = Document.objects.all()

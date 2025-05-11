@@ -30,4 +30,7 @@ urlpatterns = [
 
     path('letterhead/<int:document_id>/', views.letterhead, name='letterhead'),
     path('save-download-history/', views.save_download_history, name='save_download_history'),
+    # urls.py
+    path('download-history/pdf/<int:id>/', views.download_history_pdf, name='download_history_pdf'),
+
 ]
