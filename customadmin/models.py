@@ -219,8 +219,8 @@ class DocumentHeaderFooterImage(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='header_footer_images')
     color = models.CharField(max_length=50, blank=True, null=True)
     css = models.CharField(blank=True, null=True)
-    header = models.ImageField(upload_to='documents/previews/')
-    footer = models.ImageField(upload_to='documents/previews/')
+    header = models.ImageField(upload_to='documents/previews/', blank=False, null=False)
+    footer = models.ImageField(upload_to='documents/previews/', blank=False, null=False)
     preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
     is_default = models.BooleanField(null=True)
 

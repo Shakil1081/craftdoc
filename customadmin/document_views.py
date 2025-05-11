@@ -79,6 +79,7 @@ def document_list(request):
 def document_delete(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     doc.delete()
+    messages.success(request, "Document deleted successfully.")
     return redirect('document_list')
 
 
