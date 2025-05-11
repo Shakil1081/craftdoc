@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Download History PDF</title>
+    <style>
+        @page {
+            margin: 0;
+        }
+    
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    
+        * {
+            box-sizing: border-box;
+        }
+    
+        #a4panel {
+            height: 297mm;
+            width: 210mm;
+            background-color: #fff;
+            position: relative;
+            margin: 0 auto;
+            transform-origin: top center;
+            background-image: url("{{ header_url }}"), url("{{ footer_url }}");
+            background-position: top, bottom;
+            background-repeat: no-repeat;
+            background-size: 100% auto, 100% auto;
+        }
+    
+        #logoShow,
+        #phoneShow,
+        #emailShow,
+        #locationShow {
+            position: absolute;
+        }
+    
+        #letterheadContentShow {
+            padding: 96px;
+            height: 11.69in;
+            overflow: hidden;
+        }
+    
+        #phoneShow pre,
+        #emailShow pre,
+        #locationShow pre {
+            margin: 0;
+            font-family: sans-serif;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+        
+    
+        {{ history.css|safe }}
+    </style>
+    
+</head>
+<body>
+    <div id="a4panel">
+        <img id="logoShow" src="{{ logo_url }}" alt="Logo">
+        <div id="letterheadContentShow">{{ history.letterhead_content|safe }}</div>
+        <div id="phoneShow"><pre>{{ history.contact }}</pre></div>
+        <div id="emailShow"><pre>{{ history.email }}</pre></div>
+        <div id="locationShow"><pre>{{ history.location }}</pre></div>
+    </div>
+</body>
+</html>

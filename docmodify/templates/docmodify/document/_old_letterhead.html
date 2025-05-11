@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Letterhead Templates</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="url" crossorigin>
+
+    {% for font in fonts %}
+        <link rel="stylesheet" href="{{ font.url }}" >
+    {% endfor %}
+
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+</head>
+<body class="letterhead-page">
+  {% load custom_filters %}
+    <div class="letterhead-content">
+        <div class="template-layout">
+          <!-- Left Panel -->
+          <div class="left-panel scroll-panel">
+            <div class="row row-cols-2 g-2 template-list">
+              {% for singleDocument in documents %}
+                {% with img=images_by_document|get_item:singleDocument.id %}
+                <div class="">
+                  <div class="template-item {% if forloop.first %}selected{% endif %}" 
+                       data-id="{{ singleDocument.id }}"
+                       data-header="{{ img.header }}"
+                       data-body="{{ img.body }}"
+                       data-footer="{{ img.footer }}">
+                    <img src="{{ singleDocument.file_path.url }}" class="img-fluid" alt="Template {{ forloop.counter }}">
+                  </div>
+                </div>
+                {% endwith %}
+              {% endfor %}
+            </div>
+          </div>
+          
+            
+            <!-- Center Panel -->
+          <div class="center-panel scroll-panel position-relative d-flex justify-content-center align-items-center">
+              
+              <div class="zoom-control position-absolute top-0 start-50 translate-middle-x mt-3">
+                  <button class="btn btn-sm btn-secondary" id="zoomOut">-</button>
+                  <span id="zoomValue">100%</span>
+                  <button class="btn btn-sm btn-secondary" id="zoomIn">+</button>
+              </div>
+          
+              <!-- Centered Preview -->
+              <div class="a4-preview" id="a4Preview">
+                {% for item in header_footer_images %}
+                  {% if item.is_default %}
+                  <div class="header-section"></div>
+                
+                  <div class="body-section">
+                    <div class="contact contact-number"></div>
+                    <div class="contact website"></div>
+                    <div class="contact address"></div>
+                  </div>
+              
+                  <div class="footer-section"></div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+                
+          </div>
+  
+  
+    
+            <!-- Right Panel -->
+            <div class="right-panel scroll-panel">
+                <h5>Edit Letterhead</h5>
+                <div class="form-group">
+                    <h6>Logo</h6>
+                    <img id="logoPreview" src="./assets/image/logo.png" alt="Logo" width="80px" style="cursor: pointer;">
+                    <input type="file" id="logoInput" accept="image/*" style="display: none;">
+                
+                    <label for="size">Size</label>
+                    <div class="input-group input-group-sm">
+                        <input type="number" class="form-control" placeholder="width">
+                        <span class="input-group-text">X</span>
+                        <input type="number" class="form-control" placeholder="height">
+                    </div>
+                </div>
+            
+                {% for meta in metas %}
+                {% with textarea_id=meta.title|slugify %}
+                <div class="form-group">
+                    <label for="{{ textarea_id }}">{{ meta.title }}</label>
+                    <textarea rows="2"id="{{ textarea_id }}" class="form-control" placeholder="Enter {{ meta.title }}">{{ meta.value }}</textarea>
+
+                    <div class="input-group input-group-sm mb-3">
+                        <select class="form-select font-select" data-target="{{ textarea_id }}">
+                            <option value="">Select Font</option>
+                            {% for font in fonts %}
+                            <option value="{{ font.font_family|escape }}">{{ font.name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <input type="number"
+                                class="form-control font-size-input"
+                                placeholder="font-size"
+                                value="14"
+                                data-target="{{ textarea_id }}">
+
+                        <input type="color"
+                                class="form-control form-control-color font-color-input d-none"
+                                value="#000000"
+                                title="Choose color"
+                                data-target="{{ textarea_id }}">
+                    </div>
+                </div>
+                {% endwith %}
+                {% endfor %}
+            </div>
+            
+        </div>
+      </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script>
+    function updateDynamicPreview() {
+      $('textarea[id]').each(function () {
+        const textarea = $(this);
+        const textareaId = textarea.attr('id');
+        const textValue = textarea.val().trim();
+    
+        // Map textarea ID to preview class
+        let previewClass = '';
+        if (textareaId.includes('contact')) {
+          previewClass = 'contact-number';
+        } else if (textareaId.includes('email') || textareaId.includes('website')) {
+          previewClass = 'website';
+        } else if (textareaId.includes('address') || textareaId.includes('location')) {
+          previewClass = 'address';
+        } else {
+          return;
+        }
+    
+        // Elements for styling controls
+        const fontSelect = $(`.font-select[data-target="${textareaId}"]`);
+        const fontSizeInput = $(`.font-size-input[data-target="${textareaId}"]`);
+        const fontColorInput = $(`.font-color-input[data-target="${textareaId}"]`);
+    
+        function applyStylesToPreview() {
+          const inputLines = textarea.val().split('\n');
+          const font = fontSelect.val() || 'inherit';
+          const fontSize = fontSizeInput.val() ? fontSizeInput.val() + 'px' : 'inherit';
+          const color = fontColorInput.val() || '#000000';
+    
+          const newHtml = inputLines.map(line => {
+            return `<span style='font-family: ${font}; font-size: ${fontSize}; color: ${color};'>${line.trim()}</span>`;
+          }).join('');
+          $('.' + previewClass).html(newHtml);
+        }
+    
+        // Initial render
+        applyStylesToPreview();
+    
+        // Listeners
+        textarea.on('input', applyStylesToPreview);
+        fontSelect.on('change', applyStylesToPreview);
+        fontSizeInput.on('input', applyStylesToPreview);
+        fontColorInput.on('input', applyStylesToPreview);
+      });
+    }
+    
+    $(document).ready(function () {
+      updateDynamicPreview();
+    });
+</script>
+
+<script>
+  const defaultImagesByDocument = {{ images_by_document|safe }};
+</script>
+
+<script>
+  $(document).ready(function () {
+    const $templateItems = $('.template-item');
+    const $headerSection = $('.header-section');
+    const $bodySection = $('.body-section');
+    const $footerSection = $('.footer-section');
+
+    function setTemplateImages(images) {
+      console.log(images)
+      if (images.header) {
+        $headerSection.css({
+          'background-image': `url('${images.header}')`,
+          'background-size': '100% auto',
+          'background-repeat': 'no-repeat',
+          'background-position': 'top center',
+        });
+      }
+
+      if (images.body) {
+        $bodySection.css({
+          'background-image': `url('${images.body}')`,
+          'background-size': 'cover',
+          'background-repeat': 'no-repeat',
+          'background-position': 'center',
+        });
+      }
+
+      if (images.footer) {
+        $footerSection.css({
+          'background-image': `url('${images.footer}')`,
+          'background-size': '100% auto',
+          'background-repeat': 'no-repeat',
+          'background-position': 'bottom center',
+        });
+      }
+    }
+ 
+    // Initial Load
+    const defaultId = $('.template-item.selected').data('id');
+    if (defaultId && defaultImagesByDocument[defaultId]) {
+      setTemplateImages(defaultImagesByDocument[defaultId]);
+    }
+
+    // On click 
+    $templateItems.on('click', function () {
+      $templateItems.removeClass('selected');
+      $(this).addClass('selected');
+      //get the data-id of the clicked item
+      const header = $(this).data('header');
+      const id = $(this).data('id');
+      const footer = $(this).data('footer');
+      $('#a4Preview').css({
+        'background-image': `none`,
+      });
+     
+      /* const docId = $(this).data('id');
+      if (defaultImagesByDocument[docId]) {
+        setTemplateImages(defaultImagesByDocument[docId]);
+      }
+        */
+    });
+  });
+</script>
+
+    
+  <script src="{% static 'assets/js/script.js' %}"></script>
+
+</body>
+</html>
