@@ -580,7 +580,7 @@
             if (logoInput && logoInput.files.length > 0) {
                 formData.append('logo_file', logoInput.files[0]);
             }
-            console.log(formData.logo_file);
+            
             $.ajax({
                 url: '/save-download-history/',
                 type: 'POST',
@@ -594,12 +594,12 @@
                         window.location.href = 'http://127.10.10.10:8000/download/pdf/' + res.download_history_id;
                     } else {
                         console.error(res.error);
+                        alert(res.error);
                     }
                 }
             });
         }); 
-    });
-    
+    });   
     
   </script>
 </body>
