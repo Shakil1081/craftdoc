@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-4">
     <h2>Add New Document</h2>
 
     <div class="text-danger">
@@ -11,6 +11,13 @@
         {% endfor %}
     </div>
     
+    {% comment %} {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %} {% endcomment %}
 
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
@@ -29,28 +36,29 @@
             <div class="text-danger">{{ form.description.errors }}</div>
         </div>
 
-        <!-- HTML Body -->
         <div class="mb-3">
-            <label for="html_body" class="form-label">HTML Body</label>
-            <textarea name="html_body" id="html_body" class="form-control {% if form.html_body.errors %}is-invalid{% endif %}">{{ form.html_body.value|default:'' }}</textarea>
-            <div class="text-danger">{{ form.html_body.errors }}</div>
+            <label for="email" class="form-label">Email</label>
+            <textarea name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}">{{ form.email.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.email.errors }}</div>
         </div>
-
-        <!-- CSS Body -->
+        
         <div class="mb-3">
-            <label for="css_body" class="form-label">CSS Body</label>
-            <textarea name="css_body" id="css_body" class="form-control {% if form.css_body.errors %}is-invalid{% endif %}">{{ form.css_body.value|default:'' }}</textarea>
-            <div class="text-danger">{{ form.css_body.errors }}</div>
+            <label for="phone" class="form-label">Phone</label>
+            <textarea name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}">{{ form.phone.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.phone.errors }}</div>
         </div>
-
-
-        <!-- File Path -->
+        
         <div class="mb-3">
-            <label for="file_path" class="form-label">Upload File</label>
-            <input type="file" name="file_path" id="file_path" class="form-control {% if form.file_path.errors %}is-invalid{% endif %}">
-            <div class="text-danger">{{ form.file_path.errors }}</div>
+            <label for="location" class="form-label">Location</label>
+            <textarea name="location" id="location" class="form-control {% if form.location.errors %}is-invalid{% endif %}">{{ form.location.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.location.errors }}</div>
         </div>
-
+        
+        <div class="mb-3">
+            <label for="logo_path" class="form-label">Upload Logo File</label>
+            <input type="file" name="logo_path" id="logo_path" class="form-control {% if form.logo_path.errors %}is-invalid{% endif %}" required>
+            <div class="text-danger">{{ form.logo_path.errors }}</div>
+        </div>
 
         <!-- Category Dropdown -->
         <div class="mb-3">
@@ -64,49 +72,18 @@
             <div class="text-danger">{{ category_form.category.errors }}</div>
         </div>
 
-
-
-        <!-- Document Meta Fields -->
-        <hr>
-        <h4>
-            Document Meta 
-            <button type="button" id="add-meta" class="btn btn-sm btn-success">+</button>
-        </h4>
-        <div id="meta-formset">
-            {{ formset.management_form }}
-            {% for form in formset %}
-                <div class="meta-form border p-3 mb-3 rounded">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Title</label>
-                            <input type="text" name="{{ form.title.html_name }}" class="form-control" value="{{ form.title.value|default:'' }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Key</label>
-                            <input type="text" name="{{ form.key.html_name }}" class="form-control" value="{{ form.key.value|default:'' }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Value</label>
-                            <textarea name="{{ form.value.html_name }}" class="form-control" rows="2">{{ form.value.value|default:'' }}</textarea>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Type</label>
-                            <input type="text" name="{{ form.type.html_name }}" class="form-control" value="{{ form.type.value|default:'' }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">CSS</label>
-                            <input type="text" name="{{ form.css.html_name }}" class="form-control" value="{{ form.css.value|default:'' }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Attribute ID</label>
-                            <input type="text" name="{{ form.attribute_id.html_name }}" class="form-control" value="{{ form.attribute_id.value|default:'' }}">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-danger remove-meta">Remove</button>
-                </div>
-            {% endfor %}
-        </div>
+        <div class="mb-3">
+            <label for="letterhead_content" class="form-label">Letterhead Content</label>
+            
+            <!-- Hidden input to store Quill content -->
+            <input type="hidden" name="letterhead_content" id="letterhead_content_input">
+    
+            <!-- Quill Editor -->
+            <div id="letterhead_editor" style="height: 250px;" class="form-control {% if form.letterhead_content.errors %}is-invalid{% endif %}"></div>
+    
+            <!-- Error display -->
+            <div class="text-danger">{{ form.letterhead_content.errors }}</div>
+        </div>       
 
         <!-- Header & Footer Images Section -->
         <hr>
@@ -122,15 +99,21 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Header Image</label>
-                            <input type="file" name="{{ form.header.html_name }}" class="form-control">
+                            <input type="file" name="{{ form.header.html_name }}" class="form-control" required>
+                            <div class="text-danger">{{ form.header.errors }}</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Footer Image</label>
-                            <input type="file" name="{{ form.footer.html_name }}" class="form-control">
+                            <input type="file" name="{{ form.footer.html_name }}" class="form-control" required>
+                            <div class="text-danger">{{ form.footer.errors }}</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Preview Image</label>
                             <input type="file" name="{{ form.preview_image.html_name }}" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Color</label>
+                            <input type="text" name="{{ form.color.html_name }}" class="form-control">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Is Default</label>
@@ -148,9 +131,48 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- JavaScript to clone formset -->
-<script>
+<script> 
+    $(document).ready(function () {
+        // Initialize Quill
+        var quill = new Quill('#letterhead_editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': '1' }, { 'header': '2' }],
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', 'medium', 'large', 'huge'] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['bold', 'italic', 'underline'],
+                    ['link'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['blockquote', 'code-block']
+                ]
+            }
+        });
+
+        // Fill editor with existing content if available
+        var initialContent = `{{ form.letterhead_content.value|default_if_none:''|escapejs }}`;
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+
+        // Intercept form submission
+        $('form').on('submit', function (e) {
+            // Update hidden input with editor content
+            const content = quill.root.innerHTML;
+            if (content.trim() !== '' && content !== '<p><br></p>') {
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
+        
+
         const addButton = document.getElementById('add-meta');
         const formsetDiv = document.getElementById('meta-formset');
         const totalForms = document.getElementById('id_documentmeta_set-TOTAL_FORMS');

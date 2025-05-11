@@ -35,7 +35,7 @@ def register(request):
             # here implement email sent while register
 
             # Redirect to the verification page after successful registration
-            return redirect('verification_sent')
+            # return redirect('verification_sent')
     else:
         form = UserRegistrationForm()
 
@@ -43,24 +43,20 @@ def register(request):
 
 # Login view for checking email verification
 def login_view(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('custom_admin_dashboard')
+    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # Check if the user is an admin (superuser)
             if user.is_superuser:
                 login(request, user)
-                return redirect('custom_admin_dashboard')  # Redirect to the dashboard after successful login
+                return redirect('custom_admin_dashboard')
             else:
-                # Check if the user's email is verified for non-admin users
-                if user.email_verified_at is None:
-                    messages.error(request, 'Please verify your email before logging in.')
-                    return redirect('verification_sent')  # Redirect to verification page
-                else:
-                    login(request, user)
-                    return redirect('custom_admin_dashboard')  # Redirect to the dashboard after successful login
+                return redirect('login')                     
         else:
             messages.error(request, 'Invalid credentials. Please try again.')
 

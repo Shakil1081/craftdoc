@@ -1,52 +1,74 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Document
 from .forms import DocumentForm, DocumentMetaFormSet, DocumentCategoryForm, DocumentHeaderFooterImageFormSet
-
+from collections import defaultdict
+from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse
+from .models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
 # views.py
+from django.contrib import messages
+from django.db import transaction
+
 def document_create(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         category_form = DocumentCategoryForm(request.POST)
-        formset = DocumentMetaFormSet(request.POST, request.FILES)
         header_footer_image_formset = DocumentHeaderFooterImageFormSet(request.POST, request.FILES)
 
-        if form.is_valid() and category_form.is_valid() and formset.is_valid() and header_footer_image_formset.is_valid():
-            # Save the main Document object
-            document = form.save()
+        # Check individual validation
+        is_valid = True
 
-            # Save the category object (assumes FK to Document)
-            category = category_form.save(commit=False)
-            category.document = document
-            category.save()
+        if not form.is_valid():
+            is_valid = False
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"DocumentForm - {field}: {error}")
 
-            # Save DocumentMeta formset (assumes FK to Document)
-            formset.instance = document
-            formset.save()
+        if not category_form.is_valid():
+            is_valid = False
+            for field, errors in category_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"CategoryForm - {field}: {error}")
 
-            # Save HeaderFooterImage formset (assumes FK to Document)
-            header_footer_image_formset.instance = document
-            header_footer_image_formset.save()
+        if not header_footer_image_formset.is_valid():
+            is_valid = False
+            for form_index, subform in enumerate(header_footer_image_formset.forms):
+                for field, errors in subform.errors.items():
+                    for error in errors:
+                        messages.error(request, f"HeaderFooterImageForm #{form_index + 1} - {field}: {error}")
 
-            return redirect('document_list')
-        else:
-            # Optional: Log form errors
-            print("DocumentForm errors:", form.errors)
-            print("CategoryForm errors:", category_form.errors)
-            print("Meta Formset errors:", formset.errors)
-            print("Header/Footer Formset errors:", header_footer_image_formset.errors)
+        if is_valid:
+            try:
+                with transaction.atomic():
+                    # Save the main Document object
+                    document = form.save()
+
+                    # Save the category object (FK to Document)
+                    category = category_form.save(commit=False)
+                    category.document = document
+                    category.save()
+
+                    # Save HeaderFooterImage formset (FK to Document)
+                    header_footer_image_formset.instance = document
+                    header_footer_image_formset.save()
+
+                    messages.success(request, "Document created successfully.")
+                    return redirect('document_list')
+
+            except Exception as e:
+                messages.error(request, f"An unexpected error occurred: {str(e)}")
+
     else:
         form = DocumentForm()
         category_form = DocumentCategoryForm()
-        formset = DocumentMetaFormSet()
         header_footer_image_formset = DocumentHeaderFooterImageFormSet()
 
     return render(request, 'customadmin/document/document_form.html', {
         'form': form,
         'category_form': category_form,
-        'formset': formset,
         'header_footer_image_formset': header_footer_image_formset,
     })
+
 
 
 def document_list(request):
@@ -58,3 +80,69 @@ def document_delete(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     doc.delete()
     return redirect('document_list')
+
+
+def document_lhsetup(request, document_id):
+    # Only fetch the selected document
+    document = get_object_or_404(Document, pk=document_id)
+
+    categories = DocumentCategory.objects.filter(document=document)
+    metas = DocumentMeta.objects.filter(document=document)
+    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
+    fonts = Font.objects.all()
+
+    # Group default image (for initial selection)
+    default_header_footer = None
+    for img in header_footer_images:
+        if img.is_default:
+            default_header_footer = {
+                'header': img.header.url if img.header else '',
+                'footer': img.footer.url if img.footer else '',
+                'body': img.preview_image.url if img.preview_image else '',
+                'css': img.css,
+                'id': img.id,
+            }
+            break
+
+    context = {
+        'document': document,
+        'categories': categories,
+        'metas': metas,
+        'header_footer_images': header_footer_images,
+        'fonts': fonts,
+        'default_header_footer': default_header_footer,
+        'default_css': default_header_footer['css'] if default_header_footer else '',
+    }
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # AJAX request to save selected css
+        if request.method == "POST":
+            selected_id = request.POST.get('selected_id')
+            css = request.POST.get('css')
+            save_all_css = request.POST.get('saveAllCss') == 'true'  # <--- added
+
+            if save_all_css:
+                # Save CSS for all header/footer images of the document
+                try:
+                    hf_images = DocumentHeaderFooterImage.objects.filter(document_id=document_id)
+                    updated_count = 0
+                    for hf_image in hf_images:
+                        hf_image.css = css
+                        hf_image.save()
+                        updated_count += 1
+
+                    return JsonResponse({'success': True, 'updated_count': updated_count})
+                except Exception as e:
+                    return JsonResponse({'success': False, 'error': str(e)})
+
+            else:
+                # Save CSS for only the selected header/footer image
+                try:
+                    hf_image = DocumentHeaderFooterImage.objects.get(id=selected_id)
+                    hf_image.css = css
+                    hf_image.save()
+                    return JsonResponse({'success': True})
+                except DocumentHeaderFooterImage.DoesNotExist:
+                    return JsonResponse({'success': False, 'error': 'Not found'})
+
+    return render(request, 'customadmin/document/letterhead_setup.html', context)

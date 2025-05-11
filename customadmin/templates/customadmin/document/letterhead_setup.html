@@ -1,0 +1,576 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
+    <style>
+        #letterheadContentShow{
+            padding: 96px;
+            height: 11.69in;
+            overflow: hidden;
+        }
+        #letterheadContentShow p{
+            margin: 0;
+        }
+    </style>
+    <style id="preview-css">
+        {{ default_css|safe }}
+    </style>
+    
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="letterhead-body">
+        <div class="left-panel">
+            <div class="row row-cols-2 g-2 letterhead-items">
+                {% if default_header_footer %}
+                <div class="letterhead-item selected" 
+                     data-document-id="{{ document.id }}" 
+                     data-header="{{ default_header_footer.header }}" 
+                     data-footer="{{ default_header_footer.footer }}">
+                    <img class="preview-image" src="{{ default_header_footer.body }}" alt="Default Preview">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="content-panel">
+            <div class="zoom-buttons">
+                <div class="input-group input-group-sm">
+                    <button id="zoomOutBtn" class="input-group-text">-</button>
+                    <div id="zoomInput" class="form-control  text-center">
+                        100%
+                    </div>
+                    <button id="zoomInBtn" class="input-group-text">+</button>
+                </div>
+            </div>
+            <div class="content">
+                <div id="a4panel">
+                    <img id="logoShow" 
+                        src="{{ document.logo_path.url }}" 
+                        alt="Logo">
+
+                    <div id="letterheadContentShow">
+                         <p>John Doe</p>
+                        <p>Software Engineer</p>
+                        <p>XYZ Technologies Ltd.</p>
+                        <p>May 8, 2025</p>
+
+                        <p>Subject: Application for Leave</p>
+                        
+                       
+                        <p>Dear Mr. Smith,</p>
+                        <p>I hope this message finds you well. I would like to formally request a leave of absence from work from May 10, 2025, to May 12, 2025, due to personal reasons. I have ensured that all my tasks are up to date and will be handing over any ongoing work to Jane Doe during my absence, should it require immediate attention.</p>
+
+                        <p>Please let me know if you need any additional information or if you require me to take any further action before my leave.</p>
+
+                        <p>Thank you for your understanding, and I look forward to your approval.</p>
+
+                        <p>Sincerely,</p>
+                        <p>John Doe</p>
+                        <p>johndoe@example.com</p>
+                    </div>
+                
+                    <div id="phoneShow">
+                        {% if document.phone %}
+                            {{ document.phone|linebreaksbr }}
+                        {% else %}
+                            01736234377<br>01916120927
+                        {% endif %}
+                    </div>
+                
+                    <div id="emailShow">
+                        {% if document.email %}
+                            {{ document.email|linebreaksbr }}
+                        {% else %}
+                            admin@gmail.com<br>mail@example.com
+                        {% endif %}
+                    </div>
+                
+                    <div id="locationShow">
+                        {% if document.location %}
+                            {{ document.location|linebreaksbr }}
+                        {% else %}
+                            123, Main Street,<br>Dhaka, Bangladesh.
+                        {% endif %}
+                    </div>
+                </div>                
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="mb-3">
+                <button class="btn btn-primary" id="getCss">Get CSS</button>
+                <button class="btn btn-success" id="saveCss">Save</button>
+                {% if header_footer_images.count > 1 %}
+                    <button class="btn btn-warning" id="saveAllCss">Save All</button>
+                {% endif %}
+            </div>
+            <div id="messageBox" class="alert d-none" role="alert"></div>
+            <div class="d-flex align-items-center mb-3 gap-3">
+                <h5 class="m-0">Download </h5>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-danger" id="downloadPdf">PDF</button>
+                    <button class="btn btn-outline-secondary" id="downloadPng">PNG</button>
+                    <button class="btn btn-outline-success" id="downloadJpg">JPG</button>
+                </div>
+            </div>
+            <div class="logo-change-panel">
+                <h5>Logo </h5>
+                <div class="logo-panel">
+                    <img id="logoPreview" class="logo" src="{{ document.logo_path.url }}" alt="Logo Preview">
+                    <label for="logoInput" class="change-logo">Change</label>
+                </div>
+                <input type="file" hidden id="logoInput" class="form-control" accept="image/*">
+                <div class="input-group input-group-sm mt-1">
+                    <input type="number" class="form-control" id="logoLeft" placeholder="Left">
+                    <input type="number" class="form-control" id="logoRight" placeholder="Right">
+                    <input type="number" class="form-control" id="logoTop" placeholder="Top">
+                    <input type="number" class="form-control" id="logoBottom" placeholder="Bottom">
+                </div>
+                <div class="input-group input-group-sm ">
+                    <span class="input-group-text">Width</span>
+                    <input type="number" class="form-control" id="logoWidthInput" placeholder="Width">
+                    <span class="input-group-text">Height</span>
+                    <input type="number" class="form-control" id="logoHeightInput" placeholder="Height">
+                </div>
+
+            </div>
+            <hr>
+            <div class="single-content-panel">
+                <h5 class="title">Phone</h5>
+                {% comment %} <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm"></textarea> {% endcomment %}
+                <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm">{{ document.phone }}</textarea>
+
+                <div class="input-group  input-group-sm">
+                    <input type="number" class="form-control" id="phoneLeft" placeholder="Left">
+                    <input type="number" class="form-control" id="phoneRight" placeholder="Right">
+                    <input type="number" class="form-control" id="phoneTop" placeholder="Top">
+                    <input type="number" class="form-control" id="phoneBottom" placeholder="Bottom">
+                </div>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">
+                        <i id="phoneLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+                    </span>
+                    <span class="input-group-text">
+                        <i id="phoneCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+                    </span>
+                    <span class="input-group-text">
+                        <i id="phoneRightAlign" class="fa-solid fa-align-right align-icon"></i>
+                    </span>
+                    <b class="input-group-text">
+                        <span style="width: 16px;" id="phoneBoldInput">B</span>
+                    </b>
+                    <i class="input-group-text">
+                        <span style="width: 16px;" id="phoneItalicInput">i</span>
+                    </i>
+                    <input type="color" class="form-control form-control-sm form-control-color" id="phoneColorInput">
+                </div>
+                <div class="input-group input-group-sm">
+                    <select name="" id="phoneFontFamily" class="form-select form-select-sm">
+                        <option value="">Font Family</option>
+                        <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                        <option value='"Courier New", Courier, monospace'>Courier New</option>
+                        <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                        <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                        <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                        <option value='"Georgia", serif'>Georgia</option>
+                        <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                        <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                        <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                    </select>
+
+                    <input type="number" style="max-width: 80px;" class="form-control" id="phoneFontSize"
+                        placeholder="Size">
+                </div>
+            </div>
+
+            <div class="single-content-panel">
+                <h5 class="title">Email</h5>
+                {% comment %} <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+                <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm">{{ document.email }}</textarea>
+
+                <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" id="emailLeft" placeholder="Left">
+                    <input type="number" class="form-control" id="emailRight" placeholder="Right">
+                    <input type="number" class="form-control" id="emailTop" placeholder="Top">
+                    <input type="number" class="form-control" id="emailBottom" placeholder="Bottom">
+                </div>
+
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">
+                        <i id="emailLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+                    </span>
+                    <span class="input-group-text">
+                        <i id="emailCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+                    </span>
+                    <span class="input-group-text">
+                        <i id="emailRightAlign" class="fa-solid fa-align-right align-icon"></i>
+                    </span>
+                    <b class="input-group-text">
+                        <span style="width: 16px;" id="emailBoldInput">B</span>
+                    </b>
+                    <i class="input-group-text">
+                        <span style="width: 16px;" id="emailItalicInput">i</span>
+                    </i>
+                    <input type="color" class="form-control form-control-sm form-control-color" id="emailColorInput">
+                </div>
+
+                <div class="input-group input-group-sm">
+                    <select name="" id="emailFontFamily" class="form-select form-select-sm">
+                        <option value="">Font Family</option>
+                        <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                        <option value='"Courier New", Courier, monospace'>Courier New</option>
+                        <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                        <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                        <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                        <option value='"Georgia", serif'>Georgia</option>
+                        <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                        <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                        <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                    </select>
+
+                    <input type="number" style="max-width: 80px;" class="form-control" id="emailFontSize"
+                        placeholder="Size">
+                </div>
+
+            </div>
+
+            <div class="single-content-panel">
+                <h5 class="title">Location</h5>
+                {% comment %} <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+                <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm">{{ document.location }}</textarea>
+
+                <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" id="locationLeft" placeholder="Left">
+                    <input type="number" class="form-control" id="locationRight" placeholder="Right">
+                    <input type="number" class="form-control" id="locationTop" placeholder="Top">
+                    <input type="number" class="form-control" id="locationBottom" placeholder="Bottom">
+                </div>
+
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">
+                        <i id="locationLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+                    </span>
+                    <span class="input-group-text">
+                        <i id="locationCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+                    </span>
+                    <span class="input-group-text">
+                        <i id="locationRightAlign" class="fa-solid fa-align-right align-icon"></i>
+                    </span>
+                    <b class="input-group-text">
+                        <span style="width: 16px;" id="locationBoldInput">B</span>
+                    </b>
+                    <i class="input-group-text">
+                        <span style="width: 16px;" id="locationItalicInput">i</span>
+                    </i>
+                    <input type="color" class="form-control form-control-sm form-control-color" id="locationColorInput">
+                </div>
+
+                <div class="input-group input-group-sm">
+                    <select name="" id="locationFontFamily" class="form-select form-select-sm">
+                        <option value="">Font Family</option>
+                        {% for font in fonts %}
+                            <option value="{{ font.font_family }}">{{ font.name }}</option>
+                        {% empty %}
+                            <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                            <option value='"Courier New", Courier, monospace'>Courier New</option>
+                            <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                            <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                            <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                            <option value='"Georgia", serif'>Georgia</option>
+                            <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                            <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                            <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" style="max-width: 80px;" class="form-control" id="locationFontSize" placeholder="Size">
+                </div>
+
+            </div>
+
+            <div class="single-content-panel">
+                <h5 class="title">Letterhead Content</h5>
+                <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" id="letterheadContentLeft" value="96"  placeholder="Left">
+                    <input type="number" class="form-control" id="letterheadContentRight" value="96"   placeholder="Right">
+                    <input type="number" class="form-control" id="letterheadContentTop" value="96"   placeholder="Top">
+                    <input type="number" class="form-control" id="letterheadContentBottom" value="96"   placeholder="Bottom">
+                </div>
+            </div>
+
+            <div class="single-content-panel header">
+                <h5 class="title">Header</h5>
+                <div id="headerChangePanel">
+                    {% for img in header_footer_images %}
+                        {% if img.header %}
+                        <div class="header-item {% if img.is_default %}selected{% endif %}" 
+                             data-hf-id="{{ img.id }}" data-css="{{ img.css }}"
+                             data-header="{{ img.header.url }}">
+                            <img class="header-item-img" src="{{ img.header.url }}" alt="Header Image">
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="header-item" data-hf-id="" data-header="">
+                            <img class="header-item-img" src="" alt="No Header Available">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="single-content-panel footer">
+                <h5 class="title">Footer</h5>
+                <div id="footerChangePanel">
+                    {% for img in header_footer_images %}
+                        {% if img.footer %}
+                        <div class="footer-item {% if img.is_default %}selected{% endif %}" 
+                             data-hf-id="{{ img.id }}" data-css="{{ img.css }}"
+                             data-footer="{{ img.footer.url }}">
+                            <img class="footer-item-img" src="{{ img.footer.url }}" alt="Footer Image">
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="footer-item" data-hf-id="" data-footer="">
+                            <img class="footer-item-img" src="" alt="No Footer Available">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+    <script src="{%static 'js/lh_setup_custom.js' %}"></script>
+    {% csrf_token %}
+    <script>
+        const defaultCss = `{{ default_css|escapejs }}`;
+        
+        $(document).ready(function() {
+            //header item click event
+            $(document).on("click", ".header-item, .footer-item", function () {
+                $(".header-item").removeClass("selected");
+                $(".footer-item").removeClass("selected");
+                $(this).addClass("selected");
+                
+                const dataId = $(this).data("hf-id");
+                const css = $(this).data("css");
+                
+                if (css) {
+                    $("#preview-css").html(css);
+                } else {
+                    $("#preview-css").html(defaultCss);
+                }
+
+                const headerItem = $('.header-item[data-hf-id="' + dataId + '"]');
+                const headerSrc = headerItem.data("header");
+
+                const footerItem = $('.footer-item[data-hf-id="' + dataId + '"]');
+                const footerSrc = footerItem.data("footer");
+
+                headerItem.addClass("selected");
+                footerItem.addClass("selected");
+
+                $("#a4panel").css("background-image", `url('${headerSrc}'), url('${footerSrc}')`);
+            });
+  
+            // get css
+            function getCss() {
+                const elements = {
+                    phone: [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "font-weight",
+                        "font-style",
+                        "font-family",
+                        "font-size",
+                        "color",
+                        "text-align",
+                    ],
+                    email: [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "font-weight",
+                        "font-style",
+                        "font-family",
+                        "font-size",
+                        "color",
+                        "text-align",
+                    ],
+                    location: [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "font-weight",
+                        "font-style",
+                        "font-family",
+                        "font-size",
+                        "color",
+                        "text-align",
+                    ],
+                    logo: ["left", "right", "top", "bottom", "height", "width"],
+                    letterheadContent: ["padding-left", "padding-right", "padding-top", "padding-bottom"],
+                };
+
+                let cssOutput = "";
+
+                Object.entries(elements).forEach(([id, props]) => {
+                const idShow = id + "Show";
+                const el = document.getElementById(idShow);
+                    if (el) {
+                    const styles = window.getComputedStyle(el);
+
+                    cssOutput += `#${id}Show{`;
+                    props.forEach((prop) => {
+                    const val = styles.getPropertyValue(prop);
+                    if (val && val.trim()) {
+                      if(prop == "left" ) {
+                        if($(`#${id}Left`).val() != ""){
+                            cssOutput += `${prop}:${val.trim()};`;
+                        }
+                      }else if(prop == "right" ) {
+                        if($(`#${id}Right`).val() != ""){
+                            cssOutput += `${prop}:${val.trim()};`;
+                        }
+                      }else if(prop == "top" ) {
+                        if($(`#${id}Top`).val() != ""){
+                            cssOutput += `${prop}:${val.trim()};`;
+                        }
+                      }else if(prop == "bottom" ) {
+                        if($(`#${id}Bottom`).val() != ""){
+                            cssOutput += `${prop}:${val.trim()};`;
+                        }
+                      }else{
+                        cssOutput += `${prop}:${val.trim()};`;
+                      }
+                    }
+                    });
+                    cssOutput += "}";
+                }
+                });
+                
+                return cssOutput;
+            }
+
+
+            function showMessage(message, type) {
+                const messageBox = $("#messageBox");
+                messageBox.removeClass("d-none alert-success alert-danger");
+                
+                if (type === "success") {
+                    messageBox.addClass("alert-success");
+                } else if (type === "error") {
+                    messageBox.addClass("alert-danger");
+                }
+            
+                messageBox.text(message);
+            
+                // Hide the message after 30 seconds (30,000 milliseconds)
+                setTimeout(function () {
+                    messageBox.addClass("d-none");
+                }, 10000);
+            }
+          
+            // letterheadContentLeft on change  letterheadContentShow set as padding css
+            $(document).on('change', '#letterheadContentLeft', function() {
+                const left = `${$(this).val()}px`;
+                $('#letterheadContentShow').css('padding-left', left);
+            });
+
+            $(document).on('change', '#letterheadContentRight', function() {
+                const right = `${$(this).val()}px`;
+                $('#letterheadContentShow').css('padding-right', right);
+            });
+
+            $(document).on('change', '#letterheadContentTop', function() {
+                const top = `${$(this).val()}px`;
+                $('#letterheadContentShow').css('padding-top', top);
+            });
+
+            $(document).on('change', '#letterheadContentBottom', function() {
+                const bottom = `${$(this).val()}px`;
+                $('#letterheadContentShow').css('bottom', bottom);
+            });
+
+            // Handle footer item selection
+            $('.footer-item').on('click', function() {
+                // Get the selected footer's ID
+                const selectedId = $(this).data('hf-id');
+        
+                // Update footer items
+                $('.footer-item').removeClass('selected');
+                $(this).addClass('selected');
+        
+                // Update corresponding header item with matching data-hf-id
+                $('.header-item').removeClass('selected');
+                $(`.header-item[data-hf-id="${selectedId}"]`).addClass('selected');
+            });
+
+            // get css
+            $("#saveCss, #saveAllCss").on("click", function () {
+                // Get the selected header or footer item's ID
+                const selectedId = $(".header-item.selected, .footer-item.selected")
+                  .first()
+                  .data("hf-id");
+            
+                // Get the CSS using the getCss function
+                const css = getCss();
+            
+                // Determine if the Save All button was clicked
+                const saveAllCss = $(this).attr("id") === "saveAllCss";  // true if Save All was clicked
+            
+                // Send AJAX request to save the CSS
+                $.ajax({
+                    url: "", // The same URL as the current page
+                    type: "POST",
+                    data: {
+                        selected_id: selectedId,
+                        css: css,
+                        saveAllCss: saveAllCss,  // Pass extra flag for Save All
+                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    },
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showMessage("CSS saved successfully");
+                            // Optionally show a success message or update UI
+                        } else {
+                            showMessage("Error:", response.error);
+                        }
+                    },
+                    error: function () {
+                        console.error("AJAX request failed");
+                    },
+                });
+            });    
+            
+            $("#getCss").on("click", function () {
+                console.log(getCss());
+            });
+        });
+    </script>
+
+</body>
+
+</html>

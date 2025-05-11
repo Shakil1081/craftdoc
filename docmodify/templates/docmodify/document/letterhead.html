@@ -1,243 +1,606 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Letterhead Templates</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="url" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+  <title>Letterhead</title>
+  <style>
+    .modal-backdrop{
+        z-index: 1;
+    }
 
-    {% for font in fonts %}
-        <link rel="stylesheet" href="{{ font.url }}" >
-    {% endfor %}
+    #modalEditor {
+        font-family: 'Roboto', sans-serif; 
+    }
 
-  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    .ql-font-roboto {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .ql-font-poppins {
+        font-family: 'Poppins', sans-serif;
+    }
+    #letterheadContentShow{
+        font-family: 'Roboto', sans-serif;
+        padding-top: 115px;
+        padding-bottom: 230px;
+        padding-left: 70px;
+        padding-right: 70px;
+        height: 11.69in;
+    }
+    #letterheadContentShow p{
+        margin: 0;
+    }
+    #letterhead-body .content-panel .zoom-buttons{
+        margin: 0;
+    }
+  </style>
+  <style id="customCss"></style>
 </head>
-<body class="letterhead-page">
-  {% load custom_filters %}
-    <div class="letterhead-content">
-        <div class="template-layout">
-          <!-- Left Panel -->
-          <div class="left-panel scroll-panel">
-            <div class="row row-cols-2 g-2 template-list">
-              {% for singleDocument in documents %}
-                {% with img=images_by_document|get_item:singleDocument.id %}
-                <div class="">
-                  <div class="template-item {% if forloop.first %}selected{% endif %}" 
-                       data-id="{{ singleDocument.id }}"
-                       data-header="{{ img.header }}"
-                       data-body="{{ img.body }}"
-                       data-footer="{{ img.footer }}">
-                    <img src="{{ singleDocument.file_path.url }}" class="img-fluid" alt="Template {{ forloop.counter }}">
-                  </div>
-                </div>
-                {% endwith %}
-              {% endfor %}
-            </div>
-          </div>
-          
-            
-            <!-- Center Panel -->
-          <div class="center-panel scroll-panel position-relative d-flex justify-content-center align-items-center">
-              
-              <div class="zoom-control position-absolute top-0 start-50 translate-middle-x mt-3">
-                  <button class="btn btn-sm btn-secondary" id="zoomOut">-</button>
-                  <span id="zoomValue">100%</span>
-                  <button class="btn btn-sm btn-secondary" id="zoomIn">+</button>
-              </div>
-          
-              <!-- Centered Preview -->
-              <div class="a4-preview" id="a4Preview">
-                {% for item in header_footer_images %}
-                  {% if item.is_default %}
-                  <div class="header-section"></div>
-                
-                  <div class="body-section">
-                    <div class="contact contact-number"></div>
-                    <div class="contact website"></div>
-                    <div class="contact address"></div>
-                  </div>
-              
-                  <div class="footer-section"></div>
-                  {% endif %}
-                {% endfor %}
-              </div>
-                
-          </div>
-  
-  
+
+<body>
     
-            <!-- Right Panel -->
-            <div class="right-panel scroll-panel">
-                <h5>Edit Letterhead</h5>
-                <div class="form-group">
-                    <h6>Logo</h6>
-                    <img id="logoPreview" src="./assets/image/logo.png" alt="Logo" width="80px" style="cursor: pointer;">
-                    <input type="file" id="logoInput" accept="image/*" style="display: none;">
-                
-                    <label for="size">Size</label>
-                    <div class="input-group input-group-sm">
-                        <input type="number" class="form-control" placeholder="width">
-                        <span class="input-group-text">X</span>
-                        <input type="number" class="form-control" placeholder="height">
-                    </div>
-                </div>
-            
-                {% for meta in metas %}
-                {% with textarea_id=meta.title|slugify %}
-                <div class="form-group">
-                    <label for="{{ textarea_id }}">{{ meta.title }}</label>
-                    <textarea rows="2"id="{{ textarea_id }}" class="form-control" placeholder="Enter {{ meta.title }}">{{ meta.value }}</textarea>
-
-                    <div class="input-group input-group-sm mb-3">
-                        <select class="form-select font-select" data-target="{{ textarea_id }}">
-                            <option value="">Select Font</option>
-                            {% for font in fonts %}
-                            <option value="{{ font.font_family|escape }}">{{ font.name }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <input type="number"
-                                class="form-control font-size-input"
-                                placeholder="font-size"
-                                value="14"
-                                data-target="{{ textarea_id }}">
-
-                        <input type="color"
-                                class="form-control form-control-color font-color-input d-none"
-                                value="#000000"
-                                title="Choose color"
-                                data-target="{{ textarea_id }}">
-                    </div>
-                </div>
-                {% endwith %}
-                {% endfor %}
+  <div id="letterhead-body">
+    <!-- Left Panel: Letterhead Items -->
+    <div class="left-panel">
+      <div class="row row-cols-2 g-2 letterhead-items">
+        {% for singleDocument in documents %}
+          {% with img=images_by_document|get_item:singleDocument.id %}
+            <div class="letterhead-item {% if singleDocument.id == document.id %}selected{% endif %}" 
+                 data-document-id="{{ singleDocument.id }}" 
+                 data-header="{{ img.header }}" 
+                 data-footer="{{ img.footer }}" 
+                 data-phone="{{ singleDocument.phone|default:'' }}" 
+                 data-email="{{ singleDocument.email|default:'' }}" 
+                 data-location="{{ singleDocument.location|default:'' }}">
+              <img class="preview-image" src="{{ img.body|default:'img/background/default.png' }}" alt="Template {{ forloop.counter }}" />
             </div>
-            
-        </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="content-panel">
+      <div class="d-flex justify-content-between mb-3">
+        <div class="zoom-buttons">
+            <div class="input-group input-group-sm">
+                <button id="zoomOutBtn" class="input-group-text">-</button>
+                <div id="zoomInput" class="form-control  text-center">
+                    100%
+                </div>
+                <button id="zoomInBtn" class="input-group-text">+</button>
+            </div>
+      </div>
+      <div class="text-center">
+          <button class="btn btn-sm btn-success " data-bs-toggle="modal" data-bs-target="#contentModal">Add Content to Letterhead</button>
+      </div>
       </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script>
-    function updateDynamicPreview() {
-      $('textarea[id]').each(function () {
-        const textarea = $(this);
-        const textareaId = textarea.attr('id');
-        const textValue = textarea.val().trim();
-    
-        // Map textarea ID to preview class
-        let previewClass = '';
-        if (textareaId.includes('contact')) {
-          previewClass = 'contact-number';
-        } else if (textareaId.includes('email') || textareaId.includes('website')) {
-          previewClass = 'website';
-        } else if (textareaId.includes('address') || textareaId.includes('location')) {
-          previewClass = 'address';
-        } else {
-          return;
-        }
-    
-        // Elements for styling controls
-        const fontSelect = $(`.font-select[data-target="${textareaId}"]`);
-        const fontSizeInput = $(`.font-size-input[data-target="${textareaId}"]`);
-        const fontColorInput = $(`.font-color-input[data-target="${textareaId}"]`);
-    
-        function applyStylesToPreview() {
-          const inputLines = textarea.val().split('\n');
-          const font = fontSelect.val() || 'inherit';
-          const fontSize = fontSizeInput.val() ? fontSizeInput.val() + 'px' : 'inherit';
-          const color = fontColorInput.val() || '#000000';
-    
-          const newHtml = inputLines.map(line => {
-            return `<span style='font-family: ${font}; font-size: ${fontSize}; color: ${color};'>${line.trim()}</span>`;
-          }).join('');
-          $('.' + previewClass).html(newHtml);
-        }
-    
-        // Initial render
-        applyStylesToPreview();
-    
-        // Listeners
-        textarea.on('input', applyStylesToPreview);
-        fontSelect.on('change', applyStylesToPreview);
-        fontSizeInput.on('input', applyStylesToPreview);
-        fontColorInput.on('input', applyStylesToPreview);
-      });
-    }
-    
-    $(document).ready(function () {
-      updateDynamicPreview();
-    });
-</script>
 
-<script>
-  const defaultImagesByDocument = {{ images_by_document|safe }};
-</script>
+          {% comment %} open modal  {% endcomment %}
+          
+          
+          {% comment %} modal  {% endcomment %}
+          <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="contentModalLabel">Add Letterhead Content</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                         <div id="modalEditor" style="height: 320px"></div>
+                         <!-- Hidden input to store Quill content -->
+                         <input type="hidden" name="letterhead_content" id="letterhead_content_input">
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" id="setContentBtn" class="btn btn-primary" data-bs-dismiss="modal">Set Content</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
-<script>
-  $(document).ready(function () {
-    const $templateItems = $('.template-item');
-    const $headerSection = $('.header-section');
-    const $bodySection = $('.body-section');
-    const $footerSection = $('.footer-section');
 
-    function setTemplateImages(images) {
-      console.log(images)
-      if (images.header) {
-        $headerSection.css({
-          'background-image': `url('${images.header}')`,
-          'background-size': '100% auto',
-          'background-repeat': 'no-repeat',
-          'background-position': 'top center',
-        });
-      }
+      <div class="content">
+          <div id="a4panel">
+           
+              <img id="logoShow" 
+                  src="" 
+                  alt="Logo">
 
-      if (images.body) {
-        $bodySection.css({
-          'background-image': `url('${images.body}')`,
-          'background-size': 'cover',
-          'background-repeat': 'no-repeat',
-          'background-position': 'center',
-        });
-      }
+                <div id="letterheadContentShow">
+                    
+                </div>
+                
+          
+              <div id="phoneShow">
+              </div>
+          
+              <div id="emailShow">
+              </div>
+          
+              <div id="locationShow">
+              </div>
+          </div>                
+      </div>
+  </div>
 
-      if (images.footer) {
-        $footerSection.css({
-          'background-image': `url('${images.footer}')`,
-          'background-size': '100% auto',
-          'background-repeat': 'no-repeat',
-          'background-position': 'bottom center',
-        });
-      }
-    }
+    <!-- Right Panel: Header/Footer Selection -->
+    <div class="right-panel">
+      <div class="mb-3 d-none">
+          <button class="btn btn-primary" id="getCss">Get CSS</button>
+          <button class="btn btn-success" id="saveCss">Save</button>
+          {% if header_footer_images.count > 1 %}
+              <button class="btn btn-warning" id="saveAllCss">Save All</button>
+          {% endif %}
+      </div>
+      <div id="messageBox" class="alert d-none" role="alert"></div>
+      <div class="d-flex align-items-center mb-3 gap-3">
+          <h5 class="m-0">Download </h5>
+          <div class="btn-group btn-group-sm download-btn">
+              <button class="btn btn-outline-danger" id="downloadPdf">PDF</button>
+              <button class="btn btn-outline-secondary" id="downloadPng">PNG</button>
+              <button class="btn btn-outline-success" id="downloadJpg">JPG</button>
+          </div>
+      </div>
+      <div class="logo-change-panel">
+          <h5>Logo </h5>
+          <div class="logo-panel">
+              <img id="logoPreview" class="logo" src="" alt="Logo Preview">
+              <label for="logoInput" class="change-logo">Change</label>
+          </div>
+          <input type="file" hidden id="logoInput" class="form-control" accept="image/*">
+          <div class="input-group input-group-sm mt-1 d-none">
+              <input type="number" class="form-control" id="logoLeft" placeholder="Left">
+              <input type="number" class="form-control" id="logoRight" placeholder="Right">
+              <input type="number" class="form-control" id="logoTop" placeholder="Top">
+              <input type="number" class="form-control" id="logoBottom" placeholder="Bottom">
+          </div>
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">Width</span>
+              <input type="number" class="form-control" id="logoWidthInput" placeholder="Width">
+              <span class="input-group-text">Height</span>
+              <input type="number" class="form-control" id="logoHeightInput" placeholder="Height">
+          </div>
+
+      </div>
+      <hr>
+      <div class="single-content-panel">
+          <h5 class="title">Phone</h5>
+          <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm">{{ document.phone }}</textarea>
+
+          <div class="input-group  input-group-sm d-none">
+              <input type="number" class="form-control" id="phoneLeft" placeholder="Left">
+              <input type="number" class="form-control" id="phoneRight" placeholder="Right">
+              <input type="number" class="form-control" id="phoneTop" placeholder="Top">
+              <input type="number" class="form-control" id="phoneBottom" placeholder="Bottom">
+          </div>
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">
+                  <i id="phoneLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="phoneCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="phoneRightAlign" class="fa-solid fa-align-right align-icon"></i>
+              </span>
+              <b class="input-group-text">
+                  <span style="width: 16px;" id="phoneBoldInput">B</span>
+              </b>
+              <i class="input-group-text">
+                  <span style="width: 16px;" id="phoneItalicInput">i</span>
+              </i>
+              <input type="color" class="form-control form-control-sm form-control-color" id="phoneColorInput">
+          </div>
+          <div class="input-group input-group-sm d-none">
+              <select name="" id="phoneFontFamily" class="form-select form-select-sm">
+                  <option value="">Font Family</option>
+                  <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                  <option value='"Courier New", Courier, monospace'>Courier New</option>
+                  <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                  <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                  <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                  <option value='"Georgia", serif'>Georgia</option>
+                  <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                  <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                  <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+              </select>
+
+              <input type="number" style="max-width: 80px;" class="form-control d-none" id="phoneFontSize"
+                  placeholder="Size">
+          </div>
+      </div>
+
+      <div class="single-content-panel">
+          <h5 class="title">Email</h5>
+          {% comment %} <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+          <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm">{{ document.email }}</textarea>
+
+          <div class="input-group input-group-sm d-none">
+              <input type="number" class="form-control" id="emailLeft" placeholder="Left">
+              <input type="number" class="form-control" id="emailRight" placeholder="Right">
+              <input type="number" class="form-control" id="emailTop" placeholder="Top">
+              <input type="number" class="form-control" id="emailBottom" placeholder="Bottom">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">
+                  <i id="emailLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="emailCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="emailRightAlign" class="fa-solid fa-align-right align-icon"></i>
+              </span>
+              <b class="input-group-text">
+                  <span style="width: 16px;" id="emailBoldInput">B</span>
+              </b>
+              <i class="input-group-text">
+                  <span style="width: 16px;" id="emailItalicInput">i</span>
+              </i>
+              <input type="color" class="form-control form-control-sm form-control-color" id="emailColorInput">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <select name="" id="emailFontFamily" class="form-select form-select-sm">
+                  <option value="">Font Family</option>
+                  <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                  <option value='"Courier New", Courier, monospace'>Courier New</option>
+                  <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                  <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                  <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                  <option value='"Georgia", serif'>Georgia</option>
+                  <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                  <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                  <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+              </select>
+
+              <input type="number" style="max-width: 80px;" class="form-control d-none" id="emailFontSize"
+                  placeholder="Size">
+          </div>
+
+      </div>
+
+      <div class="single-content-panel">
+          <h5 class="title">Location</h5>
+          {% comment %} <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
+          <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm">{{ document.location }}</textarea>
+
+          <div class="input-group input-group-sm d-none">
+              <input type="number" class="form-control" id="locationLeft" placeholder="Left">
+              <input type="number" class="form-control" id="locationRight" placeholder="Right">
+              <input type="number" class="form-control" id="locationTop" placeholder="Top">
+              <input type="number" class="form-control" id="locationBottom" placeholder="Bottom">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <span class="input-group-text">
+                  <i id="locationLeftAlign" class="fa-solid fa-align-left align-icon"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="locationCenterAlign" class="fa-solid fa-align-center align-icon selected"></i>
+              </span>
+              <span class="input-group-text">
+                  <i id="locationRightAlign" class="fa-solid fa-align-right align-icon"></i>
+              </span>
+              <b class="input-group-text">
+                  <span style="width: 16px;" id="locationBoldInput">B</span>
+              </b>
+              <i class="input-group-text">
+                  <span style="width: 16px;" id="locationItalicInput">i</span>
+              </i>
+              <input type="color" class="form-control form-control-sm form-control-color" id="locationColorInput">
+          </div>
+
+          <div class="input-group input-group-sm d-none">
+              <select name="" id="locationFontFamily" class="form-select form-select-sm">
+                  <option value="">Font Family</option>
+                  
+                  <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                      <option value='"Courier New", Courier, monospace'>Courier New</option>
+                      <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                      <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                      <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                      <option value='"Georgia", serif'>Georgia</option>
+                      <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                      <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                      <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+              </select>
+              <input type="number" style="max-width: 80px;" class="form-control d-none" id="locationFontSize" placeholder="Size">
+          </div>
+
+      </div>
+
+      <div class="single-content-panel header">
+          <h5 class="title">Header</h5>
+          <div id="headerChangePanel">
+              {% for img in header_footer_images %}
+                  {% if img.header %}
+                  <div class="header-item {% if img.is_default %}selected{% endif %}" 
+                       data-hf-id="{{ img.id }}" 
+                       data-header="{{ img.header.url }}">
+                      <img class="header-item-img" src="{{ img.header.url }}" alt="Header Image">
+                  </div>0
+                  {% endif %}
+              {% empty %}
+                  <div class="header-item" data-hf-id="" data-header="">
+                      <img class="header-item-img" src="" alt="No Header Available">
+                  </div>
+              {% endfor %}
+          </div>
+      </div>
+      
+      <div class="single-content-panel footer">
+          <h5 class="title">Footer</h5>
+          <div id="footerChangePanel">
+              {% for img in header_footer_images %}
+                  {% if img.footer %}
+                  <div class="footer-item {% if img.is_default %}selected{% endif %}" 
+                       data-hf-id="{{ img.id }}" 
+                       data-footer="{{ img.footer.url }}">
+                      <img class="footer-item-img" src="{{ img.footer.url }}" alt="Footer Image">
+                  </div>
+                  {% endif %}
+              {% empty %}
+                  <div class="footer-item" data-hf-id="" data-footer="">
+                      <img class="footer-item-img" src="" alt="No Footer Available">
+                  </div>
+              {% endfor %}
+          </div>
+          {% csrf_token %}
+      </div>            
+    </div>
+  </div>
+
  
-    // Initial Load
-    const defaultId = $('.template-item.selected').data('id');
-    if (defaultId && defaultImagesByDocument[defaultId]) {
-      setTemplateImages(defaultImagesByDocument[defaultId]);
-    }
+    <!-- Include the quill-table module -->
 
-    // On click 
-    $templateItems.on('click', function () {
-     
-      $templateItems.removeClass('selected');
-      $(this).addClass('selected');
+  <!-- Inline JavaScript for AJAX Functionality -->
 
-      const docId = $(this).data('id');
-      if (defaultImagesByDocument[docId]) {
-        setTemplateImages(defaultImagesByDocument[docId]);
-      }
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+  <script src="{% static 'js/lh_setup_custom.js' %}"></script>
+
+
+  <script>
+    $(document).ready(function () {
+        var quill = new Quill('#modalEditor', {
+            theme: 'snow',
+            modules: {
+              toolbar: [
+                [{ 'header': '1' }, { 'header': '2' }],
+                [{ 'font': [] }],
+                [{
+                  'size': ['small', 'medium', 'large', 'huge']  // Custom size options
+                }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['bold', 'italic', 'underline'],    
+                ['link'],
+                [{ 'color': [] }, { 'background': [] }],
+                ['blockquote', 'code-block']
+              ]
+            }
+        });
+          
+        // Fill editor with existing content if available
+        function loadLHContent(document) {
+            var initialContent = document.letterhead_content ?? '';
+            console.log(initialContent);
+            if (initialContent) {
+                quill.root.innerHTML = initialContent;
+            }else{
+                quill.root.innerHTML = null;
+            }
+
+            const content = quill.root.innerHTML;
+            $('#letterheadContentShow').html(content);
+        }
+
+        $('#setContentBtn').on('click', function () {
+            const content = quill.root.innerHTML;
+            $('#letterheadContentShow').html(content);
+        });
+
+        function loadHeaderFooterData(documentId) {
+            $.ajax({
+                url: `/letterhead/${documentId}/`,
+                type: 'GET',
+                headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (response) {
+                headerFooterImages = response.header_footer_images;
+                const document = response.document;            
+
+                loadLHContent(document)
+
+                // Find the default header/footer image
+                const defaultImage = headerFooterImages.find(hf => hf.is_default);
+
+                if (defaultImage && defaultImage.css) {
+                    $('#customCss').html(defaultImage.css);
+                } else {
+                    console.log('No default CSS found.');
+                }
+
+                // Update logo
+                if (document.logo) {
+                    $('#logoPreview').attr('src', document.logo);
+                    $('#logoShow').attr('src', document.logo);
+                }
+                
+                // Update phone, email, location
+                $('#phoneInput').val(document.phone || '');
+                $('#emailInput').val(document.email || '');
+                $('#locationInput').val(document.location || '');
+                
+                $('#phoneShow').empty();
+                $('#emailShow').empty();
+                $('#locationShow').empty();
+
+                // Update phone, email, location
+                if (document.phone) {
+                    $('#phoneShow').append(document.phone.replace(/\n/g, '<br>'));
+                } else {
+                    $('#phoneShow').append('');
+                }
+                if (document.email) {
+                    $('#emailShow').append(document.email.replace(/\n/g, '<br>'));
+                } else {
+                    $('#emailShow').append('');
+                }
+                if (document.location) {
+                    $('#locationShow').append(document.location.replace(/\n/g, '<br>'));
+                } else {
+                    $('#locationShow').append('');
+                }
+
+                // Clear and repopulate header/footer
+                $('#headerChangePanel').empty();
+                $('#footerChangePanel').empty();
+                
+                headerFooterImages.forEach(hf => {
+                    if (hf.header) {
+                    const isSelected = hf.is_default ? 'selected' : '';
+                    $('#headerChangePanel').append(`
+                        <div class="header-item ${isSelected}" data-hf-id="${hf.id}" data-header="${hf.header}">
+                        <img class="header-item-img" src="${hf.header}" alt="Header" />
+                        </div>
+                    `);
+                    }
+                    if (hf.footer) {
+                    const isSelected = hf.is_default ? 'selected' : '';
+                    $('#footerChangePanel').append(`
+                        <div class="footer-item ${isSelected}" data-hf-id="${hf.id}" data-footer="${hf.footer}">
+                        <img class="footer-item-img" src="${hf.footer}" alt="Footer" />
+                        </div>
+                    `);
+                    }
+                });
+                },          
+                error: function (error) {
+                console.error('Error fetching header/footer data:', error);
+                }
+            });                      
+        }
+
+        // Handle click on letterhead items
+        $('.letterhead-item').on('click', function () {
+            // Remove 'selected' class from all items
+            $('.letterhead-item').removeClass('selected');
+            $(this).addClass('selected');
+
+            // Get the selected document ID
+            const documentId = $(this).data('document-id');
+
+            // Load header/footer data for the selected document
+            loadHeaderFooterData(documentId);
+
+            // Update the URL dynamically
+            const newUrl = `/letterhead/${documentId}/`;
+            window.history.pushState({}, '', newUrl);
+        });
+
+        // Trigger default selection
+        const initialDocumentId = $('.letterhead-item').first().data('document-id');
+        loadHeaderFooterData(initialDocumentId);
+
+        //header item click event
+        $(document).on("click", ".header-item, .footer-item", function () {
+            $(".header-item").removeClass("selected");
+            $(".footer-item").removeClass("selected");
+            const dataId = $(this).data("hf-id");
+            
+            const selectedHF = headerFooterImages.find(hf => hf.id == dataId);
+            if (selectedHF && selectedHF.css) {
+                $('#customCss').empty();
+                $('#customCss').html(selectedHF.css);
+            } else {
+                $('#customCss').empty();
+                console.log('No default CSS found.');
+            }
+
+            const headerItem = $('.header-item[data-hf-id="' + dataId + '"]');
+            const headerSrc = headerItem.data("header");
+
+            const footerItem = $('.footer-item[data-hf-id="' + dataId + '"]');
+            const footerSrc = footerItem.data("footer");
+
+            headerItem.addClass("selected");
+            footerItem.addClass("selected");
+
+            $("#a4panel").css("background-image", `url('${headerSrc}'), url('${footerSrc}')`);
+        });     
+        
+        $('.download-btn button').on('click', function () {
+            const downloadType = $(this).attr('id').replace('download', '').toLowerCase(); // pdf, jpg, png
+        
+            const formData = new FormData();
+
+            const content = quill.root.innerHTML;
+            if (content.trim() !== '' && content !== '<p><br></p>') {
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
+
+            // Add CSRF token
+            formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+
+            // Add regular text fields
+            formData.append('download_type', downloadType);
+            formData.append('document_id', $('.letterhead-item.selected').data('document-id'));
+            formData.append('document_hf_id', $('.header-item.selected').data('hf-id'));
+            formData.append('contact', $('#phoneShow').text().trim());
+            formData.append('email', $('#emailShow').text().trim());
+            formData.append('location', $('#locationShow').text().trim());
+            formData.append('css', $('#customCss').html().trim());
+            formData.append('letterhead_content', $('#letterhead_content_input').val());
+
+            // Add media file (e.g., logo file input)
+            const logoInput = $('#logoInput')[0];  // Assuming you have <input type="file" id="logoInput">
+            if (logoInput && logoInput.files.length > 0) {
+                formData.append('logo_file', logoInput.files[0]);
+            }
+            console.log(formData.logo_file);
+            $.ajax({
+                url: '/save-download-history/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.success) {
+                        console.log("Download history saved.");
+                        // Optionally trigger actual download
+                        window.location.href = 'http://127.10.10.10:8000/download/pdf/' + res.download_history_id;
+                    } else {
+                        console.error(res.error);
+                    }
+                }
+            });
+        }); 
     });
-  });
-</script>
-
     
-  <script src="{% static 'assets/js/script.js' %}"></script>
-
+    
+  </script>
 </body>
 </html>

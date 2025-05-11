@@ -22,10 +22,192 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
-from customadmin.models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
+from customadmin.models import Document, Setting, DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from collections import defaultdict
+from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
+from django.core.files.storage import default_storage
 
 def hello_there(request):
-    return render(request, 'docmodify/letterhead_upload.html')
+    # Get the search term from the GET request
+    search_query = request.GET.get('search', '')
+    category_filter = request.GET.get('category', 'all')
+
+    # Fetch documents, categories, and header/footer images
+    documents = Document.objects.all().order_by('id')
+
+    # Filter documents by search query
+    if search_query:
+        documents = documents.filter(title=search_query)
+
+    # Handle category filtering
+    if category_filter != 'all':
+        # Fetch category object based on category filter
+        category = Category.objects.get(name=category_filter)
+        # Filter documents by this category
+        documents = documents.filter(documentcategory__category=category)
+
+    # Pagination
+    paginator = Paginator(documents, 10)  # Show 10 documents per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Get the first document (or any other document as needed)
+    document = Document.objects.first()  
+    categories = Category.objects.all()
+    
+    # Group images by document ID
+    images_by_document = defaultdict(dict)
+    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
+        doc_id = img.document.id
+        images_by_document[doc_id] = {
+            'header': img.header.url if img.header else '',
+            'footer': img.footer.url if img.footer else '',
+            'body': img.preview_image.url if img.preview_image else ''
+        }
+
+    # Prepare context data for the template
+    context = {
+        'documents': page_obj,
+        'categories': categories,
+        'images_by_document': dict(images_by_document),
+        'search_query': search_query,
+        'category_filter': category_filter,
+    }
+
+    # Render the template with context
+    return render(request, 'docmodify/index.html', context)
+
+
+@login_required
+def letterhead(request, document_id):
+    # if not request.user.is_active:
+    #     messages.warning(request, 'Please verify your email to access all features.')
+
+     # Fetch the selected document
+    document = get_object_or_404(Document, id=document_id)
+    
+    # Get all documents
+    documents = Document.objects.all()
+    
+    # Reorder the documents list to make the selected document first
+    documents = [document] + [doc for doc in documents if doc != document]
+
+    categories = DocumentCategory.objects.filter(document=document)
+    metas = DocumentMeta.objects.filter(document=document)
+    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
+    fonts = Font.objects.all()
+
+    # Group images by document ID
+    images_by_document = defaultdict(dict)
+    default_images = DocumentHeaderFooterImage.objects.filter(is_default=True)
+    for img in default_images:
+        doc_id = img.document.id
+        images_by_document[doc_id] = {
+            'header': img.header.url if img.header else '',
+            'footer': img.footer.url if img.footer else '',
+            'body': img.preview_image.url if img.preview_image else ''
+        }
+
+    context = {
+        'document': document,
+        'documents': documents,
+        'categories': categories,
+        'metas': metas,
+        'header_footer_images': header_footer_images,
+        'fonts': fonts,
+        'images_by_document': dict(images_by_document),
+    }
+
+    # Check if the request is an AJAX request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Return JSON response for AJAX requests
+        data = {
+            'fonts': [
+                {
+                    'id': font.id,
+                    'name': font.name,
+                    'url': font.url,
+                }
+                for font in fonts
+            ],
+            'document': {
+                'id': document.id,
+                'logo': document.logo_path.url if document.logo_path else '',
+                'phone': document.phone,
+                'email': document.email,
+                'location': document.location,
+                'letterhead_content': document.letterhead_content,
+                # add more fields if needed
+            },
+            'header_footer_images': [
+                {
+                    'id': hf.id,
+                    'header': hf.header.url if hf.header else None,
+                    'footer': hf.footer.url if hf.footer else None,
+                    'css': hf.css if hf.css else None,
+                    'is_default': hf.is_default,
+                }
+                for hf in header_footer_images
+            ],
+        }
+
+        return JsonResponse(data)
+
+    # Render the template for normal requests
+    return render(request, 'docmodify/document/letterhead.html', context)
+
+@csrf_exempt
+@login_required
+def save_download_history(request):
+    if request.method == 'POST':
+        user = request.user
+        document_id = request.POST.get('document_id')
+        document_hf_id = request.POST.get('document_hf_id')
+        logo_file = request.FILES.get('logo_file')  # Handle uploaded file
+
+        # Other fields...
+        contact = request.POST.get('contact')
+        email = request.POST.get('email')
+        location = request.POST.get('location')
+        css = request.POST.get('css')
+        download_type = request.POST.get('download_type')
+        letterhead_content = request.POST.get('letterhead_content')
+
+        try:
+            document = Document.objects.get(pk=document_id)            
+            document_hf = DocumentHeaderFooterImage.objects.get(pk=document_hf_id)
+            
+            # Optional: Save logo file to media
+            logo_path = None
+            if logo_file:
+                logo_path = default_storage.save(f'documents/files/{logo_file.name}', logo_file)
+            else:
+                logo_path = document.logo_path
+            
+            download_history = DownloadHistory.objects.create(
+                user=user,
+                document_id=document.pk,
+                document_hf=document_hf,
+                logo_path=logo_path,
+                contact=contact,
+                email=email,
+                location=location,
+                css=css,
+                header_path=document_hf.header if document_hf.header else '',
+                footer_path=document_hf.footer if document_hf.footer else '',
+                download_type=download_type,
+                letterhead_content = letterhead_content
+            )
+            user.use_credit("credit_per_template")
+            return JsonResponse({'success': True, 'download_history_id': download_history.pk})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid method'})
 
 def register(request):
     if request.method == 'POST':
@@ -35,45 +217,45 @@ def register(request):
             user.is_active = False  # User inactive until email verified
             user.set_password(form.cleaned_data['password'])
             user.save()
+            user.earn_credit("signup_bonus")
+            # # Generate and store 150-char token
+            # token = user.generate_verification_token()
 
-            # Generate and store 150-char token
-            token = user.generate_verification_token()
+            # # Assign 'user' group
+            # user_group, created = Group.objects.get_or_create(name='user')
+            # user.groups.add(user_group)
 
-            # Assign 'user' group
-            user_group, created = Group.objects.get_or_create(name='user')
-            user.groups.add(user_group)
+            # # Send verification email
+            # # token = account_activation_token.make_token(user)
+            # uid = urlsafe_base64_encode(force_bytes(user.pk))
+            # protocol = 'https' if request.is_secure() else 'http'
+            # current_site = get_current_site(request)
+            # domain = current_site.domain
 
-            # Send verification email
-            # token = account_activation_token.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            protocol = 'https' if request.is_secure() else 'http'
-            current_site = get_current_site(request)
-            domain = current_site.domain
+            # context = {
+            #     'user': user,
+            #     'protocol': protocol,
+            #     'domain': domain,
+            #     'uid': uid,
+            #     'token': token,
+            #     'site_name': 'CraftDOC'
+            # }
 
-            context = {
-                'user': user,
-                'protocol': protocol,
-                'domain': domain,
-                'uid': uid,
-                'token': token,
-                'site_name': 'CraftDOC'
-            }
+            # # Render both HTML and plain text versions
+            # html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
+            # text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
 
-            # Render both HTML and plain text versions
-            html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
-            text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
+            # # Send the email
+            # email = EmailMultiAlternatives(
+            #     subject="Verify Your Email | CraftDOC",
+            #     body=text_content,  # Plain text fallback
+            #     from_email="noreply@craftdoc.com",
+            #     to=[user.email]
+            # )
+            # email.attach_alternative(html_content, "text/html")  # HTML version
+            # email.send()
 
-            # Send the email
-            email = EmailMultiAlternatives(
-                subject="Verify Your Email | CraftDOC",
-                body=text_content,  # Plain text fallback
-                from_email="noreply@craftdoc.com",
-                to=[user.email]
-            )
-            email.attach_alternative(html_content, "text/html")  # HTML version
-            email.send()
-
-            return redirect('verification_mail_sent')
+            # return redirect('verification_mail_sent')
     else:
         form = PublicUserRegistrationForm()
 
@@ -170,48 +352,12 @@ def role_based_redirect(request):
 
 @login_required
 def public_dashboard(request):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
+    # if not request.user.is_active:
+    #     messages.warning(request, 'Please verify your email to access all features.')
     return render(request, 'docmodify/dashboard.html')
 
-@login_required
-def letterhead(request):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
-
-    document_id = 26
-    document = get_object_or_404(Document, pk=document_id)
-    documents = Document.objects.all().order_by('id')
-
-    categories = DocumentCategory.objects.filter(document=document)
-    metas = DocumentMeta.objects.filter(document=document)
-    header_footer_images = DocumentHeaderFooterImage.objects.filter(document=document)
-    fonts = Font.objects.all()
-
-    # Group images by document ID
-    images_by_document = defaultdict(dict)
-    for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
-        doc_id = img.document.id
-        images_by_document[doc_id] = {
-            'header': img.header.url if img.header else '',
-            'body': img.preview_image.url if img.preview_image else '',
-            'footer': img.footer.url if img.footer else ''
-        }
-
-    context = {
-        'document': document,
-        'documents': documents,
-        'categories': categories,
-        'metas': metas,
-        'header_footer_images': header_footer_images,
-        'fonts': fonts,
-        'images_by_document': dict(images_by_document)
-    }
-
-    return render(request, 'docmodify/document/letterhead.html', context)
-
 def public_login(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    
@@ -220,7 +366,7 @@ def public_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-
+            next_url = request.POST.get('next')
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
@@ -229,13 +375,16 @@ def public_login(request):
             if user is not None:
                 if not user.check_password(password):
                     messages.error(request, "Invalid email or password.")
-                elif not user.is_active:
-                    login(request, user)
-                    messages.error(request, "Account not verified. Please enter your email for verification link.")
-                    return redirect('resend_verification')
+                # elif not user.is_active:
+                #     login(request, user)
+                #     messages.error(request, "Account not verified. Please enter your email for verification link.")
+                #     return redirect('resend_verification')
                 else:
-                    login(request, user)
-                    return redirect('public_dashboard')
+                    if not user.is_superuser:                        
+                        login(request, user)
+                        return redirect(next_url or 'hello_there')
+                    else:
+                        return redirect('admin-login')
             else:
                 messages.error(request, "Invalid email or password.")
     else:
@@ -314,7 +463,10 @@ def reset_password(request, uidb64, token):
         return redirect('forgot_password')
     
 def earn_credit(request):
-    return render(request, 'docmodify/credit/earn.html')
+    credit_setting = Setting.objects.filter(key='credit_per_bdt').first()
+    return render(request, 'docmodify/credit/earn.html', {
+        'credit_setting': credit_setting
+    })
 
 def credit_earn_history(request):
     user_credit_history = CreditEarnHistory.objects.filter(user=request.user)

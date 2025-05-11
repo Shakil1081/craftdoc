@@ -8,7 +8,7 @@ urlpatterns = [
     path('dashboard/', views.public_dashboard, name='public_dashboard'),
     path('redirect/', views.role_based_redirect, name='role_based_redirect'),
     path('login/', views.public_login, name='login'),
-    path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     
     # Email verification URLs
     path('verify-email/<str:uidb64>/<str:token>/', views.verify_email, name='verify_email'),
@@ -21,12 +21,13 @@ urlpatterns = [
 
 
 
-    path('letterhead/26', views.letterhead, name='letterhead'),
+    # path('letterhead/26', views.letterhead, name='letterhead'),
 
     # path('credit-history', views.credit_history, name='credit_history'),
     path('credit-earn', views.earn_credit, name='earn_credit'),
     path('credit-earn-history', views.credit_earn_history, name='credit_earn_history'),
     path('credit-uses-history', views.credit_uses_history, name='credit_uses_history'),
 
-    path('letterhead/5', views.letterhead, name='letterhead'),
+    path('letterhead/<int:document_id>/', views.letterhead, name='letterhead'),
+    path('save-download-history/', views.save_download_history, name='save_download_history'),
 ]

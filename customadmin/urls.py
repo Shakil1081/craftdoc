@@ -62,6 +62,7 @@ urlpatterns = [
     path('documents/', document_views.document_list, name='document_list'),
     path('documents/add/', document_views.document_create, name='document_create'),
     path('documents/delete/<int:pk>/', document_views.document_delete, name='document_delete'),
+    path('documents/letterhead-setup/<int:document_id>/', document_views.document_lhsetup, name='document_lhsetup'),
 
 
     path('fonts/', font_views.font_list, name='font_list'),

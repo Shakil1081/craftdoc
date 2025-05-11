@@ -1,81 +1,79 @@
 <!-- customadmin/templates/customadmin/category_list.html -->
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
+  <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Category List</h2>
-        <a href="{% url 'category_create' %}" class="btn btn-primary">Add New Category</a>
+      <h2>Category List</h2>
+      <a href="{% url 'category_create' %}" class="btn btn-primary">Add New Category</a>
     </div>
 
     <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Name</th>
-                <th>Short Name</th>
-                <th>Parent Category</th>
-                <th>Category Level</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category in categories %}
-            <tr id="category-{{ category.id }}">
-                <td>{{ category.name }}</td>
-                <td>{{ category.short_name }}</td>
-                <td>
-                    {% if category.parent %}
-                        {{ category.parent.name }}
-                    {% else %}
-                        None
-                    {% endif %}
-                </td>
-                <td>{{ category.category_level }}</td>
-                <td>
-                    <a href="{% url 'category_edit' category.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                    <button class="btn btn-sm btn-danger delete-btn" data-category-id="{{ category.id }}">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+      <thead class="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th>Short Name</th>
+          <th>Parent Category</th>
+          <th>Category Level</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+          <tr id="category-{{ category.id }}">
+            <td>{{ category.name }}</td>
+            <td>{{ category.short_name }}</td>
+            <td>
+              {% if category.parent %}
+                {{ category.parent.name }}
+              {% else %}
+                None
+              {% endif %}
+            </td>
+            <td>{{ category.category_level }}</td>
+            <td>
+              <a href="{% url 'category_edit' category.pk %}" class="btn btn-warning btn-sm">Edit</a>
+              <button class="btn btn-sm btn-danger delete-btn" data-category-id="{{ category.id }}">Delete</button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-</div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.querySelectorAll('.delete-btn').forEach(function(button) {
-        button.addEventListener('click', function() {
-            const categoryId = this.getAttribute('data-category-id');
-            const deleteUrl = "{% url 'category_delete' 0 %}".replace("0", categoryId);
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You won\'t be able to revert this!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(deleteUrl, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            document.getElementById('category-' + categoryId).remove();
-                            Swal.fire('Deleted!', 'The category has been deleted.', 'success');
-                        } else {
-                            Swal.fire('Error!', 'An error occurred while deleting the category.', 'error');
-                        }
-                    });
-                }
-            });
-        });
-    });
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.querySelectorAll('.delete-btn').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const categoryId = this.getAttribute('data-category-id')
+        const deleteUrl = "{% url 'category_delete' 0 %}".replace('0', categoryId)
+    
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, Delete it!',
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(deleteUrl, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+              }
+            }).then((response) => {
+              if (response.ok) {
+                document.getElementById('category-' + categoryId).remove()
+                Swal.fire('Deleted!', 'The category has been deleted.', 'success')
+              } else {
+                Swal.fire('Error!', 'An error occurred while deleting the category.', 'error')
+              }
+            })
+          }
+        })
+      })
+    })
+  </script>
 {% endblock %}

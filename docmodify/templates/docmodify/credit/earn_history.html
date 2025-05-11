@@ -22,9 +22,7 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Target Type</th>
-          <th>Target ID</th>
-          <th>Description</th>
+          <th>Title</th>
           <th>Credit Earned</th>
         </tr>
       </thead>
@@ -32,8 +30,6 @@
         {% for record in page_obj.object_list %}
         <tr>
           <td>{{ forloop.counter }}</td> <!-- Row Number -->
-          <td>{{ record.target_type }}</td> <!-- Target Type -->
-          <td>{{ record.target_id }}</td> <!-- Target ID -->
           <td>{{ record.description }}</td> <!-- Description -->
           <td>{{ record.earned_credit }}</td> <!-- Credit Earned -->
         </tr>

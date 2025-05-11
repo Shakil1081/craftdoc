@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page with Letterhead & Search</title>
+    <!-- Bootstrap 5.3 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+
+    <style>
+      /* Custom Styles */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f7fc;
+      }
+      
+      /* Header Styles */
+      .header {
+        background-color: #040444;
+        /* Primary color */
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      
+      .header .letterhead {
+        margin: 0 auto;
+        max-width: 600px;
+      }
+      
+      .header .letterhead img {
+        height: 65px;
+        margin-bottom: 10px;
+      }
+      
+      .header .letterhead h1 {
+        font-size: 36px;
+        font-weight: bold;
+      }
+      
+      .header .letterhead p {
+        font-size: 18px;
+        margin-top: 5px;
+      }
+      
+      /* Search Section Styles */
+      .search-section {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 30px 0;
+      }
+      
+      .search-bar {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      
+      .category-filter {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      
+      .search-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #f3931c;
+        /* Secondary color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      .search-button:hover {
+        background-color: #e57b0e;
+        /* Slightly darker shade of secondary color */
+      }
+      
+      /* Content Section */
+      .content-section {
+        text-align: center;
+        padding: 50px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        max-width: 900px;
+      }
+      
+      .content-section h2 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      
+      .content-section p {
+        font-size: 18px;
+        color: #555;
+      }
+      
+      /* Letterhead Preview Grid */
+      .letterhead-preview {
+        margin-top: 40px;
+      }
+      
+      .letterhead-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      
+      .letterhead-card img {
+        width: 100%;
+      }
+      
+      .letterhead-card h3 {
+        font-size: 20px;
+        margin-top: 15px;
+      }
+      
+      .letterhead-card p {
+        color: #777;
+      }
+      
+      /* Footer Styles */
+      .footer {
+        background-color: #040444;
+        /* Primary color */
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 16px;
+        width: 100%;
+      }
+      
+      /* Pagination Styles */
+      .pagination {
+        justify-content: center;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% load custom_filters %}
+    <!-- Header Section -->
+    <header class="header">
+      <div class="letterhead">
+        <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" class="logo" />
+        <p>Empowering your business, one step at a time.</p>
+        <div class="d-flex justify-content-center gap-2">
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'public_dashboard' %}" class="btn btn-sm btn-success">Dashboard</a>
+            <form method="POST" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger">Logout</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-sm btn-info">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-sm btn-warning">Sign Up</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Search Section -->
+        <section class="search-section">
+          <!-- Search bar to capture the search term -->
+          <form method="get" action="{% url 'hello_there' %}">
+              <input type="text" id="search-bar" name="search" placeholder="Search..." value="{{ search_query }}" class="search-bar" />
+              
+              <!-- Category filter -->
+              <select id="category-filter" name="category" class="category-filter">
+                  <option value="all" {% if category_filter == 'all' %}selected{% endif %}>All Categories</option>
+                  {% for category in categories %}
+                      <option value="{{ category.name }}" {% if category.name == category_filter %}selected{% endif %}>{{ category.name }}</option>
+                  {% endfor %}
+              </select>
+
+              <!-- Submit Button -->
+              <button type="submit" class="search-button">Search</button>
+          </form>
+        </section>
+
+        <!-- Content Section -->
+        <section class="content-section">
+          <h2>Explore Our Services</h2>
+          <p>We offer top-notch services tailored to your needs. Find the best solutions with us!</p>
+        </section>
+
+        <!-- Letterhead Preview Grid -->
+        <section class="letterhead-preview">
+          {% if documents %}
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
+                  {% for singleDocument in documents %}
+                      {% with img=images_by_document|get_item:singleDocument.id %}
+                          <div>
+                              <a class="letterhead-card d-block" href="{% url 'letterhead' singleDocument.id %}">
+                                  <img src="{{ img.body|default:'img/background/default.png' }}" alt="Letterhead {{ forloop.counter }}" />
+                              </a>
+                          </div>
+                      {% endwith %}
+                  {% endfor %}
+              </div>
+
+              <!-- Pagination Controls below the Letterhead Grid -->
+              <nav aria-label="Page navigation example" class="pagination">
+                  <ul class="pagination">
+                      <li class="page-item {% if not documents.has_previous %}disabled{% endif %}">
+                          <a class="page-link" href="?page=1">Previous</a>
+                      </li>
+                      {% for page_num in documents.paginator.page_range %}
+                          <li class="page-item {% if documents.number == page_num %}active{% endif %}">
+                              <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                          </li>
+                      {% endfor %}
+                      <li class="page-item {% if not documents.has_next %}disabled{% endif %}">
+                          <a class="page-link" href="?page={{ documents.paginator.num_pages }}">Next</a>
+                      </li>
+                  </ul>
+              </nav>
+          {% else %}
+              <p class="text-center text-danger">No data found.</p>
+          {% endif %}
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+      <p>&copy; 2025 Your Company. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
