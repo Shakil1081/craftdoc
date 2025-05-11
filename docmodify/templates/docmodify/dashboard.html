@@ -1,7 +1,441 @@
 {% extends 'docmodify/public_base.html' %} {% block css %}
 <style>
-  
-</style>
-{% endblock %} {% block content %}
 
+</style>
+{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #4361ee;
+        --primary-light: #4cc9f0;
+        --secondary: #3f37c9;
+        --accent: #f72585;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --gray: #6b7280;
+        --card-bg: #ffffff;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+        background-color: #f5f7ff;
+        color: var(--dark);
+    }
+
+    .dashboard {
+        max-width: 1400px;
+        margin: 0 auto;
+        /* margin-top: 3.5rem !important; */
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--dark);
+        position: relative;
+        display: inline-block;
+    }
+
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        border-radius: 2px;
+    }
+
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .card-title {
+        font-size: 14px;
+        color: var(--gray);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+    }
+
+    .card-value {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .card-change {
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .positive {
+        color: var(--success);
+    }
+
+    .negative {
+        color: var(--danger);
+    }
+
+    .tables-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    @media (min-width: 992px) {
+        .tables-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .table-wrapper {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .table-title {
+        font-size: 18px;
+        font-weight: 600;
+        padding: 20px 24px;
+        color: var(--dark);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .table-title i {
+        color: var(--primary);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 16px 24px;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: var(--gray);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 16px 24px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        font-size: 14px;
+        color: var(--dark);
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background-color: rgba(67, 97, 238, 0.03);
+    }
+
+    .badge {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .badge-success {
+        background-color: rgba(74, 222, 128, 0.1);
+        color: #16a34a;
+    }
+
+    .badge-warning {
+        background-color: rgba(251, 191, 36, 0.1);
+        color: #d97706;
+    }
+
+    .badge i {
+        font-size: 12px;
+    }
+
+    /* Floating action button */
+    .fab {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .fab:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+    }
+</style>
+
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>Credit Dashboard</h1>
+            <div class="user-info">
+                <!-- User avatar/notification could go here -->
+            </div>
+        </div>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Total Credits</div>
+                    <div class="card-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                </div>
+                <div class="card-value">12,450</div>
+                <div class="card-change positive">
+                    <i class="fas fa-arrow-up"></i> 12% from last month
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Credits Earned</div>
+                    <div class="card-icon">
+                        <i class="fas fa-arrow-circle-up"></i>
+                    </div>
+                </div>
+                <div class="card-value">2,340</div>
+                <div class="card-change positive">
+                    <i class="fas fa-arrow-up"></i> 8% from last month
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Credits Used</div>
+                    <div class="card-icon">
+                        <i class="fas fa-arrow-circle-down"></i>
+                    </div>
+                </div>
+                <div class="card-value">1,850</div>
+                <div class="card-change negative">
+                    <i class="fas fa-arrow-down"></i> 5% from last month
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Available Credits</div>
+                    <div class="card-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+                <div class="card-value">10,600</div>
+                <div class="card-change positive">
+                    <i class="fas fa-arrow-up"></i> 15% from last month
+                </div>
+            </div>
+        </div>
+
+        <div class="tables-container">
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <i class="fas fa-arrow-up"></i> Credit Earn History
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2023-10-15</td>
+                            <td>Referral Bonus</td>
+                            <td>500</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Completed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-10-10</td>
+                            <td>Monthly Reward</td>
+                            <td>300</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Completed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-10-05</td>
+                            <td>Survey Completion</td>
+                            <td>150</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Completed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-28</td>
+                            <td>Promo Code</td>
+                            <td>200</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Completed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-20</td>
+                            <td>Activity Bonus</td>
+                            <td>100</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Completed</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <i class="fas fa-arrow-down"></i> Credit Usage History
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2023-10-14</td>
+                            <td>Premium Subscription</td>
+                            <td>1,000</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Processed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-10-08</td>
+                            <td>API Calls</td>
+                            <td>350</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Processed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-10-03</td>
+                            <td>Data Export</td>
+                            <td>200</td>
+                            <td><span class="badge badge-warning"><i class="fas fa-clock"></i> Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-25</td>
+                            <td>Storage Upgrade</td>
+                            <td>150</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Processed</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-18</td>
+                            <td>Priority Support</td>
+                            <td>150</td>
+                            <td><span class="badge badge-success"><i class="fas fa-check-circle"></i> Processed</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <button class="fab">
+        <a href="{% url 'earn_credit' %}"><i class="fas fa-plus"></i></a>
+    </button>
+</body>
 {% endblock %}
