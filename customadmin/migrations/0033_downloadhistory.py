@@ -3,6 +3,7 @@
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
+from datetime import datetime       
 
 
 class Migration(migrations.Migration):
@@ -24,7 +25,7 @@ class Migration(migrations.Migration):
                 ('header_path', models.CharField(blank=True, max_length=255)),
                 ('footer_path', models.CharField(blank=True, max_length=255)),
                 ('download_type', models.CharField(max_length=10)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True, default=datetime.now())),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='customadmin.document')),
                 ('document_hf', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='customadmin.documentheaderfooterimage')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
