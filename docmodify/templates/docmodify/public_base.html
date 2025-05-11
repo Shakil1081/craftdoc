@@ -57,46 +57,129 @@
       color: var(--accent-color) !important;
     }
 
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #3498db;
+      --text-primary: #2c3e50;
+      --text-secondary: #7f8c8d;
+    }
+
     .profile-section {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
     }
 
-    .profile-img {
-      width: 40px;
-      height: 40px;
+    .credit-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+
+    .credit-indicator:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .credit-indicator i {
+      color: #f1c40f;
+      font-size: 1.1rem;
+    }
+
+    .credit-value {
+      font-weight: 600;
+      font-feature-settings: "tnum";
+    }
+
+    .profile-avatar {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid var(--accent-color);
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
-    .credit-badge {
-      background: var(--accent-color);
-      color: white;
-      border-radius: 20px;
-      padding: 5px 15px;
-      font-size: 0.9rem;
+    .profile-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
     }
 
-    /* Mobile menu styling */
+    .profile-dropdown {
+      min-width: 240px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-radius: 0.75rem;
+      padding: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .profile-header {
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 0.5rem;
+    }
+
+    .profile-name {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      color: var(--text-primary);
+    }
+
+    .profile-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0;
+    }
+
+    .profile-logout {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .profile-logout:hover {
+      background: #f8f9fa;
+      color: #e74c3c;
+    }
+
+    .profile-logout i {
+      width: 20px;
+      text-align: center;
+    }
+
     @media (max-width: 991.98px) {
-      .navbar-collapse {
-        background: var(--primary-color);
-        padding: 1rem;
-        margin-top: 0.5rem;
-        border-radius: 0 0 10px 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      .nav-link {
-        margin: 0.2rem 0;
-      }
-
       .profile-section {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .credit-indicator {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .profile-avatar {
+        width: 48px;
+        height: 48px;
+      }
+
+      .profile-dropdown {
+        width: 100%;
+        margin: 0.5rem 0;
       }
     }
   </style>
@@ -143,22 +226,26 @@
 
         <!-- Profile Section -->
         <div class="profile-section">
-          <span class="credit-badge">
-            <i class="fas fa-coins me-2"></i>1000
-          </span>
+          <div class="credit-indicator">
+            <i class="fas fa-coins"></i>
+            <span class="credit-value">1,000</span>
+          </div>
 
-          <div class="dropdown">
-            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+          <div class="profile-menu">
+            <div class="profile-toggle" data-bs-toggle="dropdown">
               {% if request.user.profile_image %}
-              <img src="{{ user.profile_image }}" alt="Profile" class="profile-img">
+              <img src="{{ user.profile_image }}" alt="Profile" class="profile-avatar">
               {% else %}
-              <img src="{% static 'assets/avatar_profile.webp' %}" alt="Profile" class="profile-img">
+              <img src="{% static 'assets/avatar_profile.webp' %}" alt="Profile" class="profile-avatar">
               {% endif %}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li class="dropdown-header">
-                <h6>{{ request.user.name }}</h6>
-                <small class="text-muted">Member since 2023</small>
+            </div>
+
+            <ul class="dropdown-menu dropdown-menu-end profile-dropdown">
+              <li class="profile-header">
+                <div class="profile-summary">
+                  <h6 class="profile-name">{{ request.user.name }}</h6>
+                  <p class="profile-meta">Member since 2023</p>
+                </div>
               </li>
               <li>
                 <hr class="dropdown-divider">
@@ -166,8 +253,9 @@
               <li>
                 <form method="POST" action="{% url 'logout' %}">
                   {% csrf_token %}
-                  <button type="submit" class="dropdown-item">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  <button type="submit" class="dropdown-item profile-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
                   </button>
                 </form>
               </li>
