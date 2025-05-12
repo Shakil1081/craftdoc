@@ -16,7 +16,6 @@
         <tr>
           <th>Title</th>
           <th>Description</th>
-          <th>File</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -25,11 +24,6 @@
           <tr>
             <td>{{ doc.title }}</td>
             <td>{{ doc.description }}</td>
-            <td>
-              {% if doc.file_path %}
-                <a href="{{ doc.file_path.url }}">Download</a>
-              {% endif %}
-            </td>
             <td>
               <a href="{% url 'document_lhsetup' doc.id %}" class="btn btn-success btn-sm">Setup Letterhead</a>
               <a href="{% url 'document_delete' doc.id %}" class="btn btn-danger btn-sm">Delete</a>

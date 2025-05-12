@@ -9,8 +9,6 @@
   position: absolute;
   z-index: 3;
   font-weight: 500;
-  left: 100px;
-  top: 200px;
   min-height: 2.3em;
   line-height: 1.15;
   display: flex;
@@ -21,8 +19,6 @@
   position: absolute;
   z-index: 3;
   font-weight: 500;
-  left: 300px;
-  top: 200px;
   line-height: 1.15;
   min-height: 2.3em;
   display: flex;
@@ -34,8 +30,6 @@
   z-index: 3;
   font-weight: 500;
   line-height: 1.15;
-  left: 300px;
-  top: 400px;
   min-height: 2.3em;
   display: flex;
   align-items: center;

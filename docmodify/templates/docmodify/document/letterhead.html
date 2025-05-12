@@ -1,23 +1,55 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
   <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
-
-  {% for font in fonts %}
-    <link rel="stylesheet" href="{{ font.url }}" />
-  {% endfor %}
-
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
   <title>Letterhead</title>
+  <style>
+    .modal-backdrop{
+        z-index: 1;
+    }
+
+    #modalEditor {
+        font-family: 'Roboto', sans-serif; 
+    }
+
+    .ql-font-roboto {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .ql-font-poppins {
+        font-family: 'Poppins', sans-serif;
+    }
+    #letterheadContentShow{
+        font-family: 'Roboto', sans-serif;
+        padding-top: 115px;
+        padding-bottom: 230px;
+        padding-left: 70px;
+        padding-right: 70px;
+        height: 11.69in;
+    }
+    #letterheadContentShow p{
+        margin: 0;
+    }
+    #letterhead-body .content-panel .zoom-buttons{
+        margin: 0;
+    }
+  </style>
   <style id="customCss"></style>
 </head>
 
 <body>
-  {% load custom_filters %}
+    
   <div id="letterhead-body">
     <!-- Left Panel: Letterhead Items -->
     <div class="left-panel">
@@ -39,34 +71,64 @@
     </div>
 
     <div class="content-panel">
-      <div class="zoom-buttons">
-          <div class="input-group input-group-sm">
-              <button id="zoomOutBtn" class="input-group-text">-</button>
-              <div id="zoomInput" class="form-control  text-center">
-                  100%
-              </div>
-              <button id="zoomInBtn" class="input-group-text">+</button>
-          </div>
+      <div class="d-flex justify-content-between mb-3">
+        <div class="zoom-buttons">
+            <div class="input-group input-group-sm">
+                <button id="zoomOutBtn" class="input-group-text">-</button>
+                <div id="zoomInput" class="form-control  text-center">
+                    100%
+                </div>
+                <button id="zoomInBtn" class="input-group-text">+</button>
+            </div>
       </div>
+      <div class="text-center">
+          <button class="btn btn-sm btn-success " data-bs-toggle="modal" data-bs-target="#contentModal">Add Content to Letterhead</button>
+      </div>
+      </div>
+
+
+          {% comment %} open modal  {% endcomment %}
+          
+          
+          {% comment %} modal  {% endcomment %}
+          <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="contentModalLabel">Add Letterhead Content</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                         <div id="modalEditor" style="height: 320px"></div>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" id="setContentBtn" class="btn btn-primary" data-bs-dismiss="modal">Set Content</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
       <div class="content">
           <div id="a4panel">
+           
               <img id="logoShow" 
                   src="" 
                   alt="Logo">
+
+                <div id="letterheadContentShow">
+                    
+                </div>
+                
           
               <div id="phoneShow">
-                  {% comment %} 01736234377<br>
-                  01916120927 {% endcomment %}
               </div>
           
               <div id="emailShow">
-                {% comment %} admin@gmail.com<br>
-                mail@example.com {% endcomment %}
               </div>
           
               <div id="locationShow">
-                {% comment %} 123, Main Street,<br>
-                Dhaka, Bangladesh. {% endcomment %}
               </div>
           </div>                
       </div>
@@ -114,7 +176,6 @@
       <hr>
       <div class="single-content-panel">
           <h5 class="title">Phone</h5>
-          {% comment %} <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm"></textarea> {% endcomment %}
           <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm">{{ document.phone }}</textarea>
 
           <div class="input-group  input-group-sm d-none">
@@ -245,10 +306,8 @@
           <div class="input-group input-group-sm d-none">
               <select name="" id="locationFontFamily" class="form-select form-select-sm">
                   <option value="">Font Family</option>
-                  {% for font in fonts %}
-                      <option value="{{ font.font_family }}">{{ font.name }}</option>
-                  {% empty %}
-                      <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                  
+                  <option value='"Times New Roman", Times, serif'>Times New Roman</option>
                       <option value='"Courier New", Courier, monospace'>Courier New</option>
                       <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
                       <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
@@ -257,7 +316,6 @@
                       <option value='"Impact", Charcoal, sans-serif'>Impact</option>
                       <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
                       <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
-                  {% endfor %}
               </select>
               <input type="number" style="max-width: 80px;" class="form-control d-none" id="locationFontSize" placeholder="Size">
           </div>
@@ -305,19 +363,52 @@
     </div>
   </div>
 
-  <!-- JavaScript Libraries -->
+ 
+    <!-- Include the quill-table module -->
+
+  <!-- Inline JavaScript for AJAX Functionality -->
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   <script src="{% static 'js/lh_setup_custom.js' %}"></script>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <!-- Inline JavaScript for AJAX Functionality -->
   <script>
     $(document).ready(function () {
-        // Function to load header/footer data via AJAX
+        var quill = new Quill('#modalEditor', {
+            theme: 'snow',
+            modules: {
+              toolbar: [
+                [{ 'header': '1' }, { 'header': '2' }],
+                [{ 'font': [] }],
+                [{
+                  'size': ['small', 'medium', 'large', 'huge']  // Custom size options
+                }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['bold', 'italic', 'underline'],    
+                ['link'],
+                [{ 'color': [] }, { 'background': [] }],
+                ['blockquote', 'code-block']
+              ]
+            }
+          });
+          
+          
+          $('#setContentBtn').on('click', function () {
+            const content = quill.root.innerHTML;
+            console.log(content);
+            $('#letterheadContentShow').html(content);
+          });
+          
+
+
         function loadHeaderFooterData(documentId) {
             $.ajax({
                 url: `/letterhead/${documentId}/`,
@@ -450,29 +541,39 @@
         $('.download-btn button').on('click', function () {
             const downloadType = $(this).attr('id').replace('download', '').toLowerCase(); // pdf, jpg, png
         
-            const data = {
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                download_type: downloadType,
-                documentId: $('.letterhead-item.selected').data('document-id'),
-                document_hf_id: $('.header-item.selected').data('hf-id'),
-                logo_path: $('#logoShow').attr('src') || '',
-                contact: $('#phoneShow').text().trim(),
-                email: $('#emailShow').text().trim(),
-                location: $('#locationShow').text().trim(),
-                css: $('#customCss').html().trim()
-            };
-            console.log(data);
+            const formData = new FormData();
+
+            // Add CSRF token
+            formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+
+            // Add regular text fields
+            formData.append('download_type', downloadType);
+            formData.append('document_id', $('.letterhead-item.selected').data('document-id'));
+            formData.append('document_hf_id', $('.header-item.selected').data('hf-id'));
+            formData.append('contact', $('#phoneShow').text().trim());
+            formData.append('email', $('#emailShow').text().trim());
+            formData.append('location', $('#locationShow').text().trim());
+            formData.append('css', $('#customCss').html().trim());
+
+            // Add media file (e.g., logo file input)
+            const logoInput = $('#logoInput')[0];  // Assuming you have <input type="file" id="logoInput">
+            if (logoInput && logoInput.files.length > 0) {
+                formData.append('logo_file', logoInput.files[0]);
+            }
+            console.log(formData.logo_file);
             $.ajax({
                 url: '/save-download-history/',
                 type: 'POST',
-                data: data,
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (res) {
                     if (res.success) {
                         console.log("Download history saved.");
                         // Optionally trigger actual download
                         window.location.href = 'http://127.10.10.10:8000/download/pdf/' + res.download_history_id;
                     } else {
-                        console.error("Failed to save download history");
+                        console.error(res.error);
                     }
                 }
             });

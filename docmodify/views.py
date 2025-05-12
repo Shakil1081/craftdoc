@@ -22,12 +22,13 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from collections import defaultdict
-from customadmin.models import Document,DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
+from customadmin.models import Document, Setting, DownloadHistory, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font, Category
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.core.files.storage import default_storage
 
 def hello_there(request):
     # Get the search term from the GET request
@@ -82,8 +83,8 @@ def hello_there(request):
 
 @login_required
 def letterhead(request, document_id):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
+    # if not request.user.is_active:
+    #     messages.warning(request, 'Please verify your email to access all features.')
 
      # Fetch the selected document
     document = get_object_or_404(Document, id=document_id)
@@ -162,9 +163,11 @@ def letterhead(request, document_id):
 def save_download_history(request):
     if request.method == 'POST':
         user = request.user
-        document_id = request.POST.get('documentId')
+        document_id = request.POST.get('document_id')
         document_hf_id = request.POST.get('document_hf_id')
-        logo_path = request.POST.get('logo_path')
+        logo_file = request.FILES.get('logo_file')  # Handle uploaded file
+
+        # Other fields...
         contact = request.POST.get('contact')
         email = request.POST.get('email')
         location = request.POST.get('location')
@@ -175,6 +178,13 @@ def save_download_history(request):
             document = Document.objects.get(pk=document_id)            
             document_hf = DocumentHeaderFooterImage.objects.get(pk=document_hf_id)
             
+            # Optional: Save logo file to media
+            logo_path = None
+            if logo_file:
+                logo_path = default_storage.save(f'documents/files/{logo_file.name}', logo_file)
+            else:
+                logo_path = document.logo_path
+            
             download_history = DownloadHistory.objects.create(
                 user=user,
                 document_id=document.pk,
@@ -184,11 +194,11 @@ def save_download_history(request):
                 email=email,
                 location=location,
                 css=css,
-                header_path=document_hf.header.url if document_hf.header else '',
-                footer_path=document_hf.footer.url if document_hf.footer else '',
+                header_path=document_hf.header if document_hf.header else '',
+                footer_path=document_hf.footer if document_hf.footer else '',
                 download_type=download_type
             )
-
+            user.use_credit("credit_per_template")
             return JsonResponse({'success': True, 'download_history_id': download_history.pk})
             
         except Exception as e:
@@ -204,45 +214,45 @@ def register(request):
             user.is_active = False  # User inactive until email verified
             user.set_password(form.cleaned_data['password'])
             user.save()
+            user.earn_credit("signup_bonus")
+            # # Generate and store 150-char token
+            # token = user.generate_verification_token()
 
-            # Generate and store 150-char token
-            token = user.generate_verification_token()
+            # # Assign 'user' group
+            # user_group, created = Group.objects.get_or_create(name='user')
+            # user.groups.add(user_group)
 
-            # Assign 'user' group
-            user_group, created = Group.objects.get_or_create(name='user')
-            user.groups.add(user_group)
+            # # Send verification email
+            # # token = account_activation_token.make_token(user)
+            # uid = urlsafe_base64_encode(force_bytes(user.pk))
+            # protocol = 'https' if request.is_secure() else 'http'
+            # current_site = get_current_site(request)
+            # domain = current_site.domain
 
-            # Send verification email
-            # token = account_activation_token.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            protocol = 'https' if request.is_secure() else 'http'
-            current_site = get_current_site(request)
-            domain = current_site.domain
+            # context = {
+            #     'user': user,
+            #     'protocol': protocol,
+            #     'domain': domain,
+            #     'uid': uid,
+            #     'token': token,
+            #     'site_name': 'CraftDOC'
+            # }
 
-            context = {
-                'user': user,
-                'protocol': protocol,
-                'domain': domain,
-                'uid': uid,
-                'token': token,
-                'site_name': 'CraftDOC'
-            }
+            # # Render both HTML and plain text versions
+            # html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
+            # text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
 
-            # Render both HTML and plain text versions
-            html_content = render_to_string('docmodify/auth/acc_active_email.html', context)
-            text_content = render_to_string('docmodify/auth/acc_active_email.txt', context)
+            # # Send the email
+            # email = EmailMultiAlternatives(
+            #     subject="Verify Your Email | CraftDOC",
+            #     body=text_content,  # Plain text fallback
+            #     from_email="noreply@craftdoc.com",
+            #     to=[user.email]
+            # )
+            # email.attach_alternative(html_content, "text/html")  # HTML version
+            # email.send()
 
-            # Send the email
-            email = EmailMultiAlternatives(
-                subject="Verify Your Email | CraftDOC",
-                body=text_content,  # Plain text fallback
-                from_email="noreply@craftdoc.com",
-                to=[user.email]
-            )
-            email.attach_alternative(html_content, "text/html")  # HTML version
-            email.send()
-
-            return redirect('verification_mail_sent')
+            # return redirect('verification_mail_sent')
     else:
         form = PublicUserRegistrationForm()
 
@@ -339,12 +349,12 @@ def role_based_redirect(request):
 
 @login_required
 def public_dashboard(request):
-    if not request.user.is_active:
-        messages.warning(request, 'Please verify your email to access all features.')
+    # if not request.user.is_active:
+    #     messages.warning(request, 'Please verify your email to access all features.')
     return render(request, 'docmodify/dashboard.html')
 
 def public_login(request):
-    if request.user.is_authenticated and request.user.is_active and not request.user.is_superuser:
+    if request.user.is_authenticated and not request.user.is_superuser:
         return redirect('public_dashboard')
     
     if request.method == 'POST':    
@@ -353,7 +363,7 @@ def public_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-
+            next_url = request.POST.get('next')
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
@@ -362,14 +372,14 @@ def public_login(request):
             if user is not None:
                 if not user.check_password(password):
                     messages.error(request, "Invalid email or password.")
-                elif not user.is_active:
-                    login(request, user)
-                    messages.error(request, "Account not verified. Please enter your email for verification link.")
-                    return redirect('resend_verification')
+                # elif not user.is_active:
+                #     login(request, user)
+                #     messages.error(request, "Account not verified. Please enter your email for verification link.")
+                #     return redirect('resend_verification')
                 else:
-                    if not request.user.is_superuser:                        
+                    if not user.is_superuser:                        
                         login(request, user)
-                        return redirect('public_dashboard')
+                        return redirect(next_url or 'hello_there')
                     else:
                         return redirect('admin-login')
             else:
@@ -450,7 +460,10 @@ def reset_password(request, uidb64, token):
         return redirect('forgot_password')
     
 def earn_credit(request):
-    return render(request, 'docmodify/credit/earn.html')
+    credit_setting = Setting.objects.filter(key='credit_per_bdt').first()
+    return render(request, 'docmodify/credit/earn.html', {
+        'credit_setting': credit_setting
+    })
 
 def credit_earn_history(request):
     user_credit_history = CreditEarnHistory.objects.filter(user=request.user)
