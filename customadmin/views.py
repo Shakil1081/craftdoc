@@ -68,6 +68,8 @@ def verification_sent(request):
 
 @login_required
 def custom_admin_dashboard(request):
+    if not request.user.has_perm('customadmin.admin_dashboard'):
+        raise PermissionDenied
     return render(request, 'customadmin/index.html')
 
 

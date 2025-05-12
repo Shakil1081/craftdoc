@@ -5,10 +5,13 @@ from collections import defaultdict
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from .models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
+from django.contrib.auth.decorators import login_required, permission_required
 # views.py
 from django.contrib import messages
 from django.db import transaction
 
+@login_required
+@permission_required('auth.add_document', raise_exception=True)
 def document_create(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -71,6 +74,8 @@ def document_create(request):
 
 
 # views.py
+@login_required
+@permission_required('auth.change_document', raise_exception=True)
 def document_edit(request, pk):
     document = get_object_or_404(Document, pk=pk)
     
@@ -143,6 +148,8 @@ def document_edit(request, pk):
         'header_footer_image_formset': header_footer_image_formset,
     })
 
+@login_required
+@permission_required('auth.view_document', raise_exception=True)
 def document_list(request):
     documents = Document.objects.all()
     return render(request, 'customadmin/document/document_list.html', {'documents': documents})
