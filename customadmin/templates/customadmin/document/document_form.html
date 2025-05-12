@@ -166,61 +166,8 @@
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        
-
-        const addButton = document.getElementById('add-meta');
-        const formsetDiv = document.getElementById('meta-formset');
-        const totalForms = document.getElementById('id_documentmeta_set-TOTAL_FORMS');
-    
-        addButton.addEventListener('click', function () {
-            const currentFormCount = parseInt(totalForms.value);
-            if (currentFormCount < 8) {
-                const firstForm = formsetDiv.querySelector('.meta-form');
-                const newForm = firstForm.cloneNode(true);
-    
-                // Update all inputs, textareas, and labels
-                newForm.querySelectorAll('input, textarea, label').forEach((el) => {
-                    if (el.name) {
-                        let newName = el.name.replace(/-(\d+)-/, `-${currentFormCount}-`);
-                        el.name = newName;
-                    }
-    
-                    if (el.id) {
-                        let newId = el.id.replace(/-(\d+)-/, `-${currentFormCount}-`);
-                        el.id = newId;
-                    }
-    
-                    // For labels, update the "for" attribute
-                    if (el.tagName.toLowerCase() === 'label' && el.htmlFor) {
-                        el.htmlFor = el.htmlFor.replace(/-(\d+)-/, `-${currentFormCount}-`);
-                    }
-    
-                    // Clear value (for input/textarea)
-                    if (el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'textarea') {
-                        el.value = '';
-                    }
-                });
-    
-                formsetDiv.appendChild(newForm);
-                totalForms.value = currentFormCount + 1;
-            } else {
-                alert("Max 8 meta entries allowed.");
-            }
-        });
-    
-        formsetDiv.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-meta')) {
-                const formBlocks = document.querySelectorAll('.meta-form');
-                if (formBlocks.length > 1) {
-                    e.target.closest('.meta-form').remove();
-                    totalForms.value = formBlocks.length - 1;
-                }
-            }
-        });
-    });
-    
-    document.addEventListener('DOMContentLoaded', function () {
+    //header footer section
+    {% comment %} document.addEventListener('DOMContentLoaded', function () {
         const formsetContainer = document.getElementById('header-footer-formset');
         const addBtn = document.getElementById('add-header-footer');
         const totalFormsInput = document.getElementById('id_header_footer_images-TOTAL_FORMS');
@@ -306,20 +253,102 @@
         });
 
         updateRadioBehavior(); // Run on page load
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const fileInput = document.getElementById("file_path");
-        const fileNameInput = document.getElementById("file_name");
+    }); {% endcomment %}
 
-        fileInput.addEventListener("change", function () {
-            if (fileInput.files.length > 0) {
-                fileNameInput.value = fileInput.files[0].name;
-            } else {
-                fileNameInput.value = '';
+    document.addEventListener('DOMContentLoaded', function () {
+        const formsetContainer = document.getElementById('header-footer-formset');
+        const addBtn = document.getElementById('add-header-footer');
+        const totalFormsInput = document.getElementById('id_header_footer_images-TOTAL_FORMS');
+
+        function updateRadioBehavior() {
+            const forms = formsetContainer.querySelectorAll('.header-footer-form');
+
+            let anyChecked = false;
+
+            forms.forEach((form, index) => {
+                const radio = form.querySelector('.is-default-radio');
+                const hiddenInput = form.querySelector('input[name$="is_default"]');
+                const preview = form.querySelector('input[name$="preview_image"]');
+
+                if (radio.checked) {
+                    hiddenInput.value = "True";
+                    preview.required = true;
+                    anyChecked = true;
+                } else {
+                    hiddenInput.value = "False";
+                    preview.required = false;
+                }
+
+                // Attach change event
+                radio.addEventListener('change', () => {
+                    forms.forEach((f, i) => {
+                        const r = f.querySelector('.is-default-radio');
+                        const h = f.querySelector('input[name$="is_default"]');
+                        const p = f.querySelector('input[name$="preview_image"]');
+
+                        if (i === index) {
+                            r.checked = true;
+                            h.value = "True";
+                            p.required = true;
+                        } else {
+                            r.checked = false;
+                            h.value = "False";
+                            p.required = false;
+                        }
+                    });
+                });
+            });
+
+            // Ensure at least one is selected
+            if (!anyChecked && forms.length > 0) {
+                const first = forms[0];
+                first.querySelector('.is-default-radio').checked = true;
+                first.querySelector('input[name$="is_default"]').value = "True";
+                first.querySelector('input[name$="preview_image"]').required = true;
+            }
+        }
+
+        addBtn.addEventListener('click', () => {
+            const formCount = parseInt(totalFormsInput.value);
+            const newForm = formsetContainer.querySelector('.header-footer-form').cloneNode(true);
+
+            newForm.setAttribute('data-form-index', formCount);
+
+            newForm.querySelectorAll('input, select, textarea').forEach(input => {
+                if (!input.name) return;
+
+                input.name = input.name.replace(/-(\d+)-/, `-${formCount}-`);
+                input.id = input.id.replace(/-(\d+)-/, `-${formCount}-`);
+
+                if (input.type === 'file' || input.type === 'text') {
+                    input.value = '';
+                }
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                }
+                if (input.name.endsWith('is_default')) {
+                    input.value = "False";
+                }
+            });
+
+            formsetContainer.appendChild(newForm);
+            totalFormsInput.value = formCount + 1;
+
+            updateRadioBehavior();
+        });
+
+        formsetContainer.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-header-footer')) {
+                const forms = formsetContainer.querySelectorAll('.header-footer-form');
+                if (forms.length > 1) {
+                    e.target.closest('.header-footer-form').remove();
+                    totalFormsInput.value = forms.length - 1;
+                    updateRadioBehavior();
+                }
             }
         });
+
+        updateRadioBehavior();
     });
 </script>
 

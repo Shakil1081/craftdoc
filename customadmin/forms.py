@@ -216,6 +216,9 @@ class DocumentHeaderFooterImageForm(forms.ModelForm):
     class Meta:
         model = DocumentHeaderFooterImage
         fields = ['header', 'footer', 'preview_image', 'is_default', 'color']
+        widgets = {
+            'is_default': forms.HiddenInput()
+        }
 
     def clean(self):
         cleaned_data = super().clean()

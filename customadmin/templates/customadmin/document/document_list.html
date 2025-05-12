@@ -10,7 +10,9 @@
         {% endif %}
       {% endfor %}
     {% endif %}
-    <a href="{% url 'document_create' %}" class="btn btn-primary mb-2">Add Document</a>
+    <div class="text-end mb-2">
+      <a href="{% url 'document_create' %}" class="btn btn-primary mb-2">Add Document</a>
+    </div>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -29,6 +31,10 @@
               <a href="{% url 'document_edit' doc.id %}" class="btn btn-primary btn-sm">Edit</a>
               <a href="{% url 'document_delete' doc.id %}" class="btn btn-danger btn-sm">Delete</a>
             </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="text-danger text-center">No data found.</td>
           </tr>
         {% endfor %}
       </tbody>
