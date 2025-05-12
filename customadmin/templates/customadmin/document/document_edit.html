@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <h2>Edit Document: {{ document.title }}</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" name="title" id="title" class="form-control {% if form.title.errors %}is-invalid{% endif %}" value="{{ form.title.value|default:'' }}">
+            <div class="text-danger">{{ form.title.errors }}</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control {% if form.description.errors %}is-invalid{% endif %}">{{ form.description.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.description.errors }}</div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <textarea name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}">{{ form.email.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.email.errors }}</div>
+        </div>
+        
+        <!-- Phone -->
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <textarea name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}">{{ form.phone.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.phone.errors }}</div>
+        </div>
+        
+        <!-- Location -->
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <textarea name="location" id="location" class="form-control {% if form.location.errors %}is-invalid{% endif %}">{{ form.location.value|default:'' }}</textarea>
+            <div class="text-danger">{{ form.location.errors }}</div>
+        </div>
+        
+        <!-- Logo Path -->
+        <div class="mb-3">
+            <label for="logo_path" class="form-label">Upload Logo File</label>
+            <input type="file" name="logo_path" id="logo_path" class="form-control {% if form.logo_path.errors %}is-invalid{% endif %}">
+            <div class="text-danger">{{ form.logo_path.errors }}</div>
+            {% if document.logo_path %}
+                <div class="mt-2">
+                    <small>Current file: <a href="{{ document.logo_path.url }}" target="_blank">{{ document.logo_path.name }}</a></small>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select name="category" id="category" class="form-select {% if category_form.category.errors %}is-invalid{% endif %}">
+                <option value="">-- Select Category --</option>
+                {% for cat in category_form.fields.category.queryset %}
+                    <option value="{{ cat.id }}" {% if category_form.category.value|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="text-danger">{{ category_form.category.errors }}</div>
+        </div>
+
+        <!-- Letterhead Content -->
+        <div class="mb-3">
+            <label for="letterhead_content" class="form-label">Letterhead Content</label>
+            
+            <!-- Hidden input to store Quill content -->
+            <input type="hidden" name="letterhead_content" id="letterhead_content_input" value="{{ form.letterhead_content.value|default:'' }}">
+    
+            <!-- Quill Editor -->
+            <div id="letterhead_editor" style="height: 250px;" class="form-control {% if form.letterhead_content.errors %}is-invalid{% endif %}">
+                {{ form.letterhead_content.value|safe }}
+            </div>
+    
+            <!-- Error display -->
+            <div class="text-danger">{{ form.letterhead_content.errors }}</div>
+        </div>       
+
+        <!-- Header & Footer Images Section -->
+        <hr>
+        <h4>
+            Header/Footer Images
+            <button type="button" id="add-header-footer" class="btn btn-sm btn-success">+</button>
+        </h4>
+
+        <div id="header-footer-formset">
+            {{ header_footer_image_formset.management_form }}
+            {% for form in header_footer_image_formset %}
+                <div class="header-footer-form border p-3 mb-3 rounded">
+                    {{ form.id }}
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Header Image</label>
+                            <input type="file" name="{{ form.header.html_name }}" class="form-control" {% if not form.instance.pk %}required{% endif %}>
+                            <div class="text-danger">{{ form.header.errors }}</div>
+                            {% if form.instance.header %}
+                                <div class="mt-2">
+                                    <small>Current: <a href="{{ form.instance.header.url }}" target="_blank">{{ form.instance.header.name }}</a></small>
+                                    <input type="hidden" name="{{ form.header.html_name }}-clear" id="{{ form.header.html_name }}-clear_id">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" name="{{ form.header.html_name }}-clear" class="form-check-input"> Remove
+                                    </label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Footer Image</label>
+                            <input type="file" name="{{ form.footer.html_name }}" class="form-control" {% if not form.instance.pk %}required{% endif %}>
+                            <div class="text-danger">{{ form.footer.errors }}</div>
+                            {% if form.instance.footer %}
+                                <div class="mt-2">
+                                    <small>Current: <a href="{{ form.instance.footer.url }}" target="_blank">{{ form.instance.footer.name }}</a></small>
+                                    <input type="hidden" name="{{ form.footer.html_name }}-clear" id="{{ form.footer.html_name }}-clear_id">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" name="{{ form.footer.html_name }}-clear" class="form-check-input"> Remove
+                                    </label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Preview Image</label>
+                            <input type="file" name="{{ form.preview_image.html_name }}" class="form-control">
+                            <div class="text-danger">{{ form.preview_image.errors }}</div>
+                            {% if form.instance.preview_image %}
+                                <div class="mt-2">
+                                    <small>Current: <a href="{{ form.instance.preview_image.url }}" target="_blank">{{ form.instance.preview_image.name }}</a></small>
+                                    <input type="hidden" name="{{ form.preview_image.html_name }}-clear" id="{{ form.preview_image.html_name }}-clear_id">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" name="{{ form.preview_image.html_name }}-clear" class="form-check-input"> Remove
+                                    </label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Color</label>
+                            <input type="text" name="{{ form.color.html_name }}" class="form-control" value="{{ form.color.value|default:'' }}">
+                            <div class="text-danger">{{ form.color.errors }}</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Is Default</label>
+                            <input type="checkbox" name="{{ form.is_default.html_name }}" class="form-check-input" {% if form.is_default.value %}checked{% endif %}>
+                            <div class="text-danger">{{ form.is_default.errors }}</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% if form.instance.pk %}
+                                <label class="form-label">Delete</label>
+                                <input type="checkbox" name="{{ form.DELETE.html_name }}" class="form-check-input">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger remove-header-footer">Remove</button>
+                </div>
+            {% endfor %}
+        </div>                
+
+        <!-- Submit Buttons -->
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{% url 'document_list' %}" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
+
+<!-- Include Quill library -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Initialize Quill
+        var quill = new Quill('#letterhead_editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': '1' }, { 'header': '2' }],
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', 'medium', 'large', 'huge'] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['bold', 'italic', 'underline'],
+                    ['link'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['blockquote', 'code-block']
+                ]
+            }
+        });
+
+        // Fill editor with existing content if available
+        var initialContent = document.getElementById('letterhead_content_input').value;
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+
+        // Intercept form submission
+        $('form').on('submit', function (e) {
+            // Update hidden input with editor content
+            const content = quill.root.innerHTML;
+            if (content.trim() !== '' && content !== '<p><br></p>') {
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
+        });
+
+        // Formset management
+        const headerFooterAddBtn = document.getElementById('add-header-footer');
+        const headerFooterFormset = document.getElementById('header-footer-formset');
+        const totalHeaderFooterForms = document.getElementById('id_header_footer_images-TOTAL_FORMS');
+        const formRegex = RegExp(`header_footer_images-(\\d+)-`, 'g');
+
+        headerFooterAddBtn.addEventListener('click', function () {
+            const currentFormCount = parseInt(totalHeaderFooterForms.value);
+            if (currentFormCount < 8) {
+                const newForm = headerFooterFormset.querySelector('.header-footer-form').cloneNode(true);
+                const formIdx = currentFormCount;
+                
+                // Update all names/IDs in the cloned form
+                newForm.innerHTML = newForm.innerHTML.replace(formRegex, `header_footer_images-${formIdx}-`);
+                
+                // Clear values
+                newForm.querySelectorAll('input[type="file"]').forEach(input => input.value = '');
+                newForm.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+                newForm.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false);
+                
+                // Add delete checkbox
+                if (!newForm.querySelector('[name$="-DELETE"]')) {
+                    const deleteDiv = document.createElement('div');
+                    deleteDiv.className = 'col-md-4 mb-3';
+                    deleteDiv.innerHTML = `
+                        <label class="form-label">Delete</label>
+                        <input type="checkbox" name="header_footer_images-${formIdx}-DELETE" class="form-check-input">
+                    `;
+                    newForm.querySelector('.row').appendChild(deleteDiv);
+                }
+                
+                headerFooterFormset.appendChild(newForm);
+                totalHeaderFooterForms.value = formIdx + 1;
+            } else {
+                alert("Max 8 header/footer image entries allowed.");
+            }
+        });
+
+        headerFooterFormset.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-header-footer')) {
+                const formBlock = e.target.closest('.header-footer-form');
+                const deleteCheckbox = formBlock.querySelector('[name$="-DELETE"]');
+                
+                if (deleteCheckbox) {
+                    // If this is an existing form (has a DB record), mark for deletion
+                    deleteCheckbox.checked = true;
+                    formBlock.style.display = 'none'; // Hide instead of remove
+                } else {
+                    // If this is a new form (no DB record), remove it
+                    formBlock.remove();
+                    
+                    // Update form indices and TOTAL_FORMS count
+                    const forms = headerFooterFormset.querySelectorAll('.header-footer-form');
+                    totalHeaderFooterForms.value = forms.length;
+                    
+                    forms.forEach((form, idx) => {
+                        form.innerHTML = form.innerHTML.replace(formRegex, `header_footer_images-${idx}-`);
+                    });
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
