@@ -385,6 +385,16 @@
                 const styles = cssMap[prefix + "Show"];
                 if (!styles) return;
 
+                // Special case for letterheadContent (uses padding instead of positioning)
+                if (prefix === "letterheadContent") {
+                    if (styles["padding-left"]) $("#" + prefix + "Left").val(parseInt(styles["padding-left"]));
+                    if (styles["padding-right"]) $("#" + prefix + "Right").val(parseInt(styles["padding-right"]));
+                    if (styles["padding-top"]) $("#" + prefix + "Top").val(parseInt(styles["padding-top"]));
+                    if (styles["padding-bottom"]) $("#" + prefix + "Bottom").val(parseInt(styles["padding-bottom"]));
+                    return; // Exit after handling letterheadContent
+                }
+
+                // Default handling for other elements
                 if (styles.right) $("#" + prefix + "Right").val(parseInt(styles.right));
                 if (styles.left) $("#" + prefix + "Left").val(parseInt(styles.left));
                 if (styles.top) $("#" + prefix + "Top").val(parseInt(styles.top));
@@ -408,6 +418,7 @@
                     else if (align === "right" || align === "end") $("#" + prefix + "RightAlign").addClass("selected");
                 }
             }
+
 
             function rgbToHex(rgb) {
                 const result = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(rgb);
