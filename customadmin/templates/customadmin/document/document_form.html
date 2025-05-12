@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container my-4">
-    <h2>{% if document %}Edit Document{% else %}Add New Document{% endif %}</h2>
+    <h2>Add New Document</h2>
 
     {% comment %} <div class="text-danger">
         {% for error in form.title.errors %}
@@ -11,9 +11,17 @@
         {% endfor %}
     </div> {% endcomment %}
     
+    {% comment %} {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %} {% endcomment %}
+
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
-        
+
         <!-- Title -->
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
@@ -28,34 +36,27 @@
             <div class="text-danger">{{ form.description.errors }}</div>
         </div>
 
-        <!-- Email -->
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" value="{{ form.email.value|default:'' }}">
+            <textarea name="email" id="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}">{{ form.email.value|default:'' }}</textarea>
             <div class="text-danger">{{ form.email.errors }}</div>
         </div>
         
-        <!-- Phone -->
         <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
-            <input type="tel" name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" value="{{ form.phone.value|default:'' }}">
+            <textarea name="phone" id="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}">{{ form.phone.value|default:'' }}</textarea>
             <div class="text-danger">{{ form.phone.errors }}</div>
         </div>
         
-        <!-- Location -->
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
-            <input type="text" name="location" id="location" class="form-control {% if form.location.errors %}is-invalid{% endif %}" value="{{ form.location.value|default:'' }}">
+            <textarea name="location" id="location" class="form-control {% if form.location.errors %}is-invalid{% endif %}">{{ form.location.value|default:'' }}</textarea>
             <div class="text-danger">{{ form.location.errors }}</div>
         </div>
         
-        <!-- Logo Upload -->
         <div class="mb-3">
             <label for="logo_path" class="form-label">Upload Logo File</label>
-            <input type="file" name="logo_path" id="logo_path" class="form-control {% if form.logo_path.errors %}is-invalid{% endif %}">
-            {% if document and document.logo_path %}
-                <div>Current Logo: <a href="{{ document.logo_path.url }}" target="_blank">View</a></div>
-            {% endif %}
+            <input type="file" name="logo_path" id="logo_path" class="form-control {% if form.logo_path.errors %}is-invalid{% endif %}" required>
             <div class="text-danger">{{ form.logo_path.errors }}</div>
         </div>
 
@@ -71,16 +72,16 @@
             <div class="text-danger">{{ category_form.category.errors }}</div>
         </div>
 
-        <!-- Letterhead Content (Quill Editor) -->
         <div class="mb-3">
             <label for="letterhead_content" class="form-label">Letterhead Content</label>
             
             <!-- Hidden input to store Quill content -->
-            <input type="hidden" name="letterhead_content" id="letterhead_content_input" value="{{ form.letterhead_content.value|default_if_none:'' }}">
+            <input type="hidden" name="letterhead_content" id="letterhead_content_input">
     
             <!-- Quill Editor -->
             <div id="letterhead_editor" style="height: 250px;" class="form-control {% if form.letterhead_content.errors %}is-invalid{% endif %}"></div>
     
+            <!-- Error display -->
             <div class="text-danger">{{ form.letterhead_content.errors }}</div>
         </div>       
 
@@ -98,75 +99,44 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Header Image</label>
-                            <input type="file" name="{{ form.header.html_name }}" class="form-control {% if form.header.errors %}is-invalid{% endif %}" 
-                                {% if form.header.value %} value="{{ form.header.value }}" {% endif %}>
-                            <div class="text-danger">
-                                {% for error in form.header.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                            {% if form.header.value %}
-                                <div>Current Header Image: <img src="{{ form.header.value.url }}" class="img-thumbnail" width="100px" alt="Header Image"></div>
-                            {% endif %}
+                            <input type="file" name="{{ form.header.html_name }}" class="form-control" required>
+                            <div class="text-danger">{{ form.header.errors }}</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Footer Image</label>
-                            <input type="file" name="{{ form.footer.html_name }}" class="form-control {% if form.footer.errors %}is-invalid{% endif %}" 
-                                {% if form.footer.value %} value="{{ form.footer.value }}" {% endif %}>
-                            <div class="text-danger">
-                                {% for error in form.footer.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                            {% if form.footer.value %}
-                                <div>Current Footer Image: <img src="{{ form.footer.value.url }}" class="img-thumbnail" width="100px" alt="Footer Image"></div>
-                            {% endif %}
+                            <input type="file" name="{{ form.footer.html_name }}" class="form-control" required>
+                            <div class="text-danger">{{ form.footer.errors }}</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Preview Image</label>
-                            <input type="file" name="{{ form.preview_image.html_name }}" class="form-control {% if form.preview_image.errors %}is-invalid{% endif %}">
-                            <div class="text-danger">
-                                {% for error in form.preview_image.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
+                            <input type="file" name="{{ form.preview_image.html_name }}" class="form-control">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Color</label>
-                            <input type="text" name="{{ form.color.html_name }}" class="form-control" value="{{ form.color.value }}">
-                            <div class="text-danger">
-                                {% for error in form.color.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
+                            <input type="text" name="{{ form.color.html_name }}" class="form-control">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Is Default</label>
                             <input type="checkbox" name="{{ form.is_default.html_name }}" class="form-check-input" {% if form.is_default.value %} checked {% endif %}>
-                            <div class="text-danger">
-                                {% for error in form.is_default.errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
                         </div>
                     </div>
                     <button type="button" class="btn btn-danger remove-header-footer">Remove</button>
                 </div>
             {% endfor %}
-        </div>             
+        </div>                
 
         <!-- Submit Buttons -->
-        <button type="submit" class="btn btn-primary">{% if document %}Update{% else %}Save{% endif %}</button>
+        <button type="submit" class="btn btn-primary">Save</button>
         <a href="{% url 'document_list' %}" class="btn btn-secondary">Back to List</a>
     </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- JavaScript to handle Quill editor and formset -->
-<script>
+<!-- JavaScript to clone formset -->
+<script> 
     $(document).ready(function () {
-        // Initialize Quill Editor
+        // Initialize Quill
         var quill = new Quill('#letterhead_editor', {
             theme: 'snow',
             modules: {
@@ -184,22 +154,77 @@
             }
         });
 
-        // Populate Quill editor with existing content if available
+        // Fill editor with existing content if available
         var initialContent = `{{ form.letterhead_content.value|default_if_none:''|escapejs }}`;
         if (initialContent) {
             quill.root.innerHTML = initialContent;
         }
 
-        // Intercept form submission to save editor content
+        // Intercept form submission
         $('form').on('submit', function (e) {
+            // Update hidden input with editor content
             const content = quill.root.innerHTML;
             if (content.trim() !== '' && content !== '<p><br></p>') {
-                $('#letterhead_content_input').val(content);
+                $('#letterhead_content_input').val(quill.root.innerHTML);
             }
         });
     });
 
-    // Script for handling header/footer image formset
+    document.addEventListener('DOMContentLoaded', function () {
+        
+
+        const addButton = document.getElementById('add-meta');
+        const formsetDiv = document.getElementById('meta-formset');
+        const totalForms = document.getElementById('id_documentmeta_set-TOTAL_FORMS');
+    
+        addButton.addEventListener('click', function () {
+            const currentFormCount = parseInt(totalForms.value);
+            if (currentFormCount < 8) {
+                const firstForm = formsetDiv.querySelector('.meta-form');
+                const newForm = firstForm.cloneNode(true);
+    
+                // Update all inputs, textareas, and labels
+                newForm.querySelectorAll('input, textarea, label').forEach((el) => {
+                    if (el.name) {
+                        let newName = el.name.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                        el.name = newName;
+                    }
+    
+                    if (el.id) {
+                        let newId = el.id.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                        el.id = newId;
+                    }
+    
+                    // For labels, update the "for" attribute
+                    if (el.tagName.toLowerCase() === 'label' && el.htmlFor) {
+                        el.htmlFor = el.htmlFor.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                    }
+    
+                    // Clear value (for input/textarea)
+                    if (el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'textarea') {
+                        el.value = '';
+                    }
+                });
+    
+                formsetDiv.appendChild(newForm);
+                totalForms.value = currentFormCount + 1;
+            } else {
+                alert("Max 8 meta entries allowed.");
+            }
+        });
+    
+        formsetDiv.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-meta')) {
+                const formBlocks = document.querySelectorAll('.meta-form');
+                if (formBlocks.length > 1) {
+                    e.target.closest('.meta-form').remove();
+                    totalForms.value = formBlocks.length - 1;
+                }
+            }
+        });
+    });
+    
+
     document.addEventListener('DOMContentLoaded', function () {
         const headerFooterAddBtn = document.getElementById('add-header-footer');
         const headerFooterFormset = document.getElementById('header-footer-formset');
@@ -215,7 +240,7 @@
                     const oldName = input.name;
                     const newName = oldName.replace(/-(\d+)-/, `-${currentFormCount}-`);
                     input.name = newName;
-                    input.value = '';  // Clear previous values
+                    input.value = '';
                 });
 
                 headerFooterFormset.appendChild(newForm);
@@ -232,6 +257,20 @@
                     e.target.closest('.header-footer-form').remove();
                     totalHeaderFooterForms.value = formBlocks.length - 1;
                 }
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.getElementById("file_path");
+        const fileNameInput = document.getElementById("file_name");
+
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                fileNameInput.value = fileInput.files[0].name;
+            } else {
+                fileNameInput.value = '';
             }
         });
     });
