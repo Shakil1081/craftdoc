@@ -400,6 +400,10 @@
                 if (styles.top) $("#" + prefix + "Top").val(parseInt(styles.top));
                 if (styles.bottom) $("#" + prefix + "Bottom").val(parseInt(styles.bottom));
                 if (styles.color) $("#" + prefix + "ColorInput").val(rgbToHex(styles.color));
+                if (prefix === "logo") {
+                    if (styles.height) $("#" + prefix + "HeightInput").val(parseInt(styles.height));
+                    if (styles.width) $("#" + prefix + "WidthInput").val(parseInt(styles.width));
+                }
                 if (styles["font-family"]) $("#" + prefix + "FontFamily").val(styles["font-family"]);
                 if (styles["font-size"]) $("#" + prefix + "FontSize").val(parseInt(styles["font-size"]));
 
@@ -457,6 +461,7 @@
                 
                 if (css && css.trim() !== "" && css !== "None") {
                     $("#preview-css").html(css);
+                    console.log(css);
                     loadCss();
                 } else {
                     $("#preview-css").html(defaultCss);
