@@ -75,9 +75,9 @@ WSGI_APPLICATION = 'adminlte2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL engine
-        'NAME': 'myproject_db',  # Replace with your PostgreSQL database name
-        'USER': 'postgres',  # PostgreSQL user (typically 'postgres')
-        'PASSWORD': '12345678',  # Replace with your PostgreSQL password
+        'NAME': 'craft_doc',  # Replace with your PostgreSQL database name
+        'USER': 'craft_doc',  # PostgreSQL user (typically 'postgres')
+        'PASSWORD': 'Pga@2022',  # Replace with your PostgreSQL password
         'HOST': '127.0.0.1',  # Localhost for PostgreSQL
         'PORT': '5432',  # Default PostgreSQL port
     }
