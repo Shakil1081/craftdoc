@@ -29,58 +29,57 @@ from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
-# from weasyprint import HTML 
+from weasyprint import HTML 
+from django.core.paginator import Paginator, EmptyPage
+from PIL import Image
+import io
+from pdf2image import convert_from_bytes
 
 def hello_there(request):
-    # Get the search term from the GET request
-    search_query = request.GET.get('search', '')
+    search_query = request.GET.get('search', '').strip()
     category_filter = request.GET.get('category', 'all')
 
-    # Fetch documents, categories, and header/footer images
+    try:
+        page_number = int(request.GET.get('page', 1))
+        if page_number < 1:
+            page_number = 1
+    except (ValueError, TypeError):
+        page_number = 1
+
     documents = Document.objects.all().order_by('id')
 
-    # Filter documents by search query
     if search_query:
-        documents = documents.filter(title=search_query)
+        documents = documents.filter(title__icontains=search_query)
 
-    # Handle category filtering
     if category_filter != 'all':
-        # Fetch category object based on category filter
-        category = Category.objects.get(name=category_filter)
-        # Filter documents by this category
+        category = get_object_or_404(Category, name=category_filter)
         documents = documents.filter(documentcategory__category=category)
 
-    # Pagination
-    paginator = Paginator(documents, 10)  # Show 10 documents per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    paginator = Paginator(documents, 10)
+    try:
+        page_obj = paginator.page(page_number)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
 
-    # Get the first document (or any other document as needed)
-    document = Document.objects.first()  
-    categories = Category.objects.all()
-    
-    # Group images by document ID
-    images_by_document = defaultdict(dict)
+    # Group default header/footer images by document
+    images_by_document = {}
     for img in DocumentHeaderFooterImage.objects.filter(is_default=True):
         doc_id = img.document.id
         images_by_document[doc_id] = {
-            'header': img.header.url if img.header else '',
-            'footer': img.footer.url if img.footer else '',
-            'body': img.preview_image.url if img.preview_image else ''
+            'header': getattr(img.header, 'url', '') if hasattr(img, 'header') and img.header else '',
+            'footer': getattr(img.footer, 'url', '') if hasattr(img, 'footer') and img.footer else '',
+            'body': getattr(img.preview_image, 'url', '') if hasattr(img, 'preview_image') and img.preview_image else ''
         }
 
-    # Prepare context data for the template
     context = {
         'documents': page_obj,
-        'categories': categories,
-        'images_by_document': dict(images_by_document),
+        'categories': Category.objects.all(),
+        'images_by_document': images_by_document,
         'search_query': search_query,
         'category_filter': category_filter,
     }
 
-    # Render the template with context
     return render(request, 'docmodify/index.html', context)
-
 
 @login_required
 def letterhead(request, document_id):
@@ -210,34 +209,54 @@ def save_download_history(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid method'})
 
-def download_history_pdf(request, id):
-    # try:
-    #     history = DownloadHistory.objects.get(pk=id)
-    # except DownloadHistory.DoesNotExist:
-    #     raise Http404("Download history not found.")
+def download_history_file(request, download_type, id):
+    try:
+        history = DownloadHistory.objects.get(pk=id)
+    except DownloadHistory.DoesNotExist:
+        raise Http404("Download history not found.")
 
     # def build_media_url(path):
     #     if path:
     #         return request.build_absolute_uri(settings.MEDIA_URL + path)
     #     return ''
 
-    # # Convert all media paths to absolute URLs
-    # context = {
-    #     'history': history,
-    #     'logo_url': build_media_url(history.logo_path),
-    #     'header_url': build_media_url(history.header_path),
-    #     'footer_url': build_media_url(history.footer_path),
-    # }
+    context = {
+        'history': history,
+        'logo_url': build_media_url(history.logo_path),
+        'header_url': build_media_url(history.header_path),
+        'footer_url': build_media_url(history.footer_path),
+    }
 
-    # html_string = render_to_string('docmodify/pdf/download_document_pdf.html', context)
-    # html = HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf_file = html.write_pdf()
+    html_string = render_to_string('docmodify/pdf/download_document_pdf.html', context)
+    pdf_bytes = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
 
-    # response = HttpResponse(pdf_file, content_type='application/pdf')
-    # response['Content-Disposition'] = f'attachment; filename=download_history_{id}.pdf'
+    if download_type == 'pdf':
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename=download_history_{id}.pdf'
+        return response
 
-    # return response
+    elif download_type in ['jpg', 'png']:
+        # Convert PDF to image(s)
+        images = convert_from_bytes(pdf_bytes)
+        image = images[0]  # Use only the first page
 
+        img_bytes = io.BytesIO()
+        if download_type == 'jpg':
+            image.convert('RGB').save(img_bytes, format='JPEG')
+            content_type = 'image/jpeg'
+            extension = 'jpg'
+        else:
+            image.save(img_bytes, format='PNG')
+            content_type = 'image/png'
+            extension = 'png'
+
+        img_bytes.seek(0)
+        response = HttpResponse(img_bytes, content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename=download_history_{id}.{extension}'
+        return response
+
+    else:
+        raise Http404("Invalid download type.")
 
     history = get_object_or_404(DownloadHistory, pk=id)
 

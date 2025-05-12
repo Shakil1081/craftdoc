@@ -3,8 +3,11 @@ from .models import Setting
 from .forms import SettingForm  # You'll create this form below
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 
 # List all settings
+@login_required
+@permission_required('auth.view_setting', raise_exception=True)
 def setting_list(request):
     settings = Setting.objects.all().order_by('id')
     paginator = Paginator(settings, 10)  # Show 10 settings per page
@@ -13,6 +16,8 @@ def setting_list(request):
     return render(request, 'settings/list.html', {'page_obj': page_obj})
 
 # Create a setting
+@login_required
+@permission_required('auth.add_setting', raise_exception=True)
 def setting_create(request):
     if request.method == 'POST':
         form = SettingForm(request.POST)
@@ -25,6 +30,8 @@ def setting_create(request):
     return render(request, 'settings/form.html', {'form': form, 'title': 'Create Setting'})
 
 # Edit a setting
+@login_required
+@permission_required('auth.change_setting', raise_exception=True)
 def setting_edit(request, pk):
     setting = get_object_or_404(Setting, pk=pk)
     if request.method == 'POST':
@@ -38,6 +45,8 @@ def setting_edit(request, pk):
     return render(request, 'settings/form.html', {'form': form, 'title': 'Edit Setting'})
 
 # Delete a setting
+@login_required
+@permission_required('auth.delete_setting', raise_exception=True)
 def setting_delete(request, pk):
     setting = get_object_or_404(Setting, pk=pk)
     if request.method == 'POST':

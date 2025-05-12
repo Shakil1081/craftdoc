@@ -5,10 +5,13 @@ from collections import defaultdict
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from .models import Document, DocumentCategory, DocumentMeta, DocumentHeaderFooterImage, Font
+from django.contrib.auth.decorators import login_required, permission_required
 # views.py
 from django.contrib import messages
 from django.db import transaction
 
+@login_required
+@permission_required('auth.add_document', raise_exception=True)
 def document_create(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -70,14 +73,27 @@ def document_create(request):
     })
 
 
+# views.py
+@login_required
+@permission_required('auth.change_document', raise_exception=True)
 def document_edit(request, pk):
     document = get_object_or_404(Document, pk=pk)
+    
+    try:
+        document_category = DocumentCategory.objects.get(document=document)
+    except DocumentCategory.DoesNotExist:
+        document_category = None
 
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES, instance=document)
-        category_form = DocumentCategoryForm(request.POST, instance=getattr(document, 'documentcategory', None))
-        header_footer_image_formset = DocumentHeaderFooterImageFormSet(request.POST, request.FILES, instance=document)
+        category_form = DocumentCategoryForm(request.POST, instance=document_category)
+        header_footer_image_formset = DocumentHeaderFooterImageFormSet(
+            request.POST, 
+            request.FILES, 
+            instance=document
+        )
 
+        # Check individual validation
         is_valid = True
 
         if not form.is_valid():
@@ -102,12 +118,15 @@ def document_edit(request, pk):
         if is_valid:
             try:
                 with transaction.atomic():
+                    # Save the main Document object
                     document = form.save()
 
+                    # Save or update the category object
                     category = category_form.save(commit=False)
                     category.document = document
                     category.save()
 
+                    # Save HeaderFooterImage formset
                     header_footer_image_formset.instance = document
                     header_footer_image_formset.save()
 
@@ -119,18 +138,18 @@ def document_edit(request, pk):
 
     else:
         form = DocumentForm(instance=document)
-        category_form = DocumentCategoryForm(instance=getattr(document, 'documentcategory', None))
+        category_form = DocumentCategoryForm(instance=document_category)
         header_footer_image_formset = DocumentHeaderFooterImageFormSet(instance=document)
 
-    return render(request, 'customadmin/document/document_form.html', {
+    return render(request, 'customadmin/document/document_edit.html', {
+        'document': document,
         'form': form,
         'category_form': category_form,
         'header_footer_image_formset': header_footer_image_formset,
-        'edit_mode': True,  # Optional: to toggle buttons/labels in the template
-        'document_id': document.id,
     })
 
-
+@login_required
+@permission_required('auth.view_document', raise_exception=True)
 def document_list(request):
     documents = Document.objects.all()
     return render(request, 'customadmin/document/document_list.html', {'documents': documents})

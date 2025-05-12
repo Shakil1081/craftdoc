@@ -3,13 +3,18 @@ from django.contrib import messages
 from django.contrib.auth.models import Group, Permission
 from .forms import GroupForm  
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required, permission_required
 
 # List View for Groups
+@login_required
+@permission_required('auth.view_group', raise_exception=True)
 def group_list(request):
     groups = Group.objects.all()
     return render(request, 'customadmin/auth_group/group_list.html', {'groups': groups})
 
 # Create View for Group
+@login_required
+@permission_required('auth.add_group', raise_exception=True)
 def group_create(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
@@ -25,6 +30,8 @@ def group_create(request):
     return render(request, 'customadmin/auth_group/create.html', {'form': form})
 
 # Edit View for Group
+@login_required
+@permission_required('auth.change_group', raise_exception=True)
 def group_edit(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
@@ -52,11 +59,15 @@ def group_edit(request, group_id):
         'selected_permissions': selected_permissions
     })
 
+@login_required
+@permission_required('auth.view_group', raise_exception=True)
 def group_view(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     return render(request, 'customadmin/auth_group/view.html', {'group': group})
 
 # Delete View for Group
+@login_required
+@permission_required('auth.delete_group', raise_exception=True)
 def group_delete(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
