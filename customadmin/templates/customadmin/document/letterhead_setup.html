@@ -148,7 +148,6 @@
             <hr>
             <div class="single-content-panel">
                 <h5 class="title">Phone</h5>
-                {% comment %} <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm"></textarea> {% endcomment %}
                 <textarea name="" rows="2" id="phoneInput" class="form-control form-control-sm">{{ document.phone }}</textarea>
 
                 <div class="input-group  input-group-sm">
@@ -178,15 +177,19 @@
                 <div class="input-group input-group-sm">
                     <select name="" id="phoneFontFamily" class="form-select form-select-sm">
                         <option value="">Font Family</option>
-                        <option value='"Times New Roman", Times, serif'>Times New Roman</option>
-                        <option value='"Courier New", Courier, monospace'>Courier New</option>
-                        <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
-                        <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
-                        <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
-                        <option value='"Georgia", serif'>Georgia</option>
-                        <option value='"Impact", Charcoal, sans-serif'>Impact</option>
-                        <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
-                        <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                        {% for font in fonts %}
+                            <option value="{{ font.font_family }}">{{ font.name }}</option>
+                        {% empty %}
+                            <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                            <option value='"Courier New", Courier, monospace'>Courier New</option>
+                            <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                            <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                            <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                            <option value='"Georgia", serif'>Georgia</option>
+                            <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                            <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                            <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                        {% endfor %}
                     </select>
 
                     <input type="number" style="max-width: 80px;" class="form-control" id="phoneFontSize"
@@ -196,7 +199,6 @@
 
             <div class="single-content-panel">
                 <h5 class="title">Email</h5>
-                {% comment %} <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
                 <textarea name="" id="emailInput" rows="2" class="form-control form-control-sm">{{ document.email }}</textarea>
 
                 <div class="input-group input-group-sm">
@@ -228,15 +230,19 @@
                 <div class="input-group input-group-sm">
                     <select name="" id="emailFontFamily" class="form-select form-select-sm">
                         <option value="">Font Family</option>
-                        <option value='"Times New Roman", Times, serif'>Times New Roman</option>
-                        <option value='"Courier New", Courier, monospace'>Courier New</option>
-                        <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
-                        <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
-                        <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
-                        <option value='"Georgia", serif'>Georgia</option>
-                        <option value='"Impact", Charcoal, sans-serif'>Impact</option>
-                        <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
-                        <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                        {% for font in fonts %}
+                            <option value="{{ font.font_family }}">{{ font.name }}</option>
+                        {% empty %}
+                            <option value='"Times New Roman", Times, serif'>Times New Roman</option>
+                            <option value='"Courier New", Courier, monospace'>Courier New</option>
+                            <option value='"Lucida Console", Monaco, monospace'>Lucida Console</option>
+                            <option value='"Arial Black", Gadget, sans-serif'>Arial Black</option>
+                            <option value='"Comic Sans MS", cursive, sans-serif'>Comic Sans MS</option>
+                            <option value='"Georgia", serif'>Georgia</option>
+                            <option value='"Impact", Charcoal, sans-serif'>Impact</option>
+                            <option value='"Palatino Linotype", "Book Antiqua", Palatino, serif'>Palatino Linotype</option>
+                            <option value='"Tahoma", Geneva, sans-serif'>Tahoma</option>
+                        {% endfor %}
                     </select>
 
                     <input type="number" style="max-width: 80px;" class="form-control" id="emailFontSize"
@@ -247,7 +253,6 @@
 
             <div class="single-content-panel">
                 <h5 class="title">Location</h5>
-                {% comment %} <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm"></textarea> {% endcomment %}
                 <textarea name="" id="locationInput" rows="2" class="form-control form-control-sm">{{ document.location }}</textarea>
 
                 <div class="input-group input-group-sm">
@@ -295,7 +300,6 @@
                     </select>
                     <input type="number" style="max-width: 80px;" class="form-control" id="locationFontSize" placeholder="Size">
                 </div>
-
             </div>
 
             <div class="single-content-panel">
@@ -361,6 +365,76 @@
         const defaultCss = `{{ default_css|escapejs }}`;
         
         $(document).ready(function() {
+            function parseCSS(cssText) {
+                const styleMap = {};
+                const regex = /#(\w+)\s*{([^}]+)}/g;
+                let match;
+                while ((match = regex.exec(cssText)) !== null) {
+                    const id = match[1];
+                    const properties = match[2].trim().split(';').filter(Boolean);
+                    styleMap[id] = {};
+                    $.each(properties, function (_, prop) {
+                        const [key, value] = prop.split(':').map(s => s.trim());
+                        if (key && value) styleMap[id][key] = value;
+                    });
+                }
+                return styleMap;
+            }
+
+            function applyStylesToInputs(cssMap, prefix) {
+                const styles = cssMap[prefix + "Show"];
+                if (!styles) return;
+
+                if (styles.right) $("#" + prefix + "Right").val(parseInt(styles.right));
+                if (styles.left) $("#" + prefix + "Left").val(parseInt(styles.left));
+                if (styles.top) $("#" + prefix + "Top").val(parseInt(styles.top));
+                if (styles.bottom) $("#" + prefix + "Bottom").val(parseInt(styles.bottom));
+                if (styles.color) $("#" + prefix + "ColorInput").val(rgbToHex(styles.color));
+                if (styles["font-family"]) $("#" + prefix + "FontFamily").val(styles["font-family"]);
+                if (styles["font-size"]) $("#" + prefix + "FontSize").val(parseInt(styles["font-size"]));
+
+                // Bold / Italic
+                if (styles["font-weight"] === "bold" || parseInt(styles["font-weight"]) >= 600)
+                    $("#" + prefix + "BoldInput").addClass("active");
+                if (styles["font-style"] === "italic")
+                    $("#" + prefix + "ItalicInput").addClass("active");
+
+                // Text alignment
+                const align = styles["text-align"];
+                if (align) {
+                    $("#" + prefix + "LeftAlign, #" + prefix + "CenterAlign, #" + prefix + "RightAlign").removeClass("selected");
+                    if (align === "left" || align === "start") $("#" + prefix + "LeftAlign").addClass("selected");
+                    else if (align === "center") $("#" + prefix + "CenterAlign").addClass("selected");
+                    else if (align === "right" || align === "end") $("#" + prefix + "RightAlign").addClass("selected");
+                }
+            }
+
+            function rgbToHex(rgb) {
+                const result = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(rgb);
+                return result ? "#" + result.slice(1).map(x => ("0" + parseInt(x).toString(16)).slice(-2)).join('') : rgb;
+            }
+
+            function loadCss() {
+                let customCss = $("#preview-css").text().trim();
+                    if (!customCss || customCss === "None") {
+                        customCss = defaultCss;
+                        $("#preview-css").html(defaultCss); // Ensure default is applied
+                    } else {
+                        $("#preview-css").html(customCss); // Apply custom
+                    }
+
+                    const cssMap = parseCSS(customCss);
+
+                    // Load styles into form for each content type
+                    applyStylesToInputs(cssMap, "email");
+                    applyStylesToInputs(cssMap, "phone");
+                    applyStylesToInputs(cssMap, "location");
+                    applyStylesToInputs(cssMap, "logo");
+                    applyStylesToInputs(cssMap, "letterheadContent");
+            }
+
+            loadCss();
+
             //header item click event
             $(document).on("click", ".header-item, .footer-item", function () {
                 $(".header-item").removeClass("selected");
@@ -370,8 +444,9 @@
                 const dataId = $(this).data("hf-id");
                 const css = $(this).data("css");
                 
-                if (css) {
+                if (css && css.trim() !== "" && css !== "None") {
                     $("#preview-css").html(css);
+                    loadCss();
                 } else {
                     $("#preview-css").html(defaultCss);
                 }
