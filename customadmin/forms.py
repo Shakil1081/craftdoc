@@ -217,6 +217,14 @@ class DocumentHeaderFooterImageForm(forms.ModelForm):
         model = DocumentHeaderFooterImage
         fields = ['header', 'footer', 'preview_image', 'is_default', 'color']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        is_default = cleaned_data.get('is_default')
+        preview_image = cleaned_data.get('preview_image')
+
+        if is_default and not preview_image:
+            self.add_error('preview_image', "Preview image is required for the default header/footer.")
+        
     # Ensure 'is_default' is handled as a Boolean field
     is_default = forms.BooleanField(required=False, initial=False)
 

@@ -222,7 +222,7 @@ class DocumentHeaderFooterImage(models.Model):
     header = models.ImageField(upload_to='documents/previews/', blank=False, null=False)
     footer = models.ImageField(upload_to='documents/previews/', blank=False, null=False)
     preview_image = models.ImageField(upload_to='documents/previews/', blank=True, null=True)
-    is_default = models.BooleanField(null=True)
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Header/Footer for {self.document.title}"
