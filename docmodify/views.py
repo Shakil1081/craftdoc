@@ -215,53 +215,53 @@ def save_download_history(request):
     return JsonResponse({'success': False, 'error': 'Invalid method'})
 
 def download_history_file(request, download_type, id):
-    try:
-        history = DownloadHistory.objects.get(pk=id)
-    except DownloadHistory.DoesNotExist:
-        raise Http404("Download history not found.")
+    # try:
+    #     history = DownloadHistory.objects.get(pk=id)
+    # except DownloadHistory.DoesNotExist:
+    #     raise Http404("Download history not found.")
 
     # def build_media_url(path):
     #     if path:
     #         return request.build_absolute_uri(settings.MEDIA_URL + path)
     #     return ''
 
-    context = {
-        'history': history,
-        'logo_url': build_media_url(history.logo_path),
-        'header_url': build_media_url(history.header_path),
-        'footer_url': build_media_url(history.footer_path),
-    }
+    # context = {
+    #     'history': history,
+    #     'logo_url': build_media_url(history.logo_path),
+    #     'header_url': build_media_url(history.header_path),
+    #     'footer_url': build_media_url(history.footer_path),
+    # }
 
-    html_string = render_to_string('docmodify/pdf/download_document_pdf.html', context)
-    pdf_bytes = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+    # html_string = render_to_string('docmodify/pdf/download_document_pdf.html', context)
+    # pdf_bytes = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
 
-    if download_type == 'pdf':
-        response = HttpResponse(pdf_bytes, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename=download_history_{id}.pdf'
-        return response
+    # if download_type == 'pdf':
+    #     response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    #     response['Content-Disposition'] = f'attachment; filename=download_history_{id}.pdf'
+    #     return response
 
-    elif download_type in ['jpg', 'png']:
-        # Convert PDF to image(s)
-        images = convert_from_bytes(pdf_bytes)
-        image = images[0]  # Use only the first page
+    # elif download_type in ['jpg', 'png']:
+    #     # Convert PDF to image(s)
+    #     images = convert_from_bytes(pdf_bytes)
+    #     image = images[0]  # Use only the first page
 
-        img_bytes = io.BytesIO()
-        if download_type == 'jpg':
-            image.convert('RGB').save(img_bytes, format='JPEG')
-            content_type = 'image/jpeg'
-            extension = 'jpg'
-        else:
-            image.save(img_bytes, format='PNG')
-            content_type = 'image/png'
-            extension = 'png'
+    #     img_bytes = io.BytesIO()
+    #     if download_type == 'jpg':
+    #         image.convert('RGB').save(img_bytes, format='JPEG')
+    #         content_type = 'image/jpeg'
+    #         extension = 'jpg'
+    #     else:
+    #         image.save(img_bytes, format='PNG')
+    #         content_type = 'image/png'
+    #         extension = 'png'
 
-        img_bytes.seek(0)
-        response = HttpResponse(img_bytes, content_type=content_type)
-        response['Content-Disposition'] = f'attachment; filename=download_history_{id}.{extension}'
-        return response
+    #     img_bytes.seek(0)
+    #     response = HttpResponse(img_bytes, content_type=content_type)
+    #     response['Content-Disposition'] = f'attachment; filename=download_history_{id}.{extension}'
+    #     return response
 
-    else:
-        raise Http404("Invalid download type.")
+    # else:
+    #     raise Http404("Invalid download type.")
 
     history = get_object_or_404(DownloadHistory, pk=id)
 
