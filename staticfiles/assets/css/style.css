@@ -1,0 +1,258 @@
+body {
+    background-color: #f8f9fa;
+  }
+  .sidebar {
+    min-width: 250px;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+  }
+  .main-content {
+    padding: 2rem;
+  }
+  .template-card {
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .template-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .template-card img {
+    width: 100%;
+    transition: all 0.3s ease;
+    display: block;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+  
+  .template-card:hover .overlay {
+    opacity: 1;
+  }
+  
+  .icon-buttons,
+  .action-button {
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+  }
+  
+  .template-card:hover .icon-buttons,
+  .template-card:hover .action-button {
+    opacity: 1;
+  }
+  
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  
+  .template-img {
+    width: 100%;
+    height: auto;
+  }
+  .nav-pills .nav-link.active {
+    background-color: #0d6efd;
+  }
+
+
+  .letterhead-page {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Disable full-page scroll */
+  }
+  
+  .letterhead-content {
+    height: 100vh;
+    padding: 0;
+  }
+  
+
+  .left-panel, .right-panel {
+    padding: 30px;
+  }
+
+  .left-panel{
+    border-right: 1px solid #d3d3d3;
+  }
+
+  .right-panel{
+    border-left: 1px solid #d3d3d3;
+  }
+
+  .template-layout {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr; /* Adjust proportions here */
+    height: 100%;
+  }
+  
+  .scroll-panel {
+    overflow-y: auto;
+    padding: 30px;
+  }
+  
+  .center-panel {
+    height: 100vh;
+    background-color: #f8f9fa;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+  }
+  
+  .center-panel .design-preview {
+    max-width: 100%;
+    width: 500px;
+  }
+  
+  .right-panel h6 {
+    font-weight: 700;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 30px;
+  }
+  
+ 
+
+  #logoPreview {
+    transition: 0.3s;
+  }
+  #logoPreview:hover {
+    opacity: 0.8;
+  }
+
+  .a4-preview {
+    margin-top: 300px;
+    display: flex;
+    flex-direction: column;
+    width: 210mm;
+    height: 297mm;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transform-origin: top center;
+    transform: scale(1);
+    transition: transform 0.2s ease;
+    overflow: hidden;
+    background-position: top, bottom;
+    background-repeat: no-repeat;
+    background-size: 100% auto, 100% auto;
+  }
+  
+  .header-section,
+  .footer-section {
+    width: 100%;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: center;
+    overflow: hidden;
+    /* aspect-ratio: 10 / 1; */
+  }
+
+  .body-section {
+    flex: 1;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: auto;
+  }
+  
+    .logo {
+      position: absolute;
+      top: 20mm;
+      left: 20mm;
+      z-index: 3;
+      cursor: move;
+    }
+
+    .logo img {
+      width: 200px;
+    }
+
+    .contact {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      position: absolute;
+      z-index: 2;
+      max-width: 200px;
+      right: 0;
+    }
+
+    .contact span {
+      font-weight: 400;
+      font-size: 10px;
+      text-align: right;
+    }
+
+    .contact-number {
+      bottom: 26mm;
+      left: 57%;
+    }
+
+    .website {
+      bottom: 15mm;
+      left: 57%;
+    }
+
+    .address {
+      bottom: 3mm;
+      left: 57%;
+    }
+  
+  .zoom-control {
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  /* Optional: Highlight selected template */
+  .template-item.selected {
+    border: 2px solid #007bff;
+    border-radius: 5px;
+  }
+
+  .zoom-control {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  #zoomValue{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100px;
+  }
