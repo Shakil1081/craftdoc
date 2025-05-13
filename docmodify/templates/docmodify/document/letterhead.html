@@ -100,6 +100,8 @@
                       </div>
                       <div class="modal-body">
                          <div id="modalEditor" style="height: 320px"></div>
+                         <!-- Hidden input to store Quill content -->
+                         <input type="hidden" name="letterhead_content" id="letterhead_content_input">
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -398,16 +400,26 @@
                 ['blockquote', 'code-block']
               ]
             }
-          });
+        });
           
-          
-          $('#setContentBtn').on('click', function () {
-            const content = quill.root.innerHTML;
-            console.log(content);
-            $('#letterheadContentShow').html(content);
-          });
-          
+        // Fill editor with existing content if available
+        function loadLHContent(document) {
+            var initialContent = document.letterhead_content ?? '';
+            console.log(initialContent);
+            if (initialContent) {
+                quill.root.innerHTML = initialContent;
+            }else{
+                quill.root.innerHTML = null;
+            }
 
+            const content = quill.root.innerHTML;
+            $('#letterheadContentShow').html(content);
+        }
+
+        $('#setContentBtn').on('click', function () {
+            const content = quill.root.innerHTML;
+            $('#letterheadContentShow').html(content);
+        });
 
         function loadHeaderFooterData(documentId) {
             $.ajax({
@@ -419,6 +431,8 @@
                 success: function (response) {
                 headerFooterImages = response.header_footer_images;
                 const document = response.document;            
+
+                loadLHContent(document)
 
                 // Find the default header/footer image
                 const defaultImage = headerFooterImages.find(hf => hf.is_default);
@@ -543,6 +557,11 @@
         
             const formData = new FormData();
 
+            const content = quill.root.innerHTML;
+            if (content.trim() !== '' && content !== '<p><br></p>') {
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
+
             // Add CSRF token
             formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
 
@@ -554,13 +573,14 @@
             formData.append('email', $('#emailShow').text().trim());
             formData.append('location', $('#locationShow').text().trim());
             formData.append('css', $('#customCss').html().trim());
+            formData.append('letterhead_content', $('#letterhead_content_input').val());
 
             // Add media file (e.g., logo file input)
             const logoInput = $('#logoInput')[0];  // Assuming you have <input type="file" id="logoInput">
             if (logoInput && logoInput.files.length > 0) {
                 formData.append('logo_file', logoInput.files[0]);
             }
-            console.log(formData.logo_file);
+            
             $.ajax({
                 url: '/save-download-history/',
                 type: 'POST',
@@ -571,15 +591,15 @@
                     if (res.success) {
                         console.log("Download history saved.");
                         // Optionally trigger actual download
-                        window.location.href = 'http://127.10.10.10:8000/download/pdf/' + res.download_history_id;
+                        window.location.href = '/download-history/pdf/' + res.download_history_id + '/';
                     } else {
                         console.error(res.error);
+                        alert(res.error);
                     }
                 }
             });
         }); 
-    });
-    
+    });   
     
   </script>
 </body>

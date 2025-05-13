@@ -5,11 +5,11 @@
 <div class="container my-4">
     <h2>Add New Document</h2>
 
-    <div class="text-danger">
+    {% comment %} <div class="text-danger">
         {% for error in form.title.errors %}
             <p>{{ error }}</p>
         {% endfor %}
-    </div>
+    </div> {% endcomment %}
     
     {% comment %} {% if messages %}
         {% for message in messages %}
@@ -72,6 +72,19 @@
             <div class="text-danger">{{ category_form.category.errors }}</div>
         </div>
 
+        <div class="mb-3">
+            <label for="letterhead_content" class="form-label">Letterhead Content</label>
+            
+            <!-- Hidden input to store Quill content -->
+            <input type="hidden" name="letterhead_content" id="letterhead_content_input">
+    
+            <!-- Quill Editor -->
+            <div id="letterhead_editor" style="height: 250px;" class="form-control {% if form.letterhead_content.errors %}is-invalid{% endif %}"></div>
+    
+            <!-- Error display -->
+            <div class="text-danger">{{ form.letterhead_content.errors }}</div>
+        </div>       
+
         <!-- Header & Footer Images Section -->
         <hr>
         <h4>
@@ -118,9 +131,48 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- JavaScript to clone formset -->
-<script>
+<script> 
+    $(document).ready(function () {
+        // Initialize Quill
+        var quill = new Quill('#letterhead_editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': '1' }, { 'header': '2' }],
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', 'medium', 'large', 'huge'] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['bold', 'italic', 'underline'],
+                    ['link'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['blockquote', 'code-block']
+                ]
+            }
+        });
+
+        // Fill editor with existing content if available
+        var initialContent = `{{ form.letterhead_content.value|default_if_none:''|escapejs }}`;
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+
+        // Intercept form submission
+        $('form').on('submit', function (e) {
+            // Update hidden input with editor content
+            const content = quill.root.innerHTML;
+            if (content.trim() !== '' && content !== '<p><br></p>') {
+                $('#letterhead_content_input').val(quill.root.innerHTML);
+            }
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
+        
+
         const addButton = document.getElementById('add-meta');
         const formsetDiv = document.getElementById('meta-formset');
         const totalForms = document.getElementById('id_documentmeta_set-TOTAL_FORMS');

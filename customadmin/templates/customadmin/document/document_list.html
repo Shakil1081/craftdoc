@@ -4,11 +4,11 @@
   <div class="container mt-4">
     <h2>Document List</h2>
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-            </div>
-        {% endfor %}
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+          <div class="alert alert-success">{{ message }}</div>
+        {% endif %}
+      {% endfor %}
     {% endif %}
     <a href="{% url 'document_create' %}" class="btn btn-primary mb-2">Add Document</a>
     <table class="table table-bordered">
@@ -26,6 +26,7 @@
             <td>{{ doc.description }}</td>
             <td>
               <a href="{% url 'document_lhsetup' doc.id %}" class="btn btn-success btn-sm">Setup Letterhead</a>
+              <a href="{% url 'document_edit' doc.id %}" class="btn btn-primary btn-sm">Edit</a>
               <a href="{% url 'document_delete' doc.id %}" class="btn btn-danger btn-sm">Delete</a>
             </td>
           </tr>
