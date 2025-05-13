@@ -85,12 +85,6 @@
           <button class="btn btn-sm btn-success " data-bs-toggle="modal" data-bs-target="#contentModal">Add Content to Letterhead</button>
       </div>
       </div>
-
-
-          {% comment %} open modal  {% endcomment %}
-          
-          
-          {% comment %} modal  {% endcomment %}
           <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg">
                   <div class="modal-content">
@@ -429,74 +423,74 @@
                 'X-Requested-With': 'XMLHttpRequest'
                 },
                 success: function (response) {
-                headerFooterImages = response.header_footer_images;
-                const document = response.document;            
+                    headerFooterImages = response.header_footer_images;
+                    const document = response.document;            
+                    $('#customCss').html('')
+                    loadLHContent(document)
 
-                loadLHContent(document)
+                    // Find the default header/footer image
+                    const defaultImage = headerFooterImages.find(hf => hf.is_default);
 
-                // Find the default header/footer image
-                const defaultImage = headerFooterImages.find(hf => hf.is_default);
-
-                if (defaultImage && defaultImage.css) {
-                    $('#customCss').html(defaultImage.css);
-                } else {
-                    console.log('No default CSS found.');
-                }
-
-                // Update logo
-                if (document.logo) {
-                    $('#logoPreview').attr('src', document.logo);
-                    $('#logoShow').attr('src', document.logo);
-                }
-                
-                // Update phone, email, location
-                $('#phoneInput').val(document.phone || '');
-                $('#emailInput').val(document.email || '');
-                $('#locationInput').val(document.location || '');
-                
-                $('#phoneShow').empty();
-                $('#emailShow').empty();
-                $('#locationShow').empty();
-
-                // Update phone, email, location
-                if (document.phone) {
-                    $('#phoneShow').append(document.phone.replace(/\n/g, '<br>'));
-                } else {
-                    $('#phoneShow').append('');
-                }
-                if (document.email) {
-                    $('#emailShow').append(document.email.replace(/\n/g, '<br>'));
-                } else {
-                    $('#emailShow').append('');
-                }
-                if (document.location) {
-                    $('#locationShow').append(document.location.replace(/\n/g, '<br>'));
-                } else {
-                    $('#locationShow').append('');
-                }
-
-                // Clear and repopulate header/footer
-                $('#headerChangePanel').empty();
-                $('#footerChangePanel').empty();
-                
-                headerFooterImages.forEach(hf => {
-                    if (hf.header) {
-                    const isSelected = hf.is_default ? 'selected' : '';
-                    $('#headerChangePanel').append(`
-                        <div class="header-item ${isSelected}" data-hf-id="${hf.id}" data-header="${hf.header}">
-                        <img class="header-item-img" src="${hf.header}" alt="Header" />
-                        </div>
-                    `);
+                    if (defaultImage && defaultImage.css) {
+                        $('#customCss').html(defaultImage.css);
+                    } else {
+                        console.log('No default CSS found.');
                     }
-                    if (hf.footer) {
-                    const isSelected = hf.is_default ? 'selected' : '';
-                    $('#footerChangePanel').append(`
-                        <div class="footer-item ${isSelected}" data-hf-id="${hf.id}" data-footer="${hf.footer}">
-                        <img class="footer-item-img" src="${hf.footer}" alt="Footer" />
-                        </div>
-                    `);
+
+                    // Update logo
+                    if (document.logo) {
+                        $('#logoPreview').attr('src', document.logo);
+                        $('#logoShow').attr('src', document.logo);
                     }
-                });
+                    
+                    // Update phone, email, location
+                    $('#phoneInput').val(document.phone || '');
+                    $('#emailInput').val(document.email || '');
+                    $('#locationInput').val(document.location || '');
+                    
+                    $('#phoneShow').empty();
+                    $('#emailShow').empty();
+                    $('#locationShow').empty();
+
+                    // Update phone, email, location
+                    if (document.phone) {
+                        $('#phoneShow').append(document.phone.replace(/\n/g, '<br>'));
+                    } else {
+                        $('#phoneShow').append('');
+                    }
+                    if (document.email) {
+                        $('#emailShow').append(document.email.replace(/\n/g, '<br>'));
+                    } else {
+                        $('#emailShow').append('');
+                    }
+                    if (document.location) {
+                        $('#locationShow').append(document.location.replace(/\n/g, '<br>'));
+                    } else {
+                        $('#locationShow').append('');
+                    }
+
+                    // Clear and repopulate header/footer
+                    $('#headerChangePanel').empty();
+                    $('#footerChangePanel').empty();
+                    
+                    headerFooterImages.forEach(hf => {
+                        if (hf.header) {
+                        const isSelected = hf.is_default ? 'selected' : '';
+                        $('#headerChangePanel').append(`
+                            <div class="header-item ${isSelected}" data-hf-id="${hf.id}" data-header="${hf.header}">
+                            <img class="header-item-img" src="${hf.header}" alt="Header" />
+                            </div>
+                        `);
+                        }
+                        if (hf.footer) {
+                        const isSelected = hf.is_default ? 'selected' : '';
+                        $('#footerChangePanel').append(`
+                            <div class="footer-item ${isSelected}" data-hf-id="${hf.id}" data-footer="${hf.footer}">
+                            <img class="footer-item-img" src="${hf.footer}" alt="Footer" />
+                            </div>
+                        `);
+                        }
+                    });
                 },          
                 error: function (error) {
                 console.error('Error fetching header/footer data:', error);

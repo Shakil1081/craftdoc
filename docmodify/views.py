@@ -29,11 +29,11 @@ from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
-from weasyprint import HTML 
+# from weasyprint import HTML 
 from django.core.paginator import Paginator, EmptyPage
 from PIL import Image
 import io
-from pdf2image import convert_from_bytes
+# from pdf2image import convert_from_bytes
 
 def hello_there(request):
     search_query = request.GET.get('search', '').strip()

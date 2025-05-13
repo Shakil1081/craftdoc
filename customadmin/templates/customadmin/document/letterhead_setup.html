@@ -11,13 +11,36 @@
 
     <link rel="stylesheet" href="{% static 'css/lh_setup_style.css' %}">
     <link rel="stylesheet" href="{% static 'css/lh_setup_custom.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
     <style>
+        .modal-backdrop{
+            z-index: 1;
+        }
+
+        #modalEditor {
+            font-family: 'Roboto', sans-serif; 
+        }
+
+        .ql-font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .ql-font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+
         #letterheadContentShow{
-            padding: 96px;
+            font-family: 'Roboto', sans-serif;
+            padding-top: 115px;
+            padding-bottom: 230px;
+            padding-left: 70px;
+            padding-right: 70px;
             height: 11.69in;
-            overflow: hidden;
         }
         #letterheadContentShow p{
+            margin: 0;
+        }
+        #letterhead-body .content-panel .zoom-buttons{
             margin: 0;
         }
     </style>
@@ -44,15 +67,42 @@
             </div>
         </div>
         <div class="content-panel">
-            <div class="zoom-buttons">
-                <div class="input-group input-group-sm">
-                    <button id="zoomOutBtn" class="input-group-text">-</button>
-                    <div id="zoomInput" class="form-control  text-center">
-                        100%
-                    </div>
-                    <button id="zoomInBtn" class="input-group-text">+</button>
+            <div class="d-flex justify-content-between mb-3">
+                <div class="zoom-buttons">
+                    <div class="input-group input-group-sm">
+                        <button id="zoomOutBtn" class="input-group-text">-</button>
+                        <div id="zoomInput" class="form-control  text-center">
+                            100%
+                        </div>
+                        <button id="zoomInBtn" class="input-group-text">+</button>
+                    </div>                
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-sm btn-success " data-bs-toggle="modal" data-bs-target="#contentModal">Add Content to Letterhead</button>
                 </div>
             </div>
+
+            <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="contentModalLabel">Add Letterhead Content</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <div id="modalEditor" style="height: 320px"></div>
+                            <!-- Hidden input to store Quill content -->
+                            <input type="hidden" name="letterhead_content" id="letterhead_content_input">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" id="setContentBtn" class="btn btn-primary" data-bs-dismiss="modal">Set Content</button>
+                            <button type="button" id="saveContentBtn" class="btn btn-success" data-bs-dismiss="modal">Save Content</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="content">
                 <div id="a4panel">
                     <img id="logoShow" 
@@ -105,6 +155,7 @@
                     </div>
                 </div>                
             </div>
+            
         </div>
 
         <div class="right-panel">
@@ -358,13 +409,85 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script src="{%static 'js/lh_setup_custom.js' %}"></script>
     {% csrf_token %}
     <script>
-        const defaultCss = `{{ default_css|escapejs }}`;
-        
+        const documentContent = `{{ document.letterhead_content|escapejs }}`;
+
         $(document).ready(function() {
+            var quill = new Quill('#modalEditor', {
+                theme: 'snow',
+                modules: {
+                toolbar: [
+                    [{ 'header': '1' }, { 'header': '2' }],
+                    [{ 'font': [] }],
+                    [{
+                    'size': ['small', 'medium', 'large', 'huge']  // Custom size options
+                    }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['bold', 'italic', 'underline'],    
+                    ['link'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['blockquote', 'code-block']
+                ]
+                }
+            });
+            
+            // Fill editor with existing content if available
+            function loadLHContent(documentContent) {
+                var initialContent = documentContent ?? '';
+                console.log(initialContent);
+                if (initialContent) {
+                    quill.root.innerHTML = initialContent;
+                }else{
+                    quill.root.innerHTML = null;
+                }
+
+                if (initialContent) {
+                    const content = quill.root.innerHTML;
+                    $('#letterheadContentShow').html(content);
+                }                
+            }
+
+            loadLHContent(documentContent);
+
+            $('#setContentBtn').on('click', function () {
+                const content = quill.root.innerHTML;
+                $('#letterheadContentShow').html(content);
+            });
+
+            $('#saveContentBtn').on('click', function () {
+                const content = quill.root.innerHTML;
+                $('#letterheadContentShow').html(content);
+
+                $.ajax({
+                    url: "",  // same URL as current page
+                    type: "POST",
+                    data: {
+                        action: "save_letterhead_content",
+                        letterhead_content: content,
+                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                    },
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showMessage("content saved successfully!", "success");
+                        } else {
+                            showMessage("Error: " + response.error, "error");
+                        }
+                    },
+                    error: function () {
+                        console.error("AJAX request failed");
+                        showMessage("Server error while saving content.", "error");
+                    }
+                });
+            });
+
+
             function parseCSS(cssText) {
                 const styleMap = {};
                 const regex = /#(\w+)\s*{([^}]+)}/g;
@@ -634,6 +757,7 @@
                     url: "", // The same URL as the current page
                     type: "POST",
                     data: {
+                        action: "save_css",
                         selected_id: selectedId,
                         css: css,
                         saveAllCss: saveAllCss,  // Pass extra flag for Save All
@@ -644,7 +768,7 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            showMessage("CSS saved successfully");
+                            showMessage("CSS saved successfully", "success");
                             // Optionally show a success message or update UI
                         } else {
                             showMessage("Error:", response.error);
