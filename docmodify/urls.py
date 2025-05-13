@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.hello_there, name='hello_there'),
     path('register/', views.register, name='register'),
     path('dashboard/', views.public_dashboard, name='public_dashboard'),
+    path('profile/edit/', views.edit_profile, name='user_profile_edit'),
     path('redirect/', views.role_based_redirect, name='role_based_redirect'),
     path('login/', views.public_login, name='login'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),

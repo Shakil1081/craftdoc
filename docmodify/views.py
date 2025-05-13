@@ -32,6 +32,7 @@ from django.core.files.storage import default_storage
 # from weasyprint import HTML 
 from django.core.paginator import Paginator, EmptyPage
 from PIL import Image
+from customadmin.forms import UserForm,ProfileEditForm
 import io
 # from pdf2image import convert_from_bytes
 
@@ -528,7 +529,21 @@ def reset_password(request, uidb64, token):
     else:
         messages.error(request, 'Invalid or expired password reset link.')
         return redirect('forgot_password')
+
+@login_required
+def edit_profile(request):
+    user = request.user  # Get logged-in user
     
+    if request.method == "POST":
+        form = ProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_edit')  # Redirect to profile page after saving
+    else:
+        form = ProfileEditForm(instance=user)
+
+    return render(request, "docmodify/profile_edit.html", {"form": form, "user": user})
+
 def earn_credit(request):
     credit_setting = Setting.objects.filter(key='credit_per_bdt').first()
     return render(request, 'docmodify/credit/earn.html', {

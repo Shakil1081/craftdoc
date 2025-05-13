@@ -1,0 +1,117 @@
+{% extends 'docmodify/public_base.html' %} 
+{% load static %}
+{% block css %}
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Edit Profile</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="text-center mb-3">
+                    {% if user.profile_image %}
+                        <img src="{{ user.profile_image.url }}" class="img-thumbnail rounded-circle" width="200">
+                    {% else %}
+                        <img src="{% static 'assets/avatar_profile.webp' %}" class="img-thumbnail rounded-circle" width="200">
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <label>Phone</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Organization</label>
+                        {{ form.organization }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Profession</label>
+                        {{ form.profession }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <label>Department</label>
+                        {{ form.department }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Designation</label>
+                        {{ form.designation }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>City</label>
+                        {{ form.city }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <label>Address</label>
+                        {{ form.address }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <label>Facebook</label>
+                        {{ form.facebook_link }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Twitter (X)</label>
+                        {{ form.x_link }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Instagram</label>
+                        {{ form.instagram_link }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <label>LinkedIn</label>
+                        {{ form.linkedin_link }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>YouTube</label>
+                        {{ form.youtube_link }}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Profile Image</label>
+                        {{ form.profile_image }}
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{% url 'profile_edit' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
