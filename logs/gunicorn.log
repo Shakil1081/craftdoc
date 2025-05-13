@@ -1,0 +1,14 @@
+[2025-05-12 16:30:00 +0600] [109743] [INFO] Starting gunicorn 23.0.0
+[2025-05-12 16:30:00 +0600] [109743] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:01 +0600] [109743] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:02 +0600] [109743] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:03 +0600] [109743] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:04 +0600] [109743] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:05 +0600] [109743] [ERROR] Can't connect to /var/www/html/python-project/run/gunicorn.sock
+[2025-05-12 16:30:53 +0600] [110065] [INFO] Starting gunicorn 23.0.0
+[2025-05-12 16:30:53 +0600] [110065] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:54 +0600] [110065] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:55 +0600] [110065] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:56 +0600] [110065] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:57 +0600] [110065] [ERROR] connection to /var/www/html/python-project/run/gunicorn.sock failed: [Errno 2] No such file or directory
+[2025-05-12 16:30:58 +0600] [110065] [ERROR] Can't connect to /var/www/html/python-project/run/gunicorn.sock
