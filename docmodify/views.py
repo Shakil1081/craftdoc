@@ -30,7 +30,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
 from weasyprint import HTML 
-from django.core.paginator import Paginator, EmptyPage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from PIL import Image
 import io
 from pdf2image import convert_from_bytes
@@ -41,8 +41,6 @@ def hello_there(request):
 
     try:
         page_number = int(request.GET.get('page', 1))
-        if page_number < 1:
-            page_number = 1
     except (ValueError, TypeError):
         page_number = 1
 
@@ -56,10 +54,17 @@ def hello_there(request):
         documents = documents.filter(documentcategory__category=category)
 
     paginator = Paginator(documents, 10)
+
     try:
         page_obj = paginator.page(page_number)
     except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
+        # If page is out of range (e.g. page < 1 or page > num_pages), deliver first or last page
+        if page_number < 1:
+            page_obj = paginator.page(1)
+        else:
+            page_obj = paginator.page(paginator.num_pages)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
 
     # Group default header/footer images by document
     images_by_document = {}

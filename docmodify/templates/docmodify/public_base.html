@@ -106,7 +106,7 @@
   <!-- Top Navigation -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="{% url 'public_dashboard' %}">
         <img src="{% static 'img/logo_light.png' %}" alt="Logo">
       </a>
 
@@ -118,7 +118,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}"
-              href="{% url 'public_dashboard' %}">
+              href="{% url 'hello_there' %}">
               <i class="fas fa-home me-2"></i>Home
             </a>
           </li>
@@ -152,7 +152,7 @@
               {% if request.user.profile_image %}
               <img src="{{ user.profile_image }}" alt="Profile" class="profile-img">
               {% else %}
-              <img src="{% static 'assets/avatar_profile.webp' %}" alt="Profile" class="profile-img">
+              <img src="{% static 'assets/avatar_profile.jpg' %}" alt="Profile" class="profile-img">
               {% endif %}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">

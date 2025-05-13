@@ -1,238 +1,1311 @@
 {% load static %}
-{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome | Letterhead Search</title>
-
-  <!-- Bootstrap 5.3 CSS & Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <title>Modern Letterhead Platform</title>
+  <!-- Bootstrap 5.3 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8f9fa;
+    :root {
+      --primary-color: #040444;
+      --secondary-color: #f3931c;
+      --accent-color: #4e54c8;
+      --light-bg: #f8f9fa;
+      --dark-text: #2c3e50;
+      --light-text: #7f8c8d;
     }
 
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--dark-text);
+      line-height: 1.6;
+    }
+
+    /* Modern Header */
     .header {
-      background: linear-gradient(to right, #040444, #313196);
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1a237e 100%);
       color: white;
-      padding: 40px 20px;
-      text-align: center;
+      padding: 2rem 0;
       position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+      opacity: 0.4;
+    }
+
+    .letterhead {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
     }
 
     .letterhead img {
-      height: 60px;
-      margin-bottom: 15px;
-    }
-
-    .header h1 {
-      font-size: 32px;
-      font-weight: bold;
-    }
-
-    .header p {
-      font-size: 16px;
-      margin-bottom: 25px;
-    }
-
-    .auth-buttons {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
-
-    .search-section {
-      margin: 40px auto 30px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      max-width: 800px;
-    }
-
-    .search-form .form-control,
-    .search-form .form-select {
-      border-radius: 30px;
-    }
-
-    .search-form .btn {
-      border-radius: 30px;
-    }
-
-    .search-form i {
-      margin-right: 5px;
-    }
-
-    .content-section {
-      padding: 40px 20px;
-      text-align: center;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
-    }
-
-    .letterhead-preview img {
-      object-fit: cover;
-      height: 200px;
+      height: 70px;
+      margin-bottom: 1rem;
       transition: transform 0.3s ease;
     }
 
-    .letterhead-preview a:hover img {
+    .letterhead img:hover {
       transform: scale(1.05);
     }
 
-    .pagination .page-link {
-      border-radius: 50px !important;
-      padding: 8px 16px;
-      color: #040444;
+    .letterhead h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #fff, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .pagination .active .page-link {
-      background-color: #040444;
-      border-color: #040444;
-      color: white;
+    .letterhead p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 1.5rem;
     }
 
-    .footer {
-      background-color: #040444;
+    .auth-buttons .btn {
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 0 0.5rem;
+    }
+
+    .auth-buttons .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Modern Search Section */
+    .search-section {
+      margin: 3rem auto;
+      max-width: 800px;
+      padding: 0 1rem;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-bar {
+      flex: 1;
+      min-width: 250px;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-bar:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 4px 12px rgba(78, 84, 200, 0.2);
+      outline: none;
+    }
+
+    .category-filter {
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 50px;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .category-filter:focus {
+      border-color: var(--accent-color);
+      outline: none;
+    }
+
+    .search-button {
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #e67e22 100%);
       color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(243, 147, 28, 0.3);
+    }
+
+    .search-button:hover {
+      background: linear-gradient(135deg, #e57b0e 0%, #d35400 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(243, 147, 28, 0.4);
+    }
+
+    /* Content Section */
+    .content-section {
       text-align: center;
-      padding: 20px 10px;
-      font-size: 15px;
-      margin-top: 40px;
+      padding: 3rem 2rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      margin: 0 auto 3rem;
+      max-width: 900px;
+      position: relative;
+      overflow: hidden;
     }
 
-    @media (max-width: 576px) {
-      .auth-buttons {
-        position: static;
-        margin-top: 10px;
+    .content-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--secondary-color));
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .content-section p {
+      font-size: 1.1rem;
+      color: var(--light-text);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Letterhead Preview Grid */
+    .letterhead-preview {
+      margin: 3rem auto;
+      max-width: 1200px;
+      padding: 0 1rem;
+    }
+
+    .letterhead-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .letterhead-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .letterhead-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .letterhead-card:hover img {
+      transform: scale(1.03);
+    }
+
+    .letterhead-card-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .letterhead-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .letterhead-card p {
+      color: var(--light-text);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .letterhead-card .btn {
+      margin-top: auto;
+      align-self: flex-start;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .letterhead-card .btn:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    /* Pagination */
+    .pagination-container {
+      margin-top: 3rem;
+    }
+
+    .page-item.active .page-link {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .page-link {
+      color: var(--primary-color);
+      border-radius: 8px !important;
+      margin: 0 5px;
+      border: none;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .page-link:hover {
+      color: var(--accent-color);
+      background-color: #f8f9fa;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .letterhead h1 {
+        font-size: 2rem;
+      }
+
+      .search-form {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .search-bar,
+      .category-filter,
+      .search-button {
+        width: 100%;
+      }
+
+      .content-section {
+        padding: 2rem 1rem;
+      }
+
+      .auth-buttons .btn {
+        margin: 0.25rem;
+        width: calc(50% - 0.5rem);
       }
     }
+      /* about section start */
+  .letterhead-about-section {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.letterhead-about-section::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  background: rgba(42, 91, 215, 0.05);
+  z-index: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.section-inner {
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+}
+
+.content-column {
+  flex: 1;
+  max-width: 500px;
+}
+
+.preview-column {
+  flex: 1;
+}
+
+.section-subtitle {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a5bd7;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+}
+
+.highlight {
+  position: relative;
+  z-index: 1;
+}
+
+.highlight::after {
+  content: "";
+  position: absolute;
+  bottom: 0.1em;
+  left: 0;
+  width: 100%;
+  height: 0.4em;
+  background: rgba(42, 91, 215, 0.2);
+  z-index: -1;
+  border-radius: 2px;
+  transform: rotate(-1deg);
+}
+
+.section-description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #4d4d4d;
+  margin-bottom: 3rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(42, 91, 215, 0.1);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.feature-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #2a5bd7;
+}
+
+.feature-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #666;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.primary-button {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background: #2a5bd7;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(42, 91, 215, 0.2);
+}
+
+.primary-button:hover {
+  background: #1f4ab3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(42, 91, 215, 0.3);
+}
+
+.secondary-button {
+  display: inline-block;
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  color: #2a5bd7;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+  background: rgba(42, 91, 215, 0.05);
+}
+
+.template-preview {
+  position: relative;
+  margin-left: 2rem;
+}
+
+.template-mockup {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transform: perspective(1000px) rotateY(-10deg) rotateX(2deg);
+  transition: transform 0.5s ease;
+}
+
+.template-mockup:hover {
+  transform: perspective(1000px) rotateY(-5deg) rotateX(1deg);
+}
+
+.template-paper {
+  padding: 2rem;
+  background: white;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.letterhead-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.company-logo {
+  width: 60px;
+  height: 60px;
+  background: #2a5bd7;
+  border-radius: 8px;
+  margin-right: 1.5rem;
+}
+
+.header-details {
+  flex: 1;
+}
+
+.letterhead-body {
+  flex: 1;
+}
+
+.letterhead-footer {
+  padding-top: 1.5rem;
+  margin-top: auto;
+}
+
+.footer-line {
+  height: 1px;
+  background: #eee;
+  margin-bottom: 1rem;
+}
+
+.animated-placeholder {
+  height: 12px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-placeholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.toolbar-mockup {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tool-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tool-button {
+  width: 36px;
+  height: 36px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.tool-button.active {
+  background: #2a5bd7;
+}
+
+.color-picker {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 992px) {
+  .section-inner {
+    flex-direction: column;
+  }
+  
+  .content-column {
+    max-width: 100%;
+    margin-bottom: 3rem;
+  }
+  
+  .template-preview {
+    margin-left: 0;
+  }
+  
+  .template-mockup {
+    transform: none;
+  }
+  
+  .template-mockup:hover {
+    transform: none;
+  }
+
+  /* about section end */
+  
+}
+/* navbar start */
+.letterhead-navbar {
+  background: var(--primary-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.letterhead-navbar .navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.letterhead-navbar .logo {
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+
+.letterhead-navbar .brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.letterhead-navbar .brand-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  line-height: 1.2;
+}
+
+.letterhead-navbar .brand-subtitle {
+  font-size: 0.875rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+.letterhead-navbar .auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.letterhead-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  padding: 0.6rem 1rem !important;
+  margin: 0 0.1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.letterhead-navbar .nav-link:hover {
+  background: var(--secondary-color);
+  color: var(--accent-color) !important;
+}
+
+.letterhead-navbar .logout-btn {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.letterhead-navbar .logout-btn:hover {
+  background: rgba(231, 76, 60, 0.2) !important;
+}
+
+.letterhead-navbar .register-btn {
+  background: rgba(241, 196, 15, 0.1);
+}
+
+.letterhead-navbar .register-btn:hover {
+  background: rgba(241, 196, 15, 0.2) !important;
+}
+
+@media (max-width: 991.98px) {
+  .letterhead-navbar .navbar-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .letterhead-navbar .auth-buttons {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .letterhead-navbar .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem !important;
+  }
+}
+  /* navbar end */
+/* new footer start */
+  .footer {
+  background: var(--primary-color);
+  color: white;
+  padding: 4rem 0 2rem;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-bottom: 3rem;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo img {
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--accent-color);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.footer-contact i {
+  margin-top: 2px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.social-icon:hover {
+  background: var(--accent-color);
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legal-links a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.legal-links a:hover {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .legal-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
   </style>
 </head>
 
 <body>
+  {% load custom_filters %}
 
-  <!-- Header -->
-  <header class="header">
-    <div class="letterhead">
-      <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" />
-      <h1>Empowering Your Business</h1>
-      <p>One Step at a Time</p>
-    </div>
+  <nav class="navbar navbar-expand-lg letterhead-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'hello_there' %}">
+      <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" class="logo">
+      <!-- <span class="brand-text">
+        <h1 class="brand-title">Letterhead Platform</h1>
+        <p class="brand-subtitle">Empowering your business with professional communication tools</p>
+      </span> -->
+    </a>
 
-    <div class="auth-buttons">
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'public_dashboard' %}" class="btn btn-success btn-sm me-2"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#letterheadNav">
+      <span class="navbar-toggler-icon text-white"><i class="fas fa-bars"></i></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="letterheadNav">
+      <div class="auth-buttons ms-auto">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'public_dashboard' %}" class="nav-link">
+          <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
         <form method="POST" action="{% url 'logout' %}" class="d-inline">
           {% csrf_token %}
-          <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</button>
+          <button type="submit" class="nav-link logout-btn">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </button>
         </form>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2"><i class="bi bi-box-arrow-in-right"></i> Login</a>
-        <a href="{% url 'register' %}" class="btn btn-warning btn-sm"><i class="bi bi-person-plus-fill"></i> Sign Up</a>
-      {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="nav-link">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+        <a href="{% url 'register' %}" class="nav-link register-btn">
+          <i class="fas fa-user-plus me-2"></i>Sign Up
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+  <!-- Modern Header Section -->
+  <header class="header">
+    <div class="letterhead text-center">
+      <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" class="logo" />
+      <h1>Letterhead Platform</h1>
+      <p>Empowering your business with professional communication tools</p>
+
+      <!-- <div class="auth-buttons d-flex justify-content-center flex-wrap">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'public_dashboard' %}" class="btn btn-success">
+          <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <form method="POST" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-info">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+        <a href="{% url 'register' %}" class="btn btn-warning">
+          <i class="fas fa-user-plus me-2"></i>Sign Up
+        </a>
+        {% endif %}
+      </div> -->
     </div>
   </header>
 
-  <!-- Search -->
-  <section class="search-section container">
-    <form method="get" action="{% url 'hello_there' %}" class="search-form row g-2 align-items-center justify-content-center">
-      <div class="col-md-5">
-        <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-          <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search_query }}" />
-        </div>
-      </div>
-      <div class="col-md-3">
-        <select name="category" class="form-select">
-          <option value="all" {% if category_filter == 'all' %}selected{% endif %}>All Categories</option>
-          {% for category in categories %}
-            <option value="{{ category.name }}" {% if category.name == category_filter %}selected{% endif %}>{{ category.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-md-2">
-        <button type="submit" class="btn btn-warning w-100"><i class="bi bi-arrow-right-circle"></i> Search</button>
-      </div>
-    </form>
-  </section>
-
   <!-- Main Content -->
   <main class="container">
-    <!-- Intro -->
+    <!-- Modern Search Section -->
+    <section class="search-section">
+      <form method="get" action="{% url 'hello_there' %}" class="search-form">
+        <input type="text" id="search-bar" name="search" placeholder="Search templates..." value="{{ search_query }}"
+          class="search-bar" />
+        <select id="category-filter" name="category" class="category-filter">
+          <option value="all" {% if category_filter == "all" %}selected{% endif %}>All Categories</option>
+          {% for category in categories %}
+          <option value="{{ category.name }}" {% if category.name == category_filter %}selected{% endif %}>
+            {{ category.name }}
+          </option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="search-button">
+          <i class="fas fa-search me-2"></i>Search
+        </button>
+      </form>
+    </section>
     <section class="content-section">
-      <h2 class="mb-3">Explore Our Services</h2>
-      <p class="text-muted">We offer top-notch services tailored to your needs. Find the best solutions with us!</p>
+      <h2>Explore Our Letterhead Collection</h2>
+      <p>Discover professionally designed templates to elevate your business communications.
+        Customize and download in minutes.</p>
     </section>
 
-    <!-- Letterheads -->
-    <section class="letterhead-preview mb-5">
+    <!-- Letterhead Preview Grid -->
+    <section class="letterhead-preview">
       {% if documents %}
-        <div class="row g-4">
-          {% for singleDocument in documents %}
-            {% with img=images_by_document|get_item:singleDocument.id %}
-              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                <a href="{% url 'letterhead' singleDocument.id %}">
-                  {% if img.body %}
-                    <img src="{{ img.body }}" alt="Letterhead {{ forloop.counter }}" class="img-fluid rounded shadow-sm" />
-                  {% else %}
-                    <img src="{% static 'img/background/default.png' %}" alt="Default Letterhead" class="img-fluid rounded shadow-sm" />
-                  {% endif %}
-                </a>
-              </div>
-            {% endwith %}
-          {% endfor %}
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        {% for singleDocument in documents %}
+        {% with img=images_by_document|get_item:singleDocument.id %}
+        <div class="col">
+          <div class="letterhead-card h-100">
+            <a href="{% url 'letterhead' singleDocument.id %}">
+              <img src="{{ img.body|default:'img/background/default.png' }}" alt="Letterhead {{ forloop.counter }}"
+                class="img-fluid" />
+            </a>
+            <div class="letterhead-card-body">
+              <h3>Template #{{ forloop.counter }}</h3>
+              <p>Professional design for all your business needs</p>
+              <a href="{% url 'letterhead' singleDocument.id %}" class="btn btn-sm">
+                <i class="fas fa-eye me-2"></i>View Details
+              </a>
+            </div>
+          </div>
         </div>
+        {% endwith %}
+        {% endfor %}
+      </div>
 
-        <!-- Pagination -->
-        <nav class="mt-4" aria-label="Page navigation">
-          <ul class="pagination justify-content-center" style="gap: 5px;">
-            <li class="page-item {% if not documents.has_previous %}disabled{% endif %}">
-              {% if documents.has_previous %}
-                <a class="page-link" href="?page={{ documents.previous_page_number }}&search={{ search_query }}&category={{ category_filter }}">
-                  <i class="bi bi-chevron-left"></i> Previous
-                </a>
-              {% else %}
-                <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
-              {% endif %}
-            </li>
-
-            {% for page_num in documents.paginator.page_range %}
-              <li class="page-item {% if documents.number == page_num %}active{% endif %}">
-                <a class="page-link" href="?page={{ page_num }}&search={{ search_query }}&category={{ category_filter }}">{{ page_num }}</a>
+      <!-- Modern Pagination -->
+      <div class="pagination-container">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <!-- First Page -->
+              <li class="page-item {% if not documents.has_previous %}disabled{% endif %}">
+                {% if documents.has_previous %}
+                  <a class="page-link" href="?page=1" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                  </a>
+                {% else %}
+                  <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+                {% endif %}
               </li>
-            {% endfor %}
-
-            <li class="page-item {% if not documents.has_next %}disabled{% endif %}">
-              {% if documents.has_next %}
-                <a class="page-link" href="?page={{ documents.next_page_number }}&search={{ search_query }}&category={{ category_filter }}">
-                  Next <i class="bi bi-chevron-right"></i>
-                </a>
-              {% else %}
-                <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
-              {% endif %}
-            </li>
-          </ul>
-        </nav>
+          
+              <!-- Previous Page -->
+              <li class="page-item {% if not documents.has_previous %}disabled{% endif %}">
+                {% if documents.has_previous %}
+                  <a class="page-link" href="?page={{ documents.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                {% else %}
+                  <span class="page-link" aria-hidden="true">&laquo;</span>
+                {% endif %}
+              </li>
+          
+              <!-- Page Numbers -->
+              {% for page_num in documents.paginator.page_range %}
+                {% if page_num >= documents.number|add:"-2" and page_num <= documents.number|add:"2" %}
+                  <li class="page-item {% if documents.number == page_num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+          
+              <!-- Next Page -->
+              <li class="page-item {% if not documents.has_next %}disabled{% endif %}">
+                {% if documents.has_next %}
+                  <a class="page-link" href="?page={{ documents.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                {% else %}
+                  <span class="page-link" aria-hidden="true">&raquo;</span>
+                {% endif %}
+              </li>
+          
+              <!-- Last Page -->
+              <li class="page-item {% if not documents.has_next %}disabled{% endif %}">
+                {% if documents.has_next %}
+                  <a class="page-link" href="?page={{ documents.paginator.num_pages }}" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                  </a>
+                {% else %}
+                  <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
+                {% endif %}
+              </li>
+            </ul>
+          </nav>
+          
+      </div>
       {% else %}
-        <p class="text-center text-danger mt-4">No data found.</p>
+      <div class="text-center py-5">
+        <i class="fas fa-search fa-3x mb-3" style="color: var(--light-text);"></i>
+        <h3 class="text-muted">No templates found</h3>
+        <p class="text-muted">Try adjusting your search criteria</p>
+      </div>
       {% endif %}
     </section>
+
+    <section class="letterhead-about-section">
+  <div class="container">
+    <div class="section-inner">
+      <!-- Content Column -->
+      <div class="content-column">
+        <span class="section-subtitle">Professional Branding Tool</span>
+        <h2 class="section-title">Craft Perfect Letterheads in <span class="highlight">Minutes</span></h2>
+        
+        <p class="section-description">Our advanced template builder combines design excellence with corporate compliance requirements for flawless official correspondence.</p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y1="15"></line>
+              </svg>
+            </div>
+            <h3>AI-Powered Layouts</h3>
+            <p>Smart templates that adapt to your content while maintaining brand guidelines</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <h3>Brand Kits</h3>
+            <p>Save company colors, logos, and fonts for one-click application</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h3>Enterprise Security</h3>
+            <p>Bank-level encryption for sensitive documents and templates</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3>Team Collaboration</h3>
+            <p>Real-time editing and approval workflows for corporate teams</p>
+          </div>
+        </div>
+        
+        <div class="cta-buttons">
+          <a href="#" class="primary-button">Start Designing Now</a>
+          <a href="#" class="secondary-button">See Enterprise Features →</a>
+        </div>
+      </div>
+      
+      <!-- Template Preview Column -->
+      <div class="preview-column">
+        <div class="template-preview">
+          <div class="template-mockup">
+            <div class="template-paper">
+              <div class="letterhead-header">
+                <div class="company-logo"></div>
+                <div class="header-details">
+                  <div class="animated-placeholder" style="width: 60%"></div>
+                  <div class="animated-placeholder" style="width: 80%"></div>
+                </div>
+              </div>
+              <div class="letterhead-body">
+                <div class="animated-placeholder" style="width: 90%; height: 20px"></div>
+                <div class="animated-placeholder" style="width: 95%; height: 16px"></div>
+                <div class="animated-placeholder" style="width: 85%; height: 16px"></div>
+                <div class="animated-placeholder" style="width: 70%; height: 16px"></div>
+              </div>
+              <div class="letterhead-footer">
+                <div class="footer-line"></div>
+                <div class="footer-details">
+                  <div class="animated-placeholder" style="width: 70%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="toolbar-mockup">
+            <div class="toolbar">
+              <div class="tool-group">
+                <div class="tool-button active"></div>
+                <div class="tool-button"></div>
+                <div class="tool-button"></div>
+              </div>
+              <div class="tool-group">
+                <div class="color-picker">
+                  <div class="color-swatch" style="background: #2a5bd7"></div>
+                  <div class="color-swatch" style="background: #1a1a1a"></div>
+                  <div class="color-swatch" style="background: #d72a2a"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
   </main>
 
-  <!-- Footer -->
+  <!-- Modern Footer -->
   <footer class="footer">
-    <p>&copy; 2025 Your Company. All rights reserved.</p>
-  </footer>
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Column 1: Logo and About -->
+      <div class="footer-column">
+        <div class="footer-logo">
+          <img src="{% static 'img/logo_light.png' %}" alt="Letterhead Platform" class="logo-img">
+          <p class="footer-tagline">Empowering professional communication since 2023</p>
+        </div>
+        <div class="footer-social">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
 
-  <!-- Bootstrap Bundle JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Column 2: Quick Links -->
+      <div class="footer-column">
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'public_dashboard' %}">Home</a></li>
+          <li><a href="{% url 'earn_credit' %}">Earn Credit</a></li>
+          <li><a href="{% url 'credit_earn_history' %}">Credit History</a></li>
+          <li><a href="{% url 'credit_uses_history' %}">Uses History</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Resources -->
+      <div class="footer-column">
+        <h4 class="footer-title">Resources</h4>
+        <ul class="footer-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Tutorials</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Help Center</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact -->
+      <div class="footer-column">
+        <h4 class="footer-title">Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fas fa-envelope me-2"></i> support@letterhead.com</li>
+          <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+          <li><i class="fas fa-map-marker-alt me-2"></i> 123 Business Ave, Suite 500<br>New York, NY 10001</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="copyright">&copy; 2025 Letterhead Platform. All rights reserved.</div>
+      <div class="legal-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script>
+    // Add smooth scrolling to all links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
