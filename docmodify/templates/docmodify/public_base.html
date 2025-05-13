@@ -133,7 +133,7 @@
             <div class="dropdown">
               <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 {% if request.user.profile_image %}
-                  <img src="{{ user.profile_image }}" alt="Profile" class="profile-img" />
+                  <img src="{{ user.profile_image.url }}" alt="Profile" class="profile-img" />
                 {% else %}
                   <img src="{% static 'assets/avatar_profile.webp' %}" alt="Profile" class="profile-img" />
                 {% endif %}

@@ -538,7 +538,7 @@ def edit_profile(request):
         form = ProfileEditForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('profile_edit')  # Redirect to profile page after saving
+            return redirect('user_profile_edit')  # Redirect to profile page after saving
     else:
         form = ProfileEditForm(instance=user)
 
