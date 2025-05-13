@@ -115,8 +115,17 @@ USE_I18N = True
 USE_TZ = True
 
 
+# STATIC_URL = '/static/'
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 STATIC_URL = '/static/'
+
+# Directory for storing collected static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Additional directories for static files (optional, only if you have custom locations)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 
 LOGIN_URL = '/login/'  
 LOGIN_REDIRECT_URL = '/redirect/'  
@@ -131,6 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 """
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
