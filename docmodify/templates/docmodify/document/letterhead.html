@@ -93,6 +93,10 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
+                        <input type="text" id="promptInput" placeholder="Ask something..." />
+                        <button id="sendPromptBtn">Send</button>
+                        <pre id="responseBox"></pre>
+
                          <div id="modalEditor" style="height: 320px"></div>
                          <!-- Hidden input to store Quill content -->
                          <input type="hidden" name="letterhead_content" id="letterhead_content_input">
@@ -374,6 +378,7 @@
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   <script src="{% static 'js/lh_setup_custom.js' %}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
     $(document).ready(function () {
@@ -397,9 +402,9 @@
         });
           
         // Fill editor with existing content if available
-        function loadLHContent(document) {
-            var initialContent = document.letterhead_content ?? '';
-            console.log(initialContent);
+        function loadLHContent(letterhead_content) {
+            var initialContent = letterhead_content ?? '';
+            //console.log(initialContent);
             if (initialContent) {
                 quill.root.innerHTML = initialContent;
             }else{
@@ -426,7 +431,7 @@
                     headerFooterImages = response.header_footer_images;
                     const document = response.document;            
                     $('#customCss').html('')
-                    loadLHContent(document)
+                    loadLHContent(document.letterhead_content ?? '')
 
                     // Find the default header/footer image
                     const defaultImage = headerFooterImages.find(hf => hf.is_default);
@@ -593,6 +598,36 @@
                 }
             });
         }); 
+
+        $('#sendPromptBtn').on('click', function () {
+            const prompt = $('#promptInput').val();
+            console.log(prompt);
+            $.ajax({
+                url: '/generate-response/',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ prompt: prompt }),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'  // if not using @csrf_exempt
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.success) {
+                         const markdown = response.text;
+                        const html = marked.parse(markdown);
+                        loadLHContent(html);
+                        $('#responseBox').html(html);
+                    } else {
+                        $('#responseBox').text("Error: " + response.error);
+                    }
+                },
+                error: function (xhr) {
+                    $('#responseBox').text("Server error");
+                    console.error(xhr.responseText);
+                }
+            });
+        });
     });   
     
   </script>

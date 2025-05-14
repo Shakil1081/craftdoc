@@ -33,5 +33,5 @@ urlpatterns = [
     path('save-download-history/', views.save_download_history, name='save_download_history'),
     # urls.py
     path('download-history/<str:download_type>/<int:id>/', views.download_history_file, name='download_history_file'),
-
+    path('generate-response/', views.generate_ai_response, name='generate_ai_response')
 ]

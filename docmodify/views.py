@@ -27,6 +27,7 @@ from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
 # from weasyprint import HTML 
@@ -34,6 +35,8 @@ from django.core.paginator import Paginator, EmptyPage
 from PIL import Image
 from customadmin.forms import UserForm,ProfileEditForm
 import io
+import json
+from google import genai
 # from pdf2image import convert_from_bytes
 
 def hello_there(request):
@@ -565,3 +568,26 @@ def credit_uses_history(request):
     page_obj = paginator.get_page(page_number)
     start_index = (page_obj.number - 1) * paginator.per_page
     return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj, 'start_index': start_index})
+
+client = genai.Client(api_key="AIzaSyBUK6zfkpLyp2LgcE9l80NO_I616CYgCfI")  # Configure globally
+
+@csrf_exempt  # Only for development — for production, use CSRF token
+@require_POST
+def generate_ai_response(request):
+    try:
+        data = json.loads(request.body)
+        prompt = data.get("prompt", "")
+
+        if not prompt:
+            return JsonResponse({"success": False, "error": "No prompt provided"}, status=400)
+
+        # Generate response using Gemini
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+        )
+
+        return JsonResponse({"success": True, "text": response.text})
+    
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
