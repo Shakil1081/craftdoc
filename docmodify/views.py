@@ -37,6 +37,7 @@ from customadmin.forms import UserForm,ProfileEditForm
 import io
 import json
 from google import genai
+import markdown
 # from pdf2image import convert_from_bytes
 
 def hello_there(request):
@@ -571,23 +572,31 @@ def credit_uses_history(request):
 
 client = genai.Client(api_key="AIzaSyBUK6zfkpLyp2LgcE9l80NO_I616CYgCfI")  # Configure globally
 
-@csrf_exempt  # Only for development — for production, use CSRF token
+@csrf_exempt
 @require_POST
 def generate_ai_response(request):
     try:
         data = json.loads(request.body)
-        prompt = data.get("prompt", "")
+        conversation_history = data.get("conversation", [])
 
-        if not prompt:
-            return JsonResponse({"success": False, "error": "No prompt provided"}, status=400)
+        if not conversation_history:
+            return JsonResponse({"success": False, "error": "No conversation history provided"}, status=400)
 
-        # Generate response using Gemini
+        # Format the conversation
+        prompt_text = ""
+        for message in conversation_history:
+            prompt_text += f"{message['role']}: {message['text']}\n"
+
+        # Generate response
         response = client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=prompt,
+            contents=prompt_text,
         )
 
-        return JsonResponse({"success": True, "text": response.text})
-    
+        markdown_text = response.text
+        html_text = markdown.markdown(markdown_text)
+
+        return JsonResponse({"success": True, "html": html_text, "markdown": markdown_text})
+
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
