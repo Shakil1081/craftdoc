@@ -44,6 +44,64 @@
     #letterhead-body .content-panel .zoom-buttons{
         margin: 0;
     }
+
+     /* Make modal body scrollable if content overflows */
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    /* Prevent #responseBox text from overflowing */
+    #responseBox {
+        white-space: pre-wrap; /* Wrap long lines */
+        word-wrap: break-word; /* Break long words if needed */
+        overflow-x: auto;      /* Add horizontal scroll if needed */
+        max-height: 200px; 
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-message, .ai-message {
+        background: #f1f8e9;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 8px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Ensure left alignment */
+        word-break: break-word;
+    }
+    
+    .user-message {
+        background: #e8f0fe;
+    }
+    
+    .user-message strong, .ai-message strong {
+        color: #0d47a1;
+        margin-bottom: 5px;
+        text-align: left;
+    }
+    
+    .ai-message strong {
+        color: #33691e;
+    }
+    
+    .set-this-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        font-size: 12px;
+        padding: 2px 6px;
+        border: 1px solid #33691e;
+        color: #33691e;
+        background: transparent;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .set-this-btn:hover {
+        background-color: #c5e1a5;
+    }    
   </style>
   <style id="customCss"></style>
 </head>
@@ -86,17 +144,21 @@
       </div>
       </div>
           <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-                  <div class="modal-content">
+              <div class="modal-dialog modal-xl">
+                  <div class="modal-content border-0 rounded-3 shadow-lg">
                       <div class="modal-header">
                           <h5 class="modal-title" id="contentModalLabel">Add Letterhead Content</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <input type="text" id="promptInput" placeholder="Ask something..." />
-                        <button id="sendPromptBtn">Send</button>
+                        
+                        
                         <pre id="responseBox"></pre>
 
+                        <div class="d-flex mb-3 gap-2">
+                            <input type="text" id="promptInput" class="form-control" placeholder="Ask something..." />
+                            <button id="sendPromptBtn" class="btn btn-primary">Send</button>
+                        </div>
                          <div id="modalEditor" style="height: 320px"></div>
                          <!-- Hidden input to store Quill content -->
                          <input type="hidden" name="letterhead_content" id="letterhead_content_input">
@@ -599,35 +661,109 @@
             });
         }); 
 
+        let conversationHistory = []; // Array to store the conversation
+
         $('#sendPromptBtn').on('click', function () {
-            const prompt = $('#promptInput').val();
-            console.log(prompt);
-            $.ajax({
-                url: '/generate-response/',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ prompt: prompt }),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': '{{ csrf_token }}'  // if not using @csrf_exempt
-                },
-                success: function (response) {
-                    console.log(response);
-                    if (response.success) {
-                         const markdown = response.text;
-                        const html = marked.parse(markdown);
-                        loadLHContent(html);
-                        $('#responseBox').html(html);
-                    } else {
-                        $('#responseBox').text("Error: " + response.error);
+            const prompt = $('#promptInput').val().trim();
+            if (prompt) {
+                conversationHistory.push({ role: 'user', text: prompt });
+                displayConversation(); // show user message
+                $('#promptInput').val('');
+
+                $.ajax({
+                    url: '/generate-response/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ conversation: conversationHistory }),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Store both original markdown and converted HTML
+                            conversationHistory.push({
+                                role: 'AI',
+                                text: response.markdown,
+                                html: response.html
+                            });
+                            displayConversation();
+                        } else {
+                            $('#responseBox').html("<div class='error'>Error: " + response.error + "</div>");
+                        }
+                    },
+                    error: function (xhr) {
+                        $('#responseBox').html("<div class='error'>Server error</div>");
+                        displayConversation();
+                        console.error(xhr.responseText);
                     }
-                },
-                error: function (xhr) {
-                    $('#responseBox').text("Server error");
-                    console.error(xhr.responseText);
-                }
-            });
+                });
+            }
         });
+
+        function displayConversation() {
+            let conversationHTML = '';
+            let lastAIIndex = -1;
+        
+            // Find the last AI message index
+            for (let i = conversationHistory.length - 1; i >= 0; i--) {
+                if (conversationHistory[i].role === 'AI') {
+                    lastAIIndex = i;
+                    break;
+                }
+            }
+        
+            conversationHistory.forEach((message, index) => {
+                const roleClass = message.role === 'user' ? 'user-message' : 'ai-message';
+                let content = message.role === 'AI' && message.html
+                    ? message.html
+                    : escapeHTML(message.text);
+
+                // Remove leading "AI:", "ai:", etc., with optional whitespace after
+                if (message.role === 'AI') {
+                    content = content.replace(/^\s*ai\s*[:\-–—]?\s*/i, '');
+                }
+        
+                let setButtonHTML = '';
+                if (message.role === 'AI' && index === lastAIIndex) {
+                    setButtonHTML = `<button class="set-this-btn" data-index="${index}">Set This</button>`;
+                }
+        
+                // Remove AI: or similar prefix from content display only
+                const displayRole = message.role === 'AI' ? '' : `<strong>${message.role}:</strong>`;
+        
+                conversationHTML += `
+                    <div class="${roleClass}">
+                        ${setButtonHTML}
+                        ${displayRole}
+                        <div>${content}</div>
+                    </div>
+                `;
+            });
+        
+            $('#responseBox').html(conversationHTML);
+            $('#responseBox').scrollTop($('#responseBox')[0].scrollHeight);
+        
+            // Automatically set last AI response in Quill
+            if (lastAIIndex !== -1) {
+                const latestAI = conversationHistory[lastAIIndex];
+                const htmlContent = latestAI.html || escapeHTML(latestAI.text);
+                quill.root.innerHTML = htmlContent;
+            }
+        
+            // Attach event handler for "Set This" buttons
+            $('.set-this-btn').on('click', function () {
+                const messageIndex = $(this).data('index');
+                const htmlContent = conversationHistory[messageIndex].html || escapeHTML(conversationHistory[messageIndex].text);
+                quill.root.innerHTML = htmlContent;
+            });
+        }        
+        
+        // Optional helper to escape HTML for plain text
+        function escapeHTML(str) {
+            return $('<div>').text(str).html();
+        }
+
     });   
     
   </script>

@@ -27,12 +27,17 @@ from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import get_object_or_404, render
 from collections import defaultdict
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
 from weasyprint import HTML 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from PIL import Image
+from customadmin.forms import UserForm,ProfileEditForm
 import io
+import json
+from google import genai
+import markdown
 from pdf2image import convert_from_bytes
 
 def hello_there(request):
@@ -533,7 +538,21 @@ def reset_password(request, uidb64, token):
     else:
         messages.error(request, 'Invalid or expired password reset link.')
         return redirect('forgot_password')
+
+@login_required
+def edit_profile(request):
+    user = request.user  # Get logged-in user
     
+    if request.method == "POST":
+        form = ProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile_edit')  # Redirect to profile page after saving
+    else:
+        form = ProfileEditForm(instance=user)
+
+    return render(request, "docmodify/profile_edit.html", {"form": form, "user": user})
+
 def earn_credit(request):
     credit_setting = Setting.objects.filter(key='credit_per_bdt').first()
     return render(request, 'docmodify/credit/earn.html', {
@@ -555,3 +574,34 @@ def credit_uses_history(request):
     page_obj = paginator.get_page(page_number)
     start_index = (page_obj.number - 1) * paginator.per_page
     return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj, 'start_index': start_index})
+
+client = genai.Client(api_key="AIzaSyBUK6zfkpLyp2LgcE9l80NO_I616CYgCfI")  # Configure globally
+
+@csrf_exempt
+@require_POST
+def generate_ai_response(request):
+    try:
+        data = json.loads(request.body)
+        conversation_history = data.get("conversation", [])
+
+        if not conversation_history:
+            return JsonResponse({"success": False, "error": "No conversation history provided"}, status=400)
+
+        # Format the conversation
+        prompt_text = ""
+        for message in conversation_history:
+            prompt_text += f"{message['role']}: {message['text']}\n"
+
+        # Generate response
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt_text,
+        )
+
+        markdown_text = response.text
+        html_text = markdown.markdown(markdown_text)
+
+        return JsonResponse({"success": True, "html": html_text, "markdown": markdown_text})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
