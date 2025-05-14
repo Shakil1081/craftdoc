@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.hello_there, name='hello_there'),
     path('register/', views.register, name='register'),
     path('dashboard/', views.public_dashboard, name='public_dashboard'),
+    path('profile/edit/', views.edit_profile, name='user_profile_edit'),
     path('redirect/', views.role_based_redirect, name='role_based_redirect'),
     path('login/', views.public_login, name='login'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
@@ -32,5 +33,5 @@ urlpatterns = [
     path('save-download-history/', views.save_download_history, name='save_download_history'),
     # urls.py
     path('download-history/<str:download_type>/<int:id>/', views.download_history_file, name='download_history_file'),
-
+    path('generate-response/', views.generate_ai_response, name='generate_ai_response')
 ]
