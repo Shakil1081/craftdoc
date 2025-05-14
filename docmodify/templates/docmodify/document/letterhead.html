@@ -677,13 +677,33 @@
             }
         });
 
+        function setToEditor(content) {
+            if (typeof quill !== 'undefined') {
+                quill.root.innerHTML = content;
+                document.getElementById('letterhead_content_input').value = quill.root.innerHTML;
+            }
+        }
+
         function displayConversation() {
             let conversationHTML = '';
+
             conversationHistory.forEach(message => {
+                const isAI = message.role.toLowerCase() === 'ai';
                 const roleClass = message.role === 'user' ? 'user-message' : 'ai-message';
-                const content = message.role === 'AI' && message.html ? message.html : escapeHTML(message.text);
-                conversationHTML += `<div class="${roleClass}"><strong>${message.role}:</strong><div>${content}</div></div>`;
+                const content = isAI && message.html ? message.html : escapeHTML(message.text);
+
+                conversationHTML += `<div class="${roleClass}"><strong>${message.role}:</strong>
+                    <div>${content}</div>`;
+
+                if (isAI) {
+                    // Safely encode content to use in inline onclick
+                    const encodedContent = encodeURIComponent(content);
+                    conversationHTML += `<button class="btn btn-sm btn-outline-primary mt-2" onclick="setToEditor(decodeURIComponent('${encodedContent}'))">Set to Editor</button>`;
+                }
+
+                conversationHTML += `</div>`;
             });
+
             $('#responseBox').html(conversationHTML);
             $('#responseBox').scrollTop($('#responseBox')[0].scrollHeight);
         }
