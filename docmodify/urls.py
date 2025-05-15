@@ -32,5 +32,9 @@ urlpatterns = [
     path('save-download-history/', views.save_download_history, name='save_download_history'),
     # urls.py
     path('download-history/pdf/<int:id>/', views.download_history_pdf, name='download_history_pdf'),
+    path('contact/', views.contact, name='contact'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('terms-service/', views.terms_service, name='terms_service'),
+    path('cookie-policy/', views.cookie_policy, name='cookie_policy'),
 
 ]

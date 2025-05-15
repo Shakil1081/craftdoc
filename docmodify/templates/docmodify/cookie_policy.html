@@ -1,0 +1,718 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Letterhead Platform</title>
+  <!-- Bootstrap 5.3 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #040444;
+      --secondary-color: #f3931c;
+      --accent-color: #4e54c8;
+      --light-bg: #f8f9fa;
+      --dark-text: #2c3e50;
+      --light-text: #7f8c8d;
+    }
+
+
+/* navbar start */
+.letterhead-navbar {
+  background: var(--primary-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.letterhead-navbar .navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.letterhead-navbar .logo {
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+
+.letterhead-navbar .brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.letterhead-navbar .brand-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  line-height: 1.2;
+}
+
+.letterhead-navbar .brand-subtitle {
+  font-size: 0.875rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+.letterhead-navbar .auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.letterhead-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  padding: 0.6rem 1rem !important;
+  margin: 0 0.1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.letterhead-navbar .nav-link:hover {
+  background: var(--secondary-color);
+  color: var(--accent-color) !important;
+}
+
+.letterhead-navbar .logout-btn {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.letterhead-navbar .logout-btn:hover {
+  background: rgba(231, 76, 60, 0.2) !important;
+}
+
+.letterhead-navbar .register-btn {
+  background: rgba(241, 196, 15, 0.1);
+}
+
+.letterhead-navbar .register-btn:hover {
+  background: rgba(241, 196, 15, 0.2) !important;
+}
+
+@media (max-width: 991.98px) {
+  .letterhead-navbar .navbar-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .letterhead-navbar .auth-buttons {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .letterhead-navbar .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem !important;
+  }
+}
+  /* navbar end */
+/* new footer start */
+  .footer {
+  background: var(--primary-color);
+  color: white;
+  padding: 4rem 0 2rem;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-bottom: 3rem;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo img {
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--accent-color);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.footer-contact i {
+  margin-top: 2px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.social-icon:hover {
+  background: var(--accent-color);
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legal-links a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.legal-links a:hover {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .legal-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+    /* new footer end */
+ /* CraftDocs cookie policy Styles */
+   .craftdocs-cookies {
+            --cd-dark-blue: #000144;
+            --cd-mid-blue: #0f0a42;
+            --cd-light-purple: #140d41;
+            --cd-dark: #212529;
+            --cd-light: #f8f9fa;
+            --cd-gray: #708090;
+            --cd-radius: 12px;
+          
+            
+            color: var(--cd-dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        
+      
+        
+        /* ===== HEADER ===== */
+        .craftdocs-cookies__header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+        
+        }
+        
+        .craftdocs-cookies__logo {
+            max-width: 250px;
+            height: auto;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+        
+        .craftdocs-cookies__tagline {
+            color: var(--cd-mid-blue);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* ===== CONTENT ===== */
+        .craftdocs-cookies__title {
+            color: var(--cd-dark-blue);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--cd-light-purple);
+        }
+        
+        .craftdocs-cookies__subtitle {
+            color: var(--cd-dark-blue);
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        .craftdocs-cookies p, 
+        .craftdocs-cookies ul, 
+        .craftdocs-cookies ol {
+            margin-bottom: 1rem;
+        }
+        
+        .craftdocs-cookies ul, 
+        .craftdocs-cookies ol {
+            padding-left: 2rem;
+        }
+        
+        .craftdocs-cookies li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* ===== COOKIE TABLE ===== */
+        .craftdocs-cookies__table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: var(--cd-shadow);
+            border-radius: var(--cd-radius);
+            overflow: hidden;
+        }
+        
+        .craftdocs-cookies__table th, 
+        .craftdocs-cookies__table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .craftdocs-cookies__table th {
+            background-color: var(--cd-dark-blue);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .craftdocs-cookies__table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* ===== COOKIE CONTROL ===== */
+        .craftdocs-cookies__controls {
+            background-color: #f8f9fa;
+            border-radius: var(--cd-radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid #eee;
+        }
+        
+        .craftdocs-cookies__toggle {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .craftdocs-cookies__toggle input {
+            margin-right: 10px;
+        }
+        
+        .craftdocs-cookies__btn {
+            background-color: var(--cd-dark-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--cd-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .craftdocs-cookies__btn:hover {
+            background-color: var(--cd-mid-blue);
+        }
+        
+        /* ===== LINKS ===== */
+        .craftdocs-cookies a {
+            color: var(--cd-mid-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .craftdocs-cookies a:hover {
+            color: var(--cd-light-purple);
+            text-decoration: underline;
+        }
+        
+        /* ===== FOOTER ===== */
+        .craftdocs-cookies__footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: var(--cd-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .craftdocs-cookies__container {
+                padding: 1.5rem;
+            }
+            
+            .craftdocs-cookies__logo {
+                max-width: 200px;
+            }
+            
+            .craftdocs-cookies__title {
+                font-size: 1.5rem;
+            }
+            
+            .craftdocs-cookies__table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+  </style>
+</head>
+
+<body>
+  {% load custom_filters %}
+
+  <nav class="navbar navbar-expand-lg letterhead-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" class="logo">
+      <!-- <span class="brand-text">
+        <h1 class="brand-title">Letterhead Platform</h1>
+        <p class="brand-subtitle">Empowering your business with professional communication tools</p>
+      </span> -->
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#letterheadNav">
+      <span class="navbar-toggler-icon text-white"><i class="fas fa-bars"></i></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="letterheadNav">
+      <div class="auth-buttons ms-auto">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'public_dashboard' %}" class="nav-link">
+          <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <form method="POST" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="nav-link logout-btn">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="nav-link">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+        <a href="{% url 'register' %}" class="nav-link register-btn">
+          <i class="fas fa-user-plus me-2"></i>Sign Up
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+  
+  <!-- Main Content -->
+  <main class="container">
+   
+ <div class="craftdocs-cookies">
+        <div class="craftdocs-cookies__container">
+            <header class="craftdocs-cookies__header">
+                <img src="{% static 'img/logo.png' %}" alt="CraftDocs" class="craftdocs-cookies__logo">
+            
+            </header>
+
+            <h1 class="craftdocs-cookies__title">Cookie Policy</h1>
+            <p><em>Last Updated: [Date]</em></p>
+
+            <p>This Cookie Policy explains how CraftDocs ("we", "us", or "our") uses cookies and similar tracking technologies when you visit our website or use our services.</p>
+
+            <h2 class="craftdocs-cookies__subtitle">1. What Are Cookies?</h2>
+            <p>Cookies are small text files stored on your device when you visit websites. They help the site remember information about your visit, which can make it easier to visit again and make the site more useful.</p>
+
+            <h2 class="craftdocs-cookies__subtitle">2. How We Use Cookies</h2>
+            <p>We use cookies for the following purposes:</p>
+            <ul>
+                <li><strong>Essential Cookies:</strong> Necessary for the website to function</li>
+                <li><strong>Preference Cookies:</strong> Remember your settings and preferences</li>
+                <li><strong>Analytics Cookies:</strong> Help us understand how visitors use our site</li>
+                <li><strong>Marketing Cookies:</strong> Used to track visitors across websites</li>
+            </ul>
+
+            <h2 class="craftdocs-cookies__subtitle">3. Types of Cookies We Use</h2>
+            <table class="craftdocs-cookies__table">
+                <thead>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>session_id</td>
+                        <td>Maintain user session</td>
+                        <td>Session</td>
+                        <td>Essential</td>
+                    </tr>
+                    <tr>
+                        <td>pref_lang</td>
+                        <td>Store language preference</td>
+                        <td>1 year</td>
+                        <td>Preference</td>
+                    </tr>
+                    <tr>
+                        <td>_ga</td>
+                        <td>Google Analytics tracking</td>
+                        <td>2 years</td>
+                        <td>Analytics</td>
+                    </tr>
+                    <tr>
+                        <td>fbp</td>
+                        <td>Facebook advertising</td>
+                        <td>3 months</td>
+                        <td>Marketing</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 class="craftdocs-cookies__subtitle">4. Third-Party Cookies</h2>
+            <p>We may use services from third parties that set their own cookies, including:</p>
+            <ul>
+                <li>Google Analytics for website usage data</li>
+                <li>Facebook Pixel for advertising effectiveness</li>
+                <li>Stripe for payment processing</li>
+            </ul>
+
+            <div class="craftdocs-cookies__controls">
+                <h3 class="craftdocs-cookies__subtitle">Cookie Preferences</h3>
+                <p>You can manage your cookie preferences below:</p>
+                
+                <div class="craftdocs-cookies__toggle">
+                    <input type="checkbox" id="essential" checked disabled>
+                    <label for="essential">Essential Cookies (Required)</label>
+                </div>
+                
+                <div class="craftdocs-cookies__toggle">
+                    <input type="checkbox" id="preferences" checked>
+                    <label for="preferences">Preference Cookies</label>
+                </div>
+                
+                <div class="craftdocs-cookies__toggle">
+                    <input type="checkbox" id="analytics" checked>
+                    <label for="analytics">Analytics Cookies</label>
+                </div>
+                
+                <div class="craftdocs-cookies__toggle">
+                    <input type="checkbox" id="marketing">
+                    <label for="marketing">Marketing Cookies</label>
+                </div>
+                
+                <button class="craftdocs-cookies__btn" onclick="alert('Preferences saved!')">Save Preferences</button>
+            </div>
+
+            <h2 class="craftdocs-cookies__subtitle">5. Managing Cookies</h2>
+            <p>You can control and/or delete cookies as you wish. Most browsers allow you to:</p>
+            <ul>
+                <li>See what cookies you have and delete them individually</li>
+                <li>Block third-party cookies</li>
+                <li>Block cookies from particular sites</li>
+                <li>Block all cookies</li>
+            </ul>
+            <p>For more information, visit <a href="https://www.aboutcookies.org" target="_blank">aboutcookies.org</a>.</p>
+
+            <h2 class="craftdocs-cookies__subtitle">6. Changes to This Policy</h2>
+            <p>We may update this Cookie Policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+
+            <h2 class="craftdocs-cookies__subtitle">Contact Us</h2>
+            <p>If you have questions about this Cookie Policy, contact us at <a href="mailto:privacy@craftdocs.com">privacy@craftdocs.com</a>.</p>
+
+        </div>
+    </div>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Column 1: Logo and About -->
+      <div class="footer-column">
+        <div class="footer-logo">
+          <img src="{% static 'img/logo_light.png' %}" alt="Letterhead Platform" class="logo-img">
+          <p class="footer-tagline">Empowering professional communication since 2023</p>
+        </div>
+        <div class="footer-social">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-column">
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'public_dashboard' %}">Home</a></li>
+          <li><a href="{% url 'earn_credit' %}">Earn Credit</a></li>
+          <li><a href="{% url 'credit_earn_history' %}">Credit History</a></li>
+          <li><a href="{% url 'credit_uses_history' %}">Uses History</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Resources -->
+      <div class="footer-column">
+        <h4 class="footer-title">Resources</h4>
+        <ul class="footer-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Tutorials</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Help Center</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact -->
+      <div class="footer-column">
+        <h4 class="footer-title">Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fas fa-envelope me-2"></i> support@letterhead.com</li>
+          <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+          <li><i class="fas fa-map-marker-alt me-2"></i> 123 Business Ave, Suite 500<br>New York, NY 10001</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="copyright">&copy; 2025 Letterhead Platform. All rights reserved.</div>
+      <div class="legal-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script>
+    // Add smooth scrolling to all links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

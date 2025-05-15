@@ -1,0 +1,666 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Letterhead Platform</title>
+  <!-- Bootstrap 5.3 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #040444;
+      --secondary-color: #f3931c;
+      --accent-color: #4e54c8;
+      --light-bg: #f8f9fa;
+      --dark-text: #2c3e50;
+      --light-text: #7f8c8d;
+    }
+
+
+/* navbar start */
+.letterhead-navbar {
+  background: var(--primary-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.letterhead-navbar .navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.letterhead-navbar .logo {
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+
+.letterhead-navbar .brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.letterhead-navbar .brand-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  line-height: 1.2;
+}
+
+.letterhead-navbar .brand-subtitle {
+  font-size: 0.875rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+.letterhead-navbar .auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.letterhead-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  padding: 0.6rem 1rem !important;
+  margin: 0 0.1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.letterhead-navbar .nav-link:hover {
+  background: var(--secondary-color);
+  color: var(--accent-color) !important;
+}
+
+.letterhead-navbar .logout-btn {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.letterhead-navbar .logout-btn:hover {
+  background: rgba(231, 76, 60, 0.2) !important;
+}
+
+.letterhead-navbar .register-btn {
+  background: rgba(241, 196, 15, 0.1);
+}
+
+.letterhead-navbar .register-btn:hover {
+  background: rgba(241, 196, 15, 0.2) !important;
+}
+
+@media (max-width: 991.98px) {
+  .letterhead-navbar .navbar-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .letterhead-navbar .auth-buttons {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .letterhead-navbar .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem !important;
+  }
+}
+  /* navbar end */
+/* new footer start */
+  .footer {
+  background: var(--primary-color);
+  color: white;
+  padding: 4rem 0 2rem;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-bottom: 3rem;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo img {
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--accent-color);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.footer-contact i {
+  margin-top: 2px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.social-icon:hover {
+  background: var(--accent-color);
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legal-links a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.legal-links a:hover {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .legal-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+    /* new footer end */
+ /* CraftDocs Privacy Policy Specific Styles */
+  .craftdocs-pp {
+            --cd-dark-blue: #000144;
+            --cd-mid-blue: #0f0a42;
+            --cd-light-purple: #140d41;
+            --cd-dark: #212529;
+            --cd-light: #f8f9fa;
+            --cd-gray: #708090;
+            --cd-radius: 12px;
+            
+          
+          
+        }
+        
+        .craftdocs-pp__container {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--cd-radius);
+            box-shadow: var(--cd-shadow);
+        }
+        
+        /* ===== HEADER ===== */
+        .craftdocs-pp__header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            
+        }
+        
+        .craftdocs-pp__logo {
+            max-width: 250px;
+            height: auto;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+        
+        .craftdocs-pp__tagline {
+            color: var(--cd-mid-blue);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* ===== CONTENT ===== */
+        .craftdocs-pp__title {
+            color: var(--cd-dark-blue);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--cd-light-purple);
+        }
+        
+        .craftdocs-pp__subtitle {
+            color: var(--cd-dark-blue);
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        .craftdocs-pp p, 
+        .craftdocs-pp ul, 
+        .craftdocs-pp ol {
+            margin-bottom: 1rem;
+        }
+        
+        .craftdocs-pp ul, 
+        .craftdocs-pp ol {
+            padding-left: 2rem;
+        }
+        
+        .craftdocs-pp li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* ===== LINKS ===== */
+        .craftdocs-pp a {
+            color: var(--cd-mid-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .craftdocs-pp a:hover {
+            color: var(--cd-light-purple);
+            text-decoration: underline;
+        }
+        
+        /* ===== TABLE ===== */
+        .craftdocs-pp table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: var(--cd-shadow);
+            border-radius: var(--cd-radius);
+            overflow: hidden;
+        }
+        
+        .craftdocs-pp th, 
+        .craftdocs-pp td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .craftdocs-pp th {
+            background-color: var(--cd-dark-blue);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .craftdocs-pp tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* ===== RIGHTS LIST ===== */
+        .craftdocs-pp__rights-list {
+            list-style: none;
+        }
+        
+        .craftdocs-pp__rights-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .craftdocs-pp__rights-item::before {
+            content: "✓";
+            color: var(--cd-light-purple);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+      
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .craftdocs-pp__container {
+                padding: 1.5rem;
+            }
+            
+            .craftdocs-pp__logo {
+                max-width: 200px;
+            }
+            
+            .craftdocs-pp__title {
+                font-size: 1.5rem;
+            }
+        }
+  </style>
+</head>
+
+<body>
+  {% load custom_filters %}
+
+  <nav class="navbar navbar-expand-lg letterhead-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <img src="{% static 'img/logo_light.png' %}" alt="Company Logo" class="logo">
+      <!-- <span class="brand-text">
+        <h1 class="brand-title">Letterhead Platform</h1>
+        <p class="brand-subtitle">Empowering your business with professional communication tools</p>
+      </span> -->
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#letterheadNav">
+      <span class="navbar-toggler-icon text-white"><i class="fas fa-bars"></i></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="letterheadNav">
+      <div class="auth-buttons ms-auto">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'public_dashboard' %}" class="nav-link">
+          <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <form method="POST" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="nav-link logout-btn">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="nav-link">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+        <a href="{% url 'register' %}" class="nav-link register-btn">
+          <i class="fas fa-user-plus me-2"></i>Sign Up
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+  
+  <!-- Main Content -->
+  <main class="container">
+   
+<div class="craftdocs-pp">
+        <div class="craftdocs-pp__container">
+            <header class="craftdocs-pp__header">
+                <img src="{% static 'img/logo.png' %}" alt="CraftDocs" class="craftdocs-pp__logo">
+            </header>
+
+            <h1 class="craftdocs-pp__title">Privacy Policy</h1>
+            <p><em>Last Updated: [Date]</em></p>
+
+            <p>CraftDocs ("we," "our," or "us") respects your privacy. This policy explains how we collect, use, and protect your information when you use our drag-and-drop letterhead tool ("Service").</p>
+
+            <h2 class="craftdocs-pp__subtitle">1. Information We Collect</h2>
+            <h3 class="craftdocs-pp__subtitle">a. Data You Provide</h3>
+            <ul>
+                <li>Account details (name, email)</li>
+                <li>Uploaded documents, templates, or letterheads</li>
+                <li>Payment information (processed securely via third-party providers)</li>
+            </ul>
+
+            <h3 class="craftdocs-pp__subtitle">b. Automated Data</h3>
+            <ul>
+                <li>Usage metrics (e.g., time spent, features used)</li>
+                <li>Device/IP address (for security and analytics)</li>
+                <li>Cookies (to improve Service functionality)</li>
+            </ul>
+
+            <h2 class="craftdocs-pp__subtitle">2. How We Use Your Data</h2>
+            <table class="craftdocs-pp">
+                <thead>
+                    <tr>
+                        <th>Purpose</th>
+                        <th>Legal Basis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Provide the Service</td>
+                        <td>Contractual necessity</td>
+                    </tr>
+                    <tr>
+                        <td>Improve features</td>
+                        <td>Legitimate interest</td>
+                    </tr>
+                    <tr>
+                        <td>Prevent fraud</td>
+                        <td>Legal obligation</td>
+                    </tr>
+                    <tr>
+                        <td>Marketing*</td>
+                        <td>Consent (opt-in required)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><small>*You can unsubscribe anytime.</small></p>
+
+            <h2 class="craftdocs-pp__subtitle">3. Data Sharing</h2>
+            <p>We <strong>do not sell</strong> your data. Limited sharing occurs with:</p>
+            <ul>
+                <li><strong>Payment processors</strong> (Stripe, PayPal)</li>
+                <li><strong>Cloud storage</strong> (AWS, encrypted)</li>
+                <li><strong>Legal authorities</strong> (if required by law)</li>
+            </ul>
+
+            <h2 class="craftdocs-pp__subtitle">4. Your Rights</h2>
+            <ul class="craftdocs-pp__rights-list">
+                <li class="craftdocs-pp__rights-item">Access, correct, or delete your data</li>
+                <li class="craftdocs-pp__rights-item">Export your documents (PDF/DOCX)</li>
+                <li class="craftdocs-pp__rights-item">Withdraw consent (email <a href="mailto:support@craftdocs.com">support@craftdocs.com</a>)</li>
+            </ul>
+
+            <h2 class="craftdocs-pp__subtitle">5. Security</h2>
+            <ul>
+                <li><strong>Encryption</strong>: AES-256 for documents in transit/at rest</li>
+                <li><strong>Access controls</strong>: Limited to essential personnel</li>
+            </ul>
+
+            <h2 class="craftdocs-pp__subtitle">6. Changes to This Policy</h2>
+            <p>We'll notify users of updates via email or in-app alerts.</p>
+
+            <h2 class="craftdocs-pp__subtitle">Contact Us</h2>
+            <p>Questions? Email <a href="mailto:privacy@craftdocs.com">privacy@craftdocs.com</a> or mail:</p>
+            <address>
+                CraftDocs Privacy Team<br>
+                [Your Physical Address]
+            </address>
+
+        </div>
+    </div>
+
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Column 1: Logo and About -->
+      <div class="footer-column">
+        <div class="footer-logo">
+          <img src="{% static 'img/logo_light.png' %}" alt="Letterhead Platform" class="logo-img">
+          <p class="footer-tagline">Empowering professional communication since 2023</p>
+        </div>
+        <div class="footer-social">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-column">
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'public_dashboard' %}">Home</a></li>
+          <li><a href="{% url 'earn_credit' %}">Earn Credit</a></li>
+          <li><a href="{% url 'credit_earn_history' %}">Credit History</a></li>
+          <li><a href="{% url 'credit_uses_history' %}">Uses History</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Resources -->
+      <div class="footer-column">
+        <h4 class="footer-title">Resources</h4>
+        <ul class="footer-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Tutorials</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Help Center</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact -->
+      <div class="footer-column">
+        <h4 class="footer-title">Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fas fa-envelope me-2"></i> support@letterhead.com</li>
+          <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+          <li><i class="fas fa-map-marker-alt me-2"></i> 123 Business Ave, Suite 500<br>New York, NY 10001</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="copyright">&copy; 2025 Letterhead Platform. All rights reserved.</div>
+      <div class="legal-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script>
+    // Add smooth scrolling to all links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

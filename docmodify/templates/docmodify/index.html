@@ -1229,7 +1229,7 @@
         <h4 class="footer-title">Quick Links</h4>
         <ul class="footer-links">
           <li><a href="{% url 'public_dashboard' %}">Home</a></li>
-          <li><a href="{% url 'earn_credit' %}">Earn Credit</a></li>
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
           <li><a href="{% url 'credit_earn_history' %}">Credit History</a></li>
           <li><a href="{% url 'credit_uses_history' %}">Uses History</a></li>
         </ul>
@@ -1260,9 +1260,9 @@
     <div class="footer-bottom">
       <div class="copyright">&copy; 2025 Letterhead Platform. All rights reserved.</div>
       <div class="legal-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Cookie Policy</a>
+        <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+        <a href="{% url 'terms_service' %}">Terms of Service</a>
+        <a href="{% url 'cookie_policy' %}">Cookie Policy</a>
       </div>
     </div>
   </div>

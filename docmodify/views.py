@@ -531,3 +531,15 @@ def credit_uses_history(request):
     page_obj = paginator.get_page(page_number)
     start_index = (page_obj.number - 1) * paginator.per_page
     return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj, 'start_index': start_index})
+
+
+def contact(request):
+    return render(request, 'docmodify/contact.html')
+
+def privacy_policy(request):
+    return render(request, 'docmodify/privacy_policy.html')
+
+def terms_service(request):
+    return render(request, 'docmodify/terms_service.html')
+def cookie_policy(request):
+    return render(request, 'docmodify/cookie_policy.html')
