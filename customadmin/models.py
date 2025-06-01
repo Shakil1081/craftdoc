@@ -199,7 +199,7 @@ class CreditEarnHistory(models.Model):
     target_id = models.IntegerField()
     description = models.TextField()
     earned_credit = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} earned {self.earned_credit}"
@@ -213,6 +213,7 @@ class CreditUsesHistory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        
         return f"{self.user.username} used {self.usage_credit}"
     
 class DocumentHeaderFooterImage(models.Model):

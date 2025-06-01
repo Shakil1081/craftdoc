@@ -39,6 +39,7 @@ import json
 from google import genai
 import markdown
 from pdf2image import convert_from_bytes
+from django.db.models import Sum
 
 def hello_there(request):
     search_query = request.GET.get('search', '').strip()
@@ -291,7 +292,7 @@ def register(request):
         form = PublicUserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False  # User inactive until email verified
+            user.is_active = True  # User inactive until email verified
             user.set_password(form.cleaned_data['password'])
             user.save()
             user.earn_credit("signup_bonus")
@@ -429,10 +430,25 @@ def role_based_redirect(request):
 
 @login_required
 def public_dashboard(request):
-    # if not request.user.is_active:
-    #     messages.warning(request, 'Please verify your email to access all features.')
-    return render(request, 'docmodify/dashboard.html')
+    user = request.user
 
+    total_earned = CreditEarnHistory.objects.filter(user_id=user.id).aggregate(total=Sum('earned_credit'))['total'] or 0
+    total_used = CreditUsesHistory.objects.filter(user_id=user.id).aggregate(total=Sum('usage_credit'))['total'] or 0
+    total_downloads = DownloadHistory.objects.filter(user_id=user.id).count()
+
+    # Fetch credit earn history
+    credit_earn_history = CreditEarnHistory.objects.filter(user_id=user.id).order_by('-created_at')[:5]
+    credit_usage_history = CreditUsesHistory.objects.filter(user_id=user.id).order_by('-created_at')[:5]
+
+    context = {
+        'total_earned': total_earned,
+        'total_used': total_used,
+        'total_downloads': total_downloads,
+        'credit_earn_history': credit_earn_history,
+        'credit_usage_history': credit_usage_history,
+    }
+
+    return render(request, 'docmodify/dashboard.html', context)
 def public_login(request):
     if request.user.is_authenticated and not request.user.is_superuser:
         return redirect('public_dashboard')
