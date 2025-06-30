@@ -36,7 +36,7 @@ from PIL import Image
 from customadmin.forms import UserForm,ProfileEditForm
 import io
 import json
-from google import genai
+import google.generativeai as genai 
 import markdown
 from pdf2image import convert_from_bytes
 from django.db.models import Sum
