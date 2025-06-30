@@ -591,7 +591,7 @@ def credit_uses_history(request):
     start_index = (page_obj.number - 1) * paginator.per_page
     return render(request, 'docmodify/credit/uses_history.html', {'page_obj': page_obj, 'start_index': start_index})
 
-client = genai.Client(api_key="AIzaSyBUK6zfkpLyp2LgcE9l80NO_I616CYgCfI")  # Configure globally
+client = genai.configure(api_key="AIzaSyBUK6zfkpLyp2LgcE9l80NO_I616CYgCfI")  # Configure globally
 
 @csrf_exempt
 @require_POST
