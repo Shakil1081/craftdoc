@@ -4,7 +4,7 @@ services:
   # --- Django Application: CraftDoc ---
   craftdoc:
     build:
-      context: ./craftdoc_project # Path to your CraftDoc Django project directory
+      context: . # Path to your CraftDoc Django project directory
       dockerfile: Dockerfile
     command: gunicorn --bind 0.0.0.0:8000 adminlte2.wsgi:application
     volumes:
