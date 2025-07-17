@@ -21,8 +21,7 @@ COPY . /app/
 RUN python manage.py collectstatic --no-input
 
 # Expose the port Gunicorn will listen on
-EXPOSE 8000
+EXPOSE 8000 # CraftDoc uses 8000
 
 # Command to run the Gunicorn server when the container starts.
-# For craftdoc, your WSGI_APPLICATION is 'adminlte2.wsgi.application'.
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "adminlte2.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "adminlte2.wsgi:application"] # Correct for CraftDoc
