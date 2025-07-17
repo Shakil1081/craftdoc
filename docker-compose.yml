@@ -1,26 +1,69 @@
-
-version: "3.9"
+version: '3.8'
 
 services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
+  # --- Django Application: CraftDoc ---
+  craftdoc:
+    build:
+      context: ./craftdoc_project # Path to your CraftDoc Django project directory
+      dockerfile: Dockerfile
+    command: gunicorn --bind 0.0.0.0:8000 adminlte2.wsgi:application
     volumes:
-      - .:/app
-    command: python manage.py runserver 0.0.0.0:8000
-  db:
-    image: postgres:15
-    restart: always
+      - ./craftdoc_project:/app
+      - static_volume_craftdoc:/app/staticfiles
+      - media_volume_craftdoc:/app/mediafiles
+    expose:
+      - "8000"
     environment:
-      POSTGRES_DB: yourdbname
-      POSTGRES_USER: youruser
-      POSTGRES_PASSWORD: yourpassword
+      - DB_NAME=craftdoc_db
+      - DB_USER=craftdoc_user
+      - DB_PASSWORD=your_craftdoc_db_password_secure # <<-- REPLACE with a STRONG password!
+      - DB_HOST=pgdatabase # This must match the pgdatabase service name
+      - SECRET_KEY=your_craftdoc_django_secret_key # <<-- REPLACE with a UNIQUE, STRONG Django SECRET_KEY!
+      - DJANGO_ALLOWED_HOSTS=craftdocai.com,35.238.61.43
+      - DEBUG=False
+    depends_on:
+      - pgdatabase
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  # --- PostgreSQL Database for CraftDoc ---
+  pgdatabase: # <<-- Service name is 'pgdatabase'
+    image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=craftdoc_db
+      - POSTGRES_USER=craftdoc_user # Consider 'postgres' or a custom user
+      - POSTGRES_PASSWORD=Test@2025 # <<-- REPLACE with a STRONG password!
+    networks:
+      - app_network
+    restart: unless-stopped
 
+  # --- Apache Web Server (Reverse Proxy for CraftDoc only) ---
+  apache:
+    image: httpd:2.4
+    ports:
+      - "80:80"
+      # - "443:443" # Uncomment this line when you configure HTTPS (SSL/TLS)
+    volumes:
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./apache/sites-enabled/:/usr/local/apache2/conf/extra/
+      - static_volume_craftdoc:/var/www/html/craftdoc_static
+      - media_volume_craftdoc:/var/www/html/craftdoc_media
+    depends_on:
+      - craftdoc # Now only depends on craftdoc
+    networks:
+      - app_network
+    restart: unless-stopped
+
+# Define the Docker network
+networks:
+  app_network:
+    driver: bridge
+
+# Define named volumes for persistent data (only CraftDoc related now)
 volumes:
   postgres_data:
-    driver: local
-
-
+  static_volume_craftdoc:
+  media_volume_craftdoc:
