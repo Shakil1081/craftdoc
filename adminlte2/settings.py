@@ -20,7 +20,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -74,12 +74,13 @@ WSGI_APPLICATION = 'adminlte2.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL engine
-        'NAME': 'craftdocdb2',  # Replace with your PostgreSQL database name
-        'USER': 'crfdoc',  # PostgreSQL user (typically 'postgres')
-        'PASSWORD': 'crfdoc@doom',  # Replace with your PostgreSQL password
-        'HOST': '127.0.0.1',  # Localhost for PostgreSQL
-        'PORT': '5432',  # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.postgresql',
+        # <<-- CHANGED: Get database credentials from environment variables
+        'NAME': os.environ.get('DB_NAME', 'craftdocdb2'), # Default for local dev if not set
+        'USER': os.environ.get('DB_USER', 'crfdoc'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'crfdoc@doom'),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'), # <<-- IMPORTANT: In Docker, this will be 'pgdatabase'
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -121,7 +122,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Directory for storing collected static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Ensure this line is present and correct
+
+
 
 # Additional directories for static files (optional, only if you have custom locations)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
@@ -132,9 +137,11 @@ LOGIN_REDIRECT_URL = '/redirect/'
 LOGOUT_REDIRECT_URL = '/login/'
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles') # <<-- Make sure this uses 'mediafiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
