@@ -1,4 +1,4 @@
-  GNU nano 8.1                                                                        Dockerfile
+#GNU nano 8.1                                                                        Dockerfile
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE 1
