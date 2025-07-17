@@ -14,7 +14,12 @@ SECRET_KEY = 'django-insecure-wnca%3k80vmnou8s-m5l3ek^l-xgc9)e$47zeoht051*x-khp6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'craftdocai.com',
+    '35.238.61.43',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # Application definition
